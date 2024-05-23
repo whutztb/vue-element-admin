@@ -2,15 +2,22 @@ import request from '@/utils/request'
 
 export function login(data) {
   return request({
-    url: '/vue-element-admin/user/login',
+    url: 'https://7xp4019ui152.vicp.fun/login',
     method: 'post',
-    data
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    data: JSON.stringify({
+      'user_name': data.username,
+      'user_pwd': data.password
+    })
   })
 }
 
 export function getInfo(token) {
+  console.log('getInfo request')
   return request({
-    url: '/vue-element-admin/user/info',
+    url: 'https://7xp4019ui152.vicp.fun/getinfo',
     method: 'get',
     params: { token }
   })
@@ -18,7 +25,7 @@ export function getInfo(token) {
 
 export function logout() {
   return request({
-    url: '/vue-element-admin/user/logout',
-    method: 'post'
+    url: 'https://7xp4019ui152.vicp.fun/logout',
+    method: 'get'
   })
 }
