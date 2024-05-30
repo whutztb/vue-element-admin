@@ -78,11 +78,11 @@ export const constantRoutes = [
       {
         path: 'dashboard',
         component: () => import('@/views/dashboard/index'),
-        name: '导航栏',
-        meta: { title: '导航栏', icon: 'dashboard', affix: true }
+        name: '首页',
+        meta: { title: '首页', icon: 'dashboard', affix: true }
       }
     ]
-  },
+  }
   // {
   //   path: '/documentation',
   //   component: Layout,
@@ -108,20 +108,20 @@ export const constantRoutes = [
   //     }
   //   ]
   // },
-  {
-    path: '/profile',
-    component: Layout,
-    redirect: '/profile/index',
-    hidden: true,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/profile/index'),
-        name: 'Profile',
-        meta: { title: 'Profile', icon: 'user', noCache: true }
-      }
-    ]
-  }
+  // {
+  //   path: '/profile',
+  //   component: Layout,
+  //   redirect: '/profile/index',
+  //   hidden: true,
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       component: () => import('@/views/profile/index'),
+  //       name: 'Profile',
+  //       meta: { title: 'Profile', icon: 'user', noCache: true }
+  //     }
+  //   ]
+  // }
 ]
 
 /**

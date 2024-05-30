@@ -15,7 +15,6 @@ export function login(data) {
 }
 
 export function getInfo(token) {
-  console.log('getInfo request')
   return request({
     url: 'https://7xp4019ui152.vicp.fun/getinfo',
     method: 'get',

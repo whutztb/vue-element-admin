@@ -32,7 +32,7 @@ service.interceptors.request.use(
   }
 )
 
-// response interceptor
+// response interceptor 接收
 service.interceptors.response.use(
   /**
    * If you want to get http information such as headers or status
@@ -45,8 +45,8 @@ service.interceptors.response.use(
    * You can also judge the status by HTTP Status Code
    */
   response => {
+    console.log('response', response)
     const res = JSON.parse(response.data)
-
     // if the custom code is not 0, it is judged as an error.
     if (res.code !== 0) {
       Message({
@@ -74,7 +74,7 @@ service.interceptors.response.use(
     }
   },
   error => {
-    console.log('err')
+    console.log('响应err')
     console.log('err' + error) // for debug
     Message({
       message: error.message,

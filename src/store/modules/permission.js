@@ -1,4 +1,4 @@
-import { asyncRoutes, constantRoutes } from '@/router'
+import { constantRoutes } from '@/router'
 import Layout from '@/layout'
 
 /**
@@ -16,7 +16,6 @@ function hasPermission(roles, route) {
 
 /**
  * Filter asynchronous routing tables by recursion
- * @param routes asyncRoutes
  * @param roles
  */
 export function filterAsyncRoutes(routes, roles) {
@@ -54,14 +53,14 @@ const actions = {
       // 配置显示内容
       const accessedRoutes = [
         {
-          path: '/',
+          path: '/views/wine/user_list',
           component: Layout,
-          redirect: '/user',
+          redirect: '/dashboard',
           // alwaysShow: true, // will always show the root menu
           children: [
             {
-              path: '/user',
-              // component: () => import('@/views/dashboard/index'),
+              path: '/views/wine/user_list',
+              component: () => import('@/views/wine/user_list'),
               name: '用户管理',
               meta: {
                 title: '用户管理',
@@ -73,14 +72,14 @@ const actions = {
           ]
         },
         {
-          path: '/',
+          path: '/views/wine/jar_list',
           component: Layout,
-          redirect: '/jar',
+          redirect: '/dashboard',
           // alwaysShow: true, // will always show the root menu
           children: [
             {
-              path: '/jar',
-              // component: () => import('@/views/dashboard/index'),
+              path: '/views/wine/jar_list',
+              component: () => import('@/views/wine/jar_list'),
               name: '陶坛管理',
               meta: {
                 title: '陶坛管理',
@@ -92,14 +91,14 @@ const actions = {
           ]
         },
         {
-          path: '/',
+          path: '/views/wine/device_list',
           component: Layout,
-          redirect: '/device',
+          redirect: '/dashboard',
           // alwaysShow: true, // will always show the root menu
           children: [
             {
-              path: '/device',
-              // component: () => import('@/views/dashboard/index'),
+              path: '/views/wine/device_list',
+              // component: () => import('@/views/wine/device_list'),
               name: '设备管理',
               meta: {
                 title: '设备管理',
@@ -111,14 +110,14 @@ const actions = {
           ]
         },
         {
-          path: '/',
+          path: '/views/wine/plan_list',
           component: Layout,
-          redirect: '/plan',
+          redirect: '/dashboard',
           // alwaysShow: true, // will always show the root menu
           children: [
             {
-              path: '/plan',
-              // component: () => import('@/views/dashboard/index'),
+              path: '/views/wine/plan_list',
+              // component: () => import('@/views/wine/plan_list'),
               name: '方案管理',
               meta: {
                 title: '方案管理',
@@ -136,7 +135,6 @@ const actions = {
       // } else {
       //   accessedRoutes = filterAsyncRoutes(asyncRoutes, roles)
       // }
-      console.log('generateRoutes   2')
       commit('SET_ROUTES', accessedRoutes)
       resolve(accessedRoutes)
     })
