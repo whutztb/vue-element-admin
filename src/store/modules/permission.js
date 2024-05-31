@@ -49,7 +49,7 @@ const mutations = {
 const actions = {
   generateRoutes({ commit }, roles) {
     return new Promise((resolve) => {
-      console.log('generateRoutes   1')
+      // console.log('generateRoutes   1')
       // 配置显示内容
       const accessedRoutes = [
         {

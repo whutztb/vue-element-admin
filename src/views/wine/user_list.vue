@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.title" placeholder="用户名" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.user_name" placeholder="用户名" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         查询
       </el-button>
@@ -23,7 +23,7 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column label="用户ID" prop="id" align="center" width="80">
+      <el-table-column label="用户ID" prop="user_id" align="center" width="80">
         <template slot-scope="{row}">
           <span>{{ row.user_id }}</span>
         </template>
@@ -53,7 +53,7 @@
           <span>{{ row.gender }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Actions" align="center" width="230" class-name="small-padding fixed-width">
+      <el-table-column label="" align="center" width="230" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(row)">
             编辑
@@ -70,30 +70,32 @@
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
         <el-form-item label="用户ID" prop="user_id">
-          <el-input v-model="temp.user_id" />
+          <el-input v-model="temp.user_id" :readonly="readOnly" />
         </el-form-item>
         <el-form-item label="用户名" prop="user_name">
           <el-input v-model="temp.user_name" />
         </el-form-item>
-        <el-form-item label="用户密码" prop="user_id">
+        <el-form-item label="密码" prop="user_pwd">
           <el-input v-model="temp.user_pwd" />
         </el-form-item>
-        <el-form-item label="电话" prop="user_name">
+        <el-form-item label="电话" prop="phone_num">
           <el-input v-model="temp.phone_num" />
         </el-form-item>
-        <el-form-item label="部门" prop="user_name">
+        <el-form-item label="部门" prop="department">
           <el-input v-model="temp.department" />
         </el-form-item>
-        <el-form-item label="性别" prop="user_name">
-          <el-input v-model="temp.gender" />
+        <el-form-item label="性别" prop="gender">
+          <el-select v-model="temp.gender" class="filter-item" placeholder="请选择">
+            <el-option v-for="item in genderOptions" :key="item" :label="item" :value="item" />
+          </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
-          Cancel
+          取消
         </el-button>
         <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
-          Confirm
+          确认
         </el-button>
       </div>
     </el-dialog>
@@ -104,30 +106,17 @@
         <el-table-column prop="pv" label="Pv" />
       </el-table>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogPvVisible = false">Confirm</el-button>
+        <el-button type="primary" @click="dialogPvVisible = false">确认</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { fetchList, fetchPv, createUser, updateArticle } from '@/api/wine_user'
+import { fetchList, createUser, deleteUser, updateUser } from '@/api/wine_user'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
-
-const calendarTypeOptions = [
-  { key: 'CN', display_name: 'China' },
-  { key: 'US', display_name: 'USA' },
-  { key: 'JP', display_name: 'Japan' },
-  { key: 'EU', display_name: 'Eurozone' }
-]
-
-// arr to obj, such as { CN : "China", US : "USA" }
-const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
-  acc[cur.key] = cur.display_name
-  return acc
-}, {})
 
 export default {
   name: 'ComplexTable',
@@ -141,9 +130,6 @@ export default {
         deleted: 'danger'
       }
       return statusMap[status]
-    },
-    typeFilter(type) {
-      return calendarTypeKeyValue[type]
     }
   },
   data() {
@@ -155,37 +141,46 @@ export default {
       listQuery: {
         page: 1,
         limit: 20,
-        importance: undefined,
-        title: undefined,
-        type: undefined,
-        sort: '+id'
+        user_name: ''
       },
-      importanceOptions: [1, 2, 3],
-      calendarTypeOptions,
-      sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
-      statusOptions: ['published', 'draft', 'deleted'],
+
+      genderOptions: ['男', '女'],
       showReviewer: false,
       temp: {
-        id: undefined,
-        importance: 1,
-        remark: '',
-        timestamp: new Date(),
-        title: '',
-        type: '',
-        status: 'published'
+        user_id: undefined,
+        user_name: undefined,
+        user_pwd: 123456,
+        phone_num: undefined,
+        department: undefined
       },
+      readOnly: false,
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
-        update: 'Edit',
-        create: 'Create'
+        update: '编辑',
+        create: '创建'
       },
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        type: [{ required: true, message: 'type is required', trigger: 'change' }],
-        timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
-        title: [{ required: true, message: 'title is required', trigger: 'blur' }]
+        user_id: [
+          { required: true, message: '请输入用户ID', trigger: 'blur' }
+        ],
+        user_name: [
+          { required: true, message: '请输入用户名', trigger: 'blur' }
+        ],
+        phone_num: [
+          { required: true, message: '请输入电话', trigger: 'blur' }
+        ],
+        department: [
+          { required: true, message: '请输入部门', trigger: 'blur' }
+        ],
+        gender: [
+          { required: true, message: '请选择性别', trigger: 'blur' }
+        ],
+        user_pwd: [
+          { required: true, message: '请输入密码', trigger: 'blur' }
+        ]
       },
       downloadLoading: false
     }
@@ -204,6 +199,7 @@ export default {
     },
     handleFilter() {
       this.listQuery.page = 1
+      console.log('listQuery', this.listQuery)
       this.getList()
     },
     handleModifyStatus(row, status) {
@@ -229,16 +225,12 @@ export default {
     },
     resetTemp() {
       this.temp = {
-        id: undefined,
-        importance: 1,
-        remark: '',
-        timestamp: new Date(),
-        title: '',
-        status: 'published',
-        type: ''
+        user_id: undefined,
+        user_name: undefined
       }
     },
     handleCreate() {
+      this.readOnly = false
       this.resetTemp()
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
@@ -249,14 +241,12 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
-          this.temp.author = 'vue-element-admin'
           createUser(this.temp).then(() => {
             this.list.unshift(this.temp)
             this.dialogFormVisible = false
             this.$notify({
-              title: 'Success',
-              message: 'Created Successfully',
+              title: '操作成功',
+              message: '创建成功',
               type: 'success',
               duration: 2000
             })
@@ -265,6 +255,7 @@ export default {
       })
     },
     handleUpdate(row) {
+      this.readOnly = true
       this.temp = Object.assign({}, row) // copy obj
       this.temp.timestamp = new Date(this.temp.timestamp)
       this.dialogStatus = 'update'
@@ -278,13 +269,13 @@ export default {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
           tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          updateArticle(tempData).then(() => {
-            const index = this.list.findIndex(v => v.id === this.temp.id)
+          updateUser(tempData).then(() => {
+            const index = this.list.findIndex(v => v.user_id === this.temp.user_id)
             this.list.splice(index, 1, this.temp)
             this.dialogFormVisible = false
             this.$notify({
-              title: 'Success',
-              message: 'Update Successfully',
+              title: '操作成功',
+              message: '编辑成功',
               type: 'success',
               duration: 2000
             })
@@ -293,25 +284,40 @@ export default {
       })
     },
     handleDelete(row, index) {
-      this.$notify({
-        title: 'Success',
-        message: 'Delete Successfully',
-        type: 'success',
-        duration: 2000
-      })
-      this.list.splice(index, 1)
-    },
-    handleFetchPv(pv) {
-      fetchPv(pv).then(response => {
-        this.pvData = response.data.pvData
-        this.dialogPvVisible = true
+      this.$confirm('确定删除该用户, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        deleteUser(row).then(response => {
+          this.$notify({
+            title: '操作成功',
+            message: '删除成功',
+            type: 'success',
+            duration: 2000
+          })
+          this.list.splice(index, 1)
+        }).catch(error => {
+          console.error('Error deleting user:', error)
+          this.$notify({
+            title: '错误',
+            message: '删除失败',
+            type: 'error',
+            duration: 2000
+          })
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
       })
     },
     handleDownload() {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
-        const filterVal = ['timestamp', 'title', 'type', 'importance', 'status']
+        const tHeader = ['user_id', 'user_name', 'phone_num', 'department', 'gender']
+        const filterVal = ['user_name']
         const data = this.formatJson(filterVal)
         excel.export_json_to_excel({
           header: tHeader,

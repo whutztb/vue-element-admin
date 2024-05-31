@@ -45,7 +45,7 @@ service.interceptors.response.use(
    * You can also judge the status by HTTP Status Code
    */
   response => {
-    console.log('response', response)
+    // console.log('接收response', response)
     const res = JSON.parse(response.data)
     // if the custom code is not 0, it is judged as an error.
     if (res.code !== 0) {
@@ -74,8 +74,7 @@ service.interceptors.response.use(
     }
   },
   error => {
-    console.log('响应err')
-    console.log('err' + error) // for debug
+    console.log('响应err' + error) // for debug
     Message({
       message: error.message,
       type: 'error',
