@@ -13,7 +13,7 @@
         <el-input
           ref="username"
           v-model="loginForm.username"
-          placeholder="Username"
+          placeholder="UserID"
           name="username"
           type="text"
           tabindex="1"
@@ -49,7 +49,7 @@
 
       <!-- <div style="position:relative">
         <div class="tips">
-          <span>Username : admin</span>
+          <span>Username : </span>
           <span>Password : any</span>
         </div>
         <div class="tips">
@@ -89,16 +89,16 @@ export default {
       }
     }
     const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
-        callback(new Error('The password can not be less than 6 digits'))
+      if (value.length < 1) {
+        callback(new Error('The password can not be less than 1 digits'))
       } else {
         callback()
       }
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: '123456'
+        username: '',
+        password: ''
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],

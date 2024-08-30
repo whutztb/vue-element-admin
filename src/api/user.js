@@ -2,13 +2,13 @@ import request from '@/utils/request'
 
 export function login(data) {
   return request({
-    url: 'https://7xp4019ui152.vicp.fun/login',
+    url: `${process.env.API_URL}/login`,
     method: 'post',
     headers: {
       'Content-Type': 'application/json'
     },
     data: JSON.stringify({
-      'user_name': data.username,
+      'user_id': data.username,
       'user_pwd': data.password
     })
   })
@@ -16,7 +16,7 @@ export function login(data) {
 
 export function getInfo(token) {
   return request({
-    url: 'https://7xp4019ui152.vicp.fun/getinfo',
+    url: `${process.env.API_URL}/getinfo`,
     method: 'get',
     params: { token }
   })
@@ -24,7 +24,7 @@ export function getInfo(token) {
 
 export function logout() {
   return request({
-    url: 'https://7xp4019ui152.vicp.fun/logout',
+    url: `${process.env.API_URL}/logout`,
     method: 'get'
   })
 }

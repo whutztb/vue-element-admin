@@ -1,0 +1,41 @@
+运行步骤：
+(1)安装node.js (https://nodejs.org/zh-cn)
+(2)npm install（漫长的等待）
+(3)npm run dev
+
+
+
+
+访问时错误Network Error 
+Access to XMLHttpRequest at 'https://7xp4019ui152.vicp.fun/login' from origin 'http://10.1.56.8:9528' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+这是属于跨域问题
+检查花生壳后端服务器配置：HTTPS类型
+https://7xp4019ui152.vicp.fun
+10.1.56.8:5000
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+npm install 时提示没有C:\Users\abcd\AppData\Roaming\npm路径,将node.js安装目录下的拷贝过去
+
+提示npm only allow pnpm，
+pnpm install提示node.js下没有pnpm:
+执行以下语句：npm install -g pnpm
+如果计算机开启代理则要关闭后安装
+然后就可以正常执行了
+
+npm run dev 提示：Error: Cannot find module 'C:\Users\abcd\AppData\Roaming\npm\node_modules\npm\bin\npm-cli.js'
+解决办法：拷贝安装目录下的npm文件夹至C:\Users\%USERNAME%\AppData\Roaming\npm\node_modules
+Copy the directory named npm from your installed node path (In my case the npm directory was available in C:\Program Files\nodejs\node_modules).
+Navigate to C:\Users\%USERNAME%\AppData\Roaming\npm\node_modules and paste the copied npm directory there.

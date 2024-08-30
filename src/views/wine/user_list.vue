@@ -167,16 +167,16 @@ export default {
           { required: true, message: '请输入用户ID', trigger: 'blur' }
         ],
         user_name: [
-          { required: true, message: '请输入用户名', trigger: 'blur' }
+          { required: false, message: '请输入用户名', trigger: 'blur' }
         ],
         phone_num: [
-          { required: true, message: '请输入电话', trigger: 'blur' }
+          { required: false, message: '请输入电话', trigger: 'blur' }
         ],
         department: [
-          { required: true, message: '请输入部门', trigger: 'blur' }
+          { required: false, message: '请输入部门', trigger: 'blur' }
         ],
         gender: [
-          { required: true, message: '请选择性别', trigger: 'blur' }
+          { required: false, message: '请选择性别', trigger: 'blur' }
         ],
         user_pwd: [
           { required: true, message: '请输入密码', trigger: 'blur' }

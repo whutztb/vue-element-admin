@@ -16,6 +16,7 @@ const name = defaultSettings.title || 'vue Element Admin' // page title
 const port = process.env.port || process.env.npm_config_port || 9527 // dev port
 
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
+const webpack = require('webpack'); // 引入 webpack
 module.exports = {
   /**
    * You will need to set publicPath if you plan to deploy your site under a sub path,
@@ -47,7 +48,13 @@ module.exports = {
       alias: {
         '@': resolve('src')
       }
-    }
+    },
+        // 其他webpack配置...在这里定义全局变量API_URL
+    plugins: [
+        new webpack.DefinePlugin({
+          'process.env.API_URL': JSON.stringify('http://192.168.3.38:5000')
+        })
+    ]
   },
   chainWebpack(config) {
     // it can improve the speed of the first screen, it is recommended to turn on preload
@@ -123,3 +130,4 @@ module.exports = {
       )
   }
 }
+
