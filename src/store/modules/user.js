@@ -37,7 +37,7 @@ const actions = {
         .then((response) => {
           commit('SET_TOKEN', response.token)
           setToken(response.token)
-          if (response.code == 0) {
+          if (response.code === 0) {
             console.log(response.message)
             router.push({ path: '/' })
             resolve()
@@ -60,7 +60,8 @@ const actions = {
           const data = {
             roles: ['普通用户'],
             introduction: '用户',
-            avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
+            // avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
+            avatar: require('@/assets/images/logo.png'),
             name: '普通用户'
           }
 

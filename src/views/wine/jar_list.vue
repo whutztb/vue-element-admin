@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.asset_id" placeholder="陶坛ID" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.jar_name" placeholder="陶坛名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         查询
       </el-button>
@@ -29,7 +29,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column width="120px" align="center" label="陶坛名称">
+      <el-table-column width="150px" align="center" label="陶坛名称">
         <template slot-scope="scope">
           <span>{{ scope.row.jar_name }}</span>
         </template>
@@ -227,11 +227,11 @@ export default {
     resetTemp() {
       this.temp = {
         asset_id: undefined,
-        jar_name: undefined,
-        jar_pos: undefined,
-        jar_height: undefined,
-        wine_level: undefined,
-        level_update_time: undefined
+        jar_name: '',
+        jar_pos: '',
+        jar_height: '',
+        wine_level: '',
+        level_update_time: ''
       }
     },
     handleCreate() {
@@ -252,6 +252,7 @@ export default {
           createJar(this.temp).then(() => {
             this.list.unshift(this.temp)
             this.dialogFormVisible = false
+            this.total += 1
             this.$notify({
               title: '操作成功',
               message: '创建成功',
@@ -284,9 +285,7 @@ export default {
           updateJar(tempData).then(() => {
             const index = this.list.findIndex(v => v.asset_id === this.temp.asset_id)
             this.list.splice(index, 1, this.temp)
-
             this.dialogFormVisible = false
-
             this.$notify({
               title: '操作成功',
               message: '修改成功',
@@ -310,6 +309,7 @@ export default {
             type: 'success',
             duration: 2000
           })
+          this.total -= 1
           this.list.splice(index, 1)
         }).catch(error => {
           console.error('Error deleting user:', error)

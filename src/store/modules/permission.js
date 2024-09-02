@@ -98,7 +98,7 @@ const actions = {
           children: [
             {
               path: '/views/wine/device_list',
-              // component: () => import('@/views/wine/device_list'),
+              component: () => import('@/views/wine/device_list'),
               name: '设备管理',
               meta: {
                 title: '设备管理',
@@ -117,7 +117,7 @@ const actions = {
           children: [
             {
               path: '/views/wine/plan_list',
-              // component: () => import('@/views/wine/plan_list'),
+              component: () => import('@/views/wine/plan_list'),
               name: '方案管理',
               meta: {
                 title: '方案管理',

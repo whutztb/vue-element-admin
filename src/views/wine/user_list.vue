@@ -147,11 +147,11 @@ export default {
       genderOptions: ['男', '女'],
       showReviewer: false,
       temp: {
-        user_id: undefined,
-        user_name: undefined,
-        user_pwd: 123456,
-        phone_num: undefined,
-        department: undefined
+        user_id: '',
+        user_name: '',
+        user_pwd: '',
+        phone_num: '',
+        department: ''
       },
       readOnly: false,
       dialogFormVisible: false,
@@ -244,6 +244,7 @@ export default {
           createUser(this.temp).then(() => {
             this.list.unshift(this.temp)
             this.dialogFormVisible = false
+            this.total += 1
             this.$notify({
               title: '操作成功',
               message: '创建成功',
@@ -296,6 +297,7 @@ export default {
             type: 'success',
             duration: 2000
           })
+          this.total -= 1
           this.list.splice(index, 1)
         }).catch(error => {
           console.error('Error deleting user:', error)
