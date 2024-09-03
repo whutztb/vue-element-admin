@@ -16,6 +16,14 @@ export function createUser(data) {
   })
 }
 
+export function changePwd(data) {
+  return request({
+    url: `${process.env.API_URL}/change_pwd`,
+    method: 'post',
+    data
+  })
+}
+
 export function updateUser(data) {
   return request({
     url: `${process.env.API_URL}/create_user`,

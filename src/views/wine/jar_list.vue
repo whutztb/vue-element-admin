@@ -23,39 +23,39 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column align="center" label="陶坛ID" width="350">
+      <el-table-column align="center" label="陶坛ID" min-width="300">
         <template slot-scope="scope">
           <span>{{ scope.row.asset_id }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column width="150px" align="center" label="陶坛名称">
+      <el-table-column min-width="100px" align="center" label="陶坛名称">
         <template slot-scope="scope">
           <span>{{ scope.row.jar_name }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column width="100px" label="陶坛位置" align="center">
+      <el-table-column min-width="100px" label="陶坛位置" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.jar_pos }}</span>
         </template>
       </el-table-column>
-      <el-table-column width="100px" label="陶坛高度" align="center">
+      <el-table-column min-width="80px" label="陶坛高度" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.jar_height }}</span>
         </template>
       </el-table-column>
-      <el-table-column width="100px" label="陶坛液位" align="center">
+      <el-table-column min-width="80px" label="陶坛液位" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.wine_level }}</span>
         </template>
       </el-table-column>
-      <el-table-column width="180px" align="center" label="液位更新日期">
+      <el-table-column min-width="180px" align="center" label="液位更新日期">
         <template slot-scope="scope">
           <span>{{ scope.row.level_update_time }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="" align="center" width="230" class-name="small-padding fixed-width">
+      <el-table-column label="" align="center" min-width="230" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(row)">
             编辑
@@ -141,17 +141,17 @@ export default {
       listQuery: {
         page: 1,
         limit: 20,
-        asset_id: ''
+        jar_name: ''
       },
 
       showReviewer: false,
       temp: {
         asset_id: undefined,
-        jar_name: undefined,
-        jar_pos: undefined,
-        jar_height: undefined,
-        wine_level: undefined,
-        level_update_time: undefined
+        jar_name: '',
+        jar_pos: '',
+        jar_height: '',
+        wine_level: '',
+        level_update_time: ''
       },
       readOnly: false,
       dialogFormVisible: false,
@@ -330,8 +330,8 @@ export default {
     handleDownload() {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['user_id', 'user_name', 'phone_num', 'department', 'gender']
-        const filterVal = ['user_name']
+        const tHeader = ['asset_id', 'jar_name', 'jar_height', 'jar_pos', 'wine_level', 'level_update_time']
+        const filterVal = ['asset_id', 'jar_name', 'jar_height', 'jar_pos', 'wine_level', 'level_update_time']
         const data = this.formatJson(filterVal)
         excel.export_json_to_excel({
           header: tHeader,

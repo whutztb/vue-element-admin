@@ -23,40 +23,45 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column label="用户ID" prop="user_id" align="center" width="80">
+      <el-table-column label="用户ID" prop="user_id" align="center" min-width="100">
         <template slot-scope="{row}">
           <span>{{ row.user_id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="用户名" width="150px" align="center">
+      <el-table-column label="用户名" min-width="200px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.user_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="用户密码" min-width="150px">
+      <!--
+      <el-table-column label="用户密码" width="200px">
         <template slot-scope="{row}">
           <span>{{ row.user_pwd }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="电话" width="110px" align="center">
+      -->
+      <el-table-column label="电话" min-width="100px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.phone_num }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="部门" width="110px" align="center">
+      <el-table-column label="部门" min-width="100px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.department }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="性别" align="center" width="95">
+      <el-table-column label="性别" align="center" min-width="100">
         <template slot-scope="{row}">
           <span>{{ row.gender }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="" align="center" width="230" class-name="small-padding fixed-width">
+      <el-table-column label="" align="center" min-width="280" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(row)">
             编辑
+          </el-button>
+          <el-button type="info" size="mini" icon="el-icon-lock" @click="handleChangePwd(row)">
+            修改密码
           </el-button>
           <el-button v-if="row.status!='deleted'" size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(row,$index)">
             删除
@@ -72,19 +77,25 @@
         <el-form-item label="用户ID" prop="user_id">
           <el-input v-model="temp.user_id" :readonly="readOnly" />
         </el-form-item>
-        <el-form-item label="用户名" prop="user_name">
+        <el-form-item v-if="dialogStatus !== 'change_pwd'" label="用户名" prop="user_name">
           <el-input v-model="temp.user_name" />
         </el-form-item>
-        <el-form-item label="密码" prop="user_pwd">
+        <el-form-item v-if="dialogStatus === 'create'" label="密码" prop="user_pwd">
           <el-input v-model="temp.user_pwd" />
         </el-form-item>
-        <el-form-item label="电话" prop="phone_num">
+        <el-form-item v-if="dialogStatus === 'change_pwd' " label="旧密码" prop="user_old_pwd">
+          <el-input v-model="temp.user_old_pwd" />
+        </el-form-item>
+        <el-form-item v-if="dialogStatus === 'change_pwd'" label="新密码" prop="user_new_pwd">
+          <el-input v-model="temp.user_new_pwd" />
+        </el-form-item>
+        <el-form-item v-if="dialogStatus !== 'change_pwd'" label="电话" prop="phone_num">
           <el-input v-model="temp.phone_num" />
         </el-form-item>
-        <el-form-item label="部门" prop="department">
+        <el-form-item v-if="dialogStatus !== 'change_pwd'" label="部门" prop="department">
           <el-input v-model="temp.department" />
         </el-form-item>
-        <el-form-item label="性别" prop="gender">
+        <el-form-item v-if="dialogStatus !== 'change_pwd'" label="性别" prop="gender">
           <el-select v-model="temp.gender" class="filter-item" placeholder="请选择">
             <el-option v-for="item in genderOptions" :key="item" :label="item" :value="item" />
           </el-select>
@@ -94,7 +105,7 @@
         <el-button @click="dialogFormVisible = false">
           取消
         </el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
+        <el-button type="primary" @click="handleConfirm">
           确认
         </el-button>
       </div>
@@ -113,7 +124,7 @@
 </template>
 
 <script>
-import { fetchList, createUser, deleteUser, updateUser } from '@/api/wine_user'
+import { fetchList, createUser, deleteUser, updateUser, changePwd } from '@/api/wine_user'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -150,6 +161,8 @@ export default {
         user_id: '',
         user_name: '',
         user_pwd: '',
+        user_old_pwd: '',
+        user_new_pwd: '',
         phone_num: '',
         department: ''
       },
@@ -158,7 +171,8 @@ export default {
       dialogStatus: '',
       textMap: {
         update: '编辑',
-        create: '创建'
+        create: '创建',
+        change_pwd: '修改密码'
       },
       dialogPvVisible: false,
       pvData: [],
@@ -180,6 +194,12 @@ export default {
         ],
         user_pwd: [
           { required: true, message: '请输入密码', trigger: 'blur' }
+        ],
+        user_old_pwd: [
+          { required: true, message: '请输入旧密码', trigger: 'blur' }
+        ],
+        user_new_pwd: [
+          { required: true, message: '请输入新密码', trigger: 'blur' }
         ]
       },
       downloadLoading: false
@@ -189,6 +209,15 @@ export default {
     this.getList()
   },
   methods: {
+    handleConfirm() {
+      if (this.dialogStatus === 'create') {
+        this.createData()
+      } else if (this.dialogStatus === 'update') {
+        this.updateData()
+      } else if (this.dialogStatus === 'change_pwd') {
+        this.changePassword()
+      }
+    },
     getList() {
       this.listLoading = true
       fetchList(this.listQuery).then(response => {
@@ -315,11 +344,43 @@ export default {
         })
       })
     },
+    handleChangePwd(row) {
+      this.readOnly = false
+      this.temp = { ...row, user_pwd: '' } // 复制用户信息，并清空密码
+      this.dialogStatus = 'change_pwd' // 设置状态为修改密码
+      this.dialogFormVisible = true // 显示对话框
+      this.$nextTick(() => {
+        this.$refs['dataForm'].clearValidate() // 清除验证
+      })
+    },
+    changePassword() {
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+        // 调用修改密码的 API
+          changePwd(this.temp).then(() => {
+            this.dialogFormVisible = false // 关闭对话框
+            this.$notify({
+              title: '操作成功',
+              message: '密码修改成功',
+              type: 'success',
+              duration: 2000
+            })
+          }).catch(error => {
+            this.$notify({
+              title: '操作失败',
+              message: '密码修改失败: ' + error.message,
+              type: 'error',
+              duration: 2000
+            })
+          })
+        }
+      })
+    },
     handleDownload() {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
         const tHeader = ['user_id', 'user_name', 'phone_num', 'department', 'gender']
-        const filterVal = ['user_name']
+        const filterVal = ['user_id', 'user_name', 'phone_num', 'department', 'gender'] // 包含
         const data = this.formatJson(filterVal)
         excel.export_json_to_excel({
           header: tHeader,

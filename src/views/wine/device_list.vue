@@ -23,28 +23,28 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column align="center" label="设备ID" width="350">
+      <el-table-column align="center" label="设备ID" min-width="300">
         <template slot-scope="scope">
           <span>{{ scope.row.device_id }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column width="350px" align="center" label="设备名称">
+      <el-table-column min-width="150px" align="center" label="设备名称">
         <template slot-scope="scope">
           <span>{{ scope.row.device_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column width="100px" label="卡号" align="center">
+      <el-table-column min-width="100px" label="卡号" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.card_num }}</span>
         </template>
       </el-table-column>
-      <el-table-column width="180px" align="center" label="到期时间">
+      <el-table-column min-width="180px" align="center" label="到期时间">
         <template slot-scope="scope">
           <span>{{ scope.row.expiration_time }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="" align="center" width="230" class-name="small-padding fixed-width">
+      <el-table-column label="" align="center" min-width="230" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(row)">
             编辑
@@ -124,7 +124,7 @@ export default {
       listQuery: {
         page: 1,
         limit: 20,
-        device_id: ''
+        device_name: ''
       },
 
       showReviewer: false,
@@ -304,8 +304,8 @@ export default {
     handleDownload() {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['user_id', 'user_name', 'phone_num', 'department', 'gender']
-        const filterVal = ['user_name']
+        const tHeader = ['device_id', 'device_name', 'card_num', 'expiration_time']
+        const filterVal = ['device_id', 'device_name', 'card_num', 'expiration_time']
         const data = this.formatJson(filterVal)
         excel.export_json_to_excel({
           header: tHeader,

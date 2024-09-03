@@ -4,8 +4,9 @@ module.exports = {
   /**
    * @type {boolean} true | false
    * @description Whether show the settings right-panel
+   * 界面是否显示设置选项
    */
-  showSettings: true,
+  showSettings: false,
 
   /**
    * @type {boolean} true | false
@@ -23,7 +24,7 @@ module.exports = {
    * @type {boolean} true | false
    * @description Whether show the logo in sidebar
    */
-  sidebarLogo: false,
+  sidebarLogo: true,
 
   /**
    * @type {string | array} 'production' | ['production', 'development']

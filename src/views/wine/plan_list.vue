@@ -23,32 +23,32 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column align="center" label="方案ID" width="350">
+      <el-table-column align="center" label="方案ID" min-width="250">
         <template slot-scope="{row}">
           <span>{{ row.plan_id }}</span>
         </template>
       </el-table-column>
-      <el-table-column width="350px" align="center" label="方案名称">
+      <el-table-column min-width="250px" align="center" label="方案名称">
         <template slot-scope="{row}">
           <span>{{ row.plan_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column width="100px" label="增益" align="center">
+      <el-table-column min-width="100px" label="增益" align="center">
         <template slot-scope="{row}">
           <span>{{ row.gain }}</span>
         </template>
       </el-table-column>
-      <el-table-column width="100px" label="峰值" align="center">
+      <el-table-column min-width="100px" label="峰值" align="center">
         <template slot-scope="{row}">
           <span>{{ row.peak }}</span>
         </template>
       </el-table-column>
-      <el-table-column width="100px" label="补偿值" align="center">
+      <el-table-column min-width="100px" label="补偿值" align="center">
         <template slot-scope="{row}">
           <span>{{ row.compensation }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="" align="center" width="230" class-name="small-padding fixed-width">
+      <el-table-column label="" align="center" min-width="230" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(row)">
             编辑
@@ -309,8 +309,8 @@ export default {
     handleDownload() {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['user_id', 'user_name', 'phone_num', 'department', 'gender']
-        const filterVal = ['user_name']
+        const tHeader = ['plan_id', 'plan_name', 'gain', 'peak', 'compensation']
+        const filterVal = ['plan_id', 'plan_name', 'gain', 'peak', 'compensation']
         const data = this.formatJson(filterVal)
         excel.export_json_to_excel({
           header: tHeader,

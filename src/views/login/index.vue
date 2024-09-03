@@ -3,7 +3,7 @@
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
 
       <div class="title-container">
-        <h3 class="title">白酒陶坛液位管理系统</h3>
+        <h3 class="title">勾储中心数智化液位管理系统</h3>
       </div>
 
       <el-form-item prop="username">
@@ -13,7 +13,7 @@
         <el-input
           ref="username"
           v-model="loginForm.username"
-          placeholder="UserID"
+          placeholder="用户ID"
           name="username"
           type="text"
           tabindex="1"
@@ -31,7 +31,7 @@
             ref="password"
             v-model="loginForm.password"
             :type="passwordType"
-            placeholder="Password"
+            placeholder="密码"
             name="password"
             tabindex="2"
             autocomplete="on"
@@ -90,7 +90,7 @@ export default {
     }
     const validatePassword = (rule, value, callback) => {
       if (value.length < 1) {
-        callback(new Error('The password can not be less than 1 digits'))
+        callback(new Error('密码不能为空'))
       } else {
         callback()
       }
@@ -255,7 +255,10 @@ $light_gray:#eee;
 .login-container {
   min-height: 100%;
   width: 100%;
-  background-color: $bg;
+  /*background-color: $bg;*/
+  background-image: url('../../../src/assets/images/background.png');
+  background-size: cover; // 确保背景图片覆盖整个容器
+  background-position: center; // 居中背景图片
   overflow: hidden;
 
   .login-form {
