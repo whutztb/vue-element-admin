@@ -1,5 +1,17 @@
 import request from '@/utils/request'
 
+export function exportUserList(query) {
+  return request({
+    url: `${process.env.API_URL}/export_user_list`,
+    method: 'get',
+    headers: {
+      'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    },
+    params: query,
+    responseType: 'blob' // 设置响应类型为 blob
+  })
+}
+
 export function fetchList(query) {
   return request({
     url: `${process.env.API_URL}/get_user_list`,
@@ -26,7 +38,7 @@ export function changePwd(data) {
 
 export function updateUser(data) {
   return request({
-    url: `${process.env.API_URL}/create_user`,
+    url: `${process.env.API_URL}/update_user`,
     method: 'post',
     data
   })

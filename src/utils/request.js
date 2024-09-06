@@ -45,32 +45,41 @@ service.interceptors.response.use(
    * You can also judge the status by HTTP Status Code
    */
   response => {
-    // console.log('接收response', response)
-    const res = JSON.parse(response.data)
-    // if the custom code is not 0, it is judged as an error.
-    if (res.code !== 0) {
-      Message({
-        message: res.message || 'Error',
-        type: 'error',
-        duration: 3 * 1000
-      })
-
-      // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
-      if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
-        // to re-login
-        MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
-          confirmButtonText: 'Re-Login',
-          cancelButtonText: 'Cancel',
-          type: 'warning'
-        }).then(() => {
-          store.dispatch('user/resetToken').then(() => {
-            location.reload()
-          })
+    if (response.status !== 200) {
+      throw new Error('网络响应不是 OK')
+    }
+    const contentType = response.headers['content-type']
+    if (contentType.includes('application/json')) {
+      const res = JSON.parse(response.data)
+      // if the custom code is not 0, it is judged as an error.
+      if (res.code !== 0) {
+        Message({
+          message: res.message || 'Error',
+          type: 'error',
+          duration: 3 * 1000
         })
+
+        // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
+        if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
+          // to re-login
+          MessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
+            confirmButtonText: 'Re-Login',
+            cancelButtonText: 'Cancel',
+            type: 'warning'
+          }).then(() => {
+            store.dispatch('user/resetToken').then(() => {
+              location.reload()
+            })
+          })
+        }
+        return Promise.reject(new Error(res.message || 'Error'))
+      } else {
+        return res
       }
-      return Promise.reject(new Error(res.message || 'Error'))
-    } else {
-      return res
+    } else if (contentType.includes('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')) {
+      // 处理 Blob 响应
+      const blob = response.data // 直接使用 response.data（Blob 对象）L
+      return blob // 返回 Blob
     }
   },
   error => {

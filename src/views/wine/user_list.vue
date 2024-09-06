@@ -1,6 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
+      <el-input v-model="listQuery.user_id" placeholder="用户ID" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.user_name" placeholder="用户名" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         查询
@@ -8,9 +9,21 @@
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         新增
       </el-button>
-      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
+      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="showDialog = true">
         导出
       </el-button>
+      <el-dialog
+        title="导出选项"
+        :visible.sync="showDialog"
+        width="30%"
+        :before-close="handleClose"
+      >
+        <div>
+          <el-button type="primary" @click="handleDownload('current')">导出当前页</el-button>
+          <el-button type="primary" @click="handleDownload('all')">导出全部</el-button>
+          <el-button @click="showDialog = false">取消</el-button>
+        </div>
+      </el-dialog>
     </div>
 
     <el-table
@@ -124,7 +137,7 @@
 </template>
 
 <script>
-import { fetchList, createUser, deleteUser, updateUser, changePwd } from '@/api/wine_user'
+import { fetchList, createUser, deleteUser, updateUser, changePwd, exportUserList } from '@/api/wine_user'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -152,7 +165,8 @@ export default {
       listQuery: {
         page: 1,
         limit: 20,
-        user_name: ''
+        user_name: '',
+        user_id: ''
       },
 
       genderOptions: ['男', '女'],
@@ -202,7 +216,8 @@ export default {
           { required: true, message: '请输入新密码', trigger: 'blur' }
         ]
       },
-      downloadLoading: false
+      downloadLoading: false,
+      showDialog: false
     }
   },
   created() {
@@ -255,7 +270,7 @@ export default {
     resetTemp() {
       this.temp = {
         user_id: undefined,
-        user_name: undefined
+        user_name: ''
       }
     },
     handleCreate() {
@@ -273,7 +288,7 @@ export default {
           createUser(this.temp).then(() => {
             this.list.unshift(this.temp)
             this.dialogFormVisible = false
-            this.total += 1
+            this.getList() // 调用 getList 方法以刷新数据
             this.$notify({
               title: '操作成功',
               message: '创建成功',
@@ -326,7 +341,7 @@ export default {
             type: 'success',
             duration: 2000
           })
-          this.total -= 1
+          this.getList() // 调用 getList 方法以刷新数据
           this.list.splice(index, 1)
         }).catch(error => {
           console.error('Error deleting user:', error)
@@ -376,19 +391,56 @@ export default {
         }
       })
     },
-    handleDownload() {
-      this.downloadLoading = true
+    handleDownload(type) {
+      this.showDialog = false // 关闭弹窗
+      this.downloadLoading = true // 开始下载
+      if (type === 'current') {
+        // 用户选择导出当前页
+        this.exportCurrentPage()
+      } else if (type === 'all') {
+        // 用户选择导出所有页
+        this.exportAllPages()
+      }
+    },
+    handleClose(done) {
+      // 可以在这里添加关闭弹窗时的逻辑
+      done()
+    },
+    exportCurrentPage() {
       import('@/vendor/Export2Excel').then(excel => {
         const tHeader = ['user_id', 'user_name', 'phone_num', 'department', 'gender']
         const filterVal = ['user_id', 'user_name', 'phone_num', 'department', 'gender'] // 包含
         const data = this.formatJson(filterVal)
+
         excel.export_json_to_excel({
           header: tHeader,
           data,
-          filename: 'table-list'
+          filename: 'current-page-user-list'
         })
         this.downloadLoading = false
       })
+    },
+    exportAllPages() {
+      this.downloadLoading = true // 开始下载时显示加载状态
+
+      // 发起请求以获取 Excel 文件，传递查询参数
+      exportUserList(this.listQuery)
+        .then(blob => { // 直接获取 Blob 对象
+          const url = window.URL.createObjectURL(blob) // 创建 Blob URL
+          const a = document.createElement('a') // 创建一个链接元素
+          a.href = url
+          a.download = 'all-page-user-list.xlsx' // 设置下载的文件名
+          document.body.appendChild(a) // 将链接添加到文档
+          a.click() // 模拟点击
+          a.remove() // 下载后移除链接
+          window.URL.revokeObjectURL(url) // 释放 Blob URL
+        })
+        .catch(error => {
+          console.error('导出数据时出错:', error)
+        })
+        .finally(() => {
+          this.downloadLoading = false // 确保下载完成后隐藏加载状态
+        })
     },
     formatJson(filterVal) {
       return this.list.map(v => filterVal.map(j => {

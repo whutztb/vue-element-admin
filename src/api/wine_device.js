@@ -1,5 +1,17 @@
 import request from '@/utils/request'
 
+export function exportDeviceList(query) {
+  return request({
+    url: `${process.env.API_URL}/export_device_list`,
+    method: 'get',
+    headers: {
+      'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    },
+    params: query,
+    responseType: 'blob' // 设置响应类型为 blob
+  })
+}
+
 export function fetchList(query) {
   return request({
     url: `${process.env.API_URL}/get_device_list`,
@@ -18,7 +30,7 @@ export function createDevice(data) {
 
 export function updateDevice(data) {
   return request({
-    url: `${process.env.API_URL}/create_device`,
+    url: `${process.env.API_URL}/update_device`,
     method: 'post',
     data
   })
