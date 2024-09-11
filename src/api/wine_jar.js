@@ -45,3 +45,11 @@ export function deleteJar(data) {
     data
   })
 }
+
+export function getHistory(data) {
+  return request({
+    url: `${process.env.API_URL}/get_jar_history`,
+    method: 'post',
+    data
+  })
+}

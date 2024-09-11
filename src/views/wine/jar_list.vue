@@ -74,12 +74,20 @@
           <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(row)">
             编辑
           </el-button>
+          <el-button v-if="row.status!='deleted'" size="mini" type="info" icon="el-icon-eye" @click="handleHistory(row,$index)">
+            历史
+          </el-button>
           <el-button v-if="row.status!='deleted'" size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(row,$index)">
             删除
           </el-button>
         </template>
       </el-table-column>
     </el-table>
+
+    <el-dialog :visible.sync="showChart" :title="chartTitle" width="650px" :styles="{ height: '300px' }" class="custom-dialog">
+      <div ref="chartContainer" class="chart-container" :style="{ height: '300px', width: '100%' }" />
+    </el-dialog>
+    <!--<history_chart v-if="historyData.length" :historyData="historyData" />-->
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
 
@@ -127,10 +135,11 @@
 </template>
 
 <script>
-import { fetchList, deleteJar, createJar, updateJar, exportJarList } from '@/api/wine_jar'
+import { fetchList, deleteJar, createJar, updateJar, exportJarList, getHistory } from '@/api/wine_jar'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import echarts from 'echarts'
 
 export default {
   name: 'ComplexTable',
@@ -199,11 +208,33 @@ export default {
         ]
       },
       downloadLoading: false,
-      showDialog: false
+      showDialog: false,
+      showChart: false,
+      chartTitle: '',
+      className: 'chart',
+      historyData: [] // 初始化为空数组
+    }
+  },
+  watch: {
+    showChart(newVal) {
+      console.log('showChart changed:', newVal) // 添加调试日志
+      if (newVal) {
+        console.log('Calling initChart...') // 调试日志
+        this.initChart()
+      }
     }
   },
   created() {
     this.getList()
+  },
+  mounted() {
+    this.initChart()
+  },
+  beforeDestroy() {
+    if (this.chart) {
+      this.chart.dispose()
+      this.chart = null
+    }
   },
   methods: {
     getList() {
@@ -212,8 +243,6 @@ export default {
       fetchList(this.listQuery).then(response => {
         this.list = response.items
         this.total = response.total_count
-        console.log('Updated list:', this.list) // 打印更新后的列表
-        console.log('Total count:', this.total) // 打印总条数
         this.listLoading = false
       })
     },
@@ -345,6 +374,148 @@ export default {
         })
       })
     },
+    handleHistory(row, index) {
+      getHistory(row).then(response => {
+        console.log('getHistory-response')
+        let message = response.message
+        // 如果 response.message 是字符串，尝试将其解析为数组
+        if (typeof message === 'string') {
+          message = message.replace(/'/g, '"')
+          this.historyData = JSON.parse(message)
+        } else {
+          this.historyData = response.message // 直接赋值
+        }
+        this.showChart = true
+        console.log('History Data:', this.historyData)
+      })
+    },
+    initChart() {
+      console.log('initChart')
+      this.$nextTick(() => {
+        const chartElement = this.$refs.chartContainer
+        console.log('Chart Element:', chartElement)
+
+        if (chartElement) {
+          console.log('chartElement')
+          this.chart = echarts.init(chartElement)
+          // this.chart = echarts.init(document.getElementById(this.id));
+
+          const timestamps = this.historyData.map(item => item.rec_time) // 提取时间
+          const recLevels = this.historyData.map(item => item.rec_lv) // 提取 rec_lv
+          this.chart.setOption({
+            backgroundColor: '#394056',
+            title: {
+              top: 20,
+              textStyle: {
+                fontWeight: 'normal',
+                fontSize: 16,
+                color: '#F1F1F3'
+              },
+              left: '1%'
+            },
+            tooltip: {
+              trigger: 'axis',
+              axisPointer: {
+                lineStyle: {
+                  color: '#57617B'
+                }
+              }
+            },
+            legend: {
+              top: 10,
+              icon: 'rect',
+              itemWidth: 14,
+              itemHeight: 5,
+              itemGap: 13,
+              // data: ['液位'],
+              right: '4%',
+              textStyle: {
+                fontSize: 12,
+                color: '#F1F1F3'
+              }
+            },
+            grid: {
+              top: '10%',
+              left: '6%',
+              right: '6%',
+              bottom: '2%',
+              containLabel: true
+            },
+            xAxis: [{
+              type: 'category',
+              boundaryGap: false,
+              axisLine: {
+                lineStyle: {
+                  color: '#57617B'
+                }
+              },
+              data: timestamps // 使用动态时间数据
+            }],
+            yAxis: [{
+              type: 'value',
+              name: '液位(mm)',
+              axisTick: {
+                show: false
+              },
+              axisLine: {
+                lineStyle: {
+                  color: '#57617B'
+                }
+              },
+              axisLabel: {
+                margin: 10,
+                textStyle: {
+                  fontSize: 14
+                }
+              },
+              splitLine: {
+                lineStyle: {
+                  color: '#57617B'
+                }
+              }
+            }],
+            series: [{
+              name: '液位',
+              type: 'line',
+              smooth: true,
+              symbol: 'circle',
+              symbolSize: 5,
+              showSymbol: false,
+              lineStyle: {
+                normal: {
+                  width: 1
+                }
+              },
+              areaStyle: {
+                normal: {
+                  color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                    offset: 0,
+                    color: 'rgba(137, 189, 27, 0.3)'
+                  }, {
+                    offset: 0.8,
+                    color: 'rgba(137, 189, 27, 0)'
+                  }], false),
+                  shadowColor: 'rgba(0, 0, 0, 0.1)',
+                  shadowBlur: 10
+                }
+              },
+              itemStyle: {
+                normal: {
+                  color: 'rgb(137,189,27)',
+                  borderColor: 'rgba(137,189,2,0.27)',
+                  borderWidth: 12
+                }
+              },
+              data: recLevels // 使用动态 rec_lv 数据
+            }]
+          })
+          setTimeout(() => {
+            this.chart.resize()
+          }, 100) // 确保在弹窗打开后再调整大小
+        }
+      })
+    },
+
     handleDownload(type) {
       this.showDialog = false // 关闭弹窗
       this.downloadLoading = true // 开始下载
@@ -412,3 +583,27 @@ export default {
   }
 }
 </script>
+<style>
+
+.custom-dialog .el-dialog__header {
+  color: white; /* 设置标题文字颜色 */
+  background-color: #394056 !important;; /* 设置标题栏背景颜色 */
+  height: 50px; /* 设置标题栏的最小高度 */
+
+}
+
+.custom-dialog .el-dialog__body {
+  padding: 0; /* 去掉弹窗的内边距 */
+  background-color: transparent; /* 使弹窗内容背景透明 */
+}
+.custom-dialog .el-dialog__close {
+  color: white; /* 关闭按钮颜色 */
+  font-size: 20px; /* 调整关闭按钮大小 */
+}
+
+.chart-container {
+  height: 100%; /* 高度填满 */
+  width: 100%; /* 宽度填满 */
+  background-color: #394056; /* 设置图表的背景颜色 */
+}
+</style>
