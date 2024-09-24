@@ -36,7 +36,7 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column align="center" label="设备ID" min-width="300">
+      <el-table-column align="center" label="设备ID" min-width="260">
         <template slot-scope="scope">
           <span>{{ scope.row.device_id }}</span>
         </template>
@@ -47,7 +47,7 @@
           <span>{{ scope.row.device_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="100px" label="卡号" align="center">
+      <el-table-column min-width="150px" label="物联卡号" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.card_num }}</span>
         </template>

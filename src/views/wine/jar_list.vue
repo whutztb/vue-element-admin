@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.asset_id" placeholder="陶坛ID" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.jar_id" placeholder="陶坛ID" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.jar_name" placeholder="陶坛名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.jar_pos" placeholder="陶坛位置" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
@@ -37,34 +37,39 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column align="center" label="陶坛ID" min-width="300">
+      <el-table-column align="center" label="陶坛ID" min-width="135">
         <template slot-scope="scope">
-          <span>{{ scope.row.asset_id }}</span>
+          <span>{{ scope.row.jar_id }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column min-width="100px" align="center" label="陶坛名称">
+      <el-table-column min-width="130px" align="center" label="陶坛名称">
         <template slot-scope="scope">
           <span>{{ scope.row.jar_name }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column min-width="100px" label="陶坛位置" align="center">
+      <el-table-column min-width="85px" label="陶坛位置" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.jar_pos }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="80px" label="陶坛高度" align="center">
+      <el-table-column min-width="90px" label="容积(L)" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.jar_height }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="80px" label="陶坛液位" align="center">
+      <el-table-column min-width="90px" label="液位(mm)" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.wine_level }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="180px" align="center" label="液位更新日期">
+      <el-table-column min-width="90px" label="酒度(°)" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.wine_vol }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column min-width="150px" align="center" label="液位更新日期">
         <template slot-scope="scope">
           <span>{{ scope.row.level_update_time }}</span>
         </template>
@@ -74,7 +79,7 @@
           <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(row)">
             编辑
           </el-button>
-          <el-button v-if="row.status!='deleted'" size="mini" type="info" icon="el-icon-eye" @click="handleHistory(row,$index)">
+          <el-button v-if="row.status!='deleted'" size="mini" type="info" icon="el-icon-document" @click="handleHistory(row,$index)">
             历史
           </el-button>
           <el-button v-if="row.status!='deleted'" size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(row,$index)">
@@ -93,8 +98,8 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="陶坛ID" prop="asset_id" label-width="100px">
-          <el-input v-model="temp.asset_id" :readonly="readOnly" />
+        <el-form-item label="陶坛ID" prop="jar_id" label-width="100px">
+          <el-input v-model="temp.jar_id" :readonly="readOnly" />
         </el-form-item>
         <el-form-item label="陶坛名称" prop="jar_name" label-width="100px">
           <el-input v-model="temp.jar_name" />
@@ -102,11 +107,14 @@
         <el-form-item label="陶坛位置" prop="jar_pos" label-width="100px">
           <el-input v-model="temp.jar_pos" />
         </el-form-item>
-        <el-form-item label="陶坛高度" prop="jar_height" label-width="100px">
+        <el-form-item label="陶坛高度(mm)" prop="jar_height" label-width="120px">
           <el-input v-model="temp.jar_height" />
         </el-form-item>
-        <el-form-item label="陶坛液位" prop="wine_level" label-width="100px">
+        <el-form-item label="液位(mm)" prop="wine_level" label-width="100px">
           <el-input v-model="temp.wine_level" />
+        </el-form-item>
+        <el-form-item label="酒度(°)" prop="wine_vol" label-width="100px">
+          <el-input v-model="temp.wine_vol" />
         </el-form-item>
         <el-form-item label="更新日期" prop="level_update_time" label-width="100px">
           <el-date-picker v-model="temp.level_update_time" type="datetime" placeholder="请选择日期" />
@@ -165,17 +173,18 @@ export default {
         page: 1,
         limit: 20,
         jar_name: '',
-        asset_id: '',
+        jar_id: '',
         jar_pos: ''
       },
 
       showReviewer: false,
       temp: {
-        asset_id: undefined,
+        jar_id: undefined,
         jar_name: '',
         jar_pos: '',
         jar_height: '',
         wine_level: '',
+        wine_vol: '',
         level_update_time: ''
       },
       readOnly: false,
@@ -188,7 +197,7 @@ export default {
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        asset_id: [
+        jar_id: [
           { required: true, message: '请输入陶坛ID', trigger: 'blur' }
         ],
         jar_name: [
@@ -203,6 +212,9 @@ export default {
         wine_level: [
           { required: true, message: '请输入陶坛液位', trigger: 'blur' }
         ],
+        wine_vol: [
+          { required: true, message: '请输入陶坛酒度', trigger: 'blur' }
+        ],
         level_update_time: [
           { required: true, message: '请输入液位陶坛更新时间', trigger: 'blur' }
         ]
@@ -212,14 +224,14 @@ export default {
       showChart: false,
       chartTitle: '',
       className: 'chart',
-      historyData: [] // 初始化为空数组
+      historyData: [], // 初始化为空数组
+      lidOpenData: [] // 初始化为空数组
+      // socket: null  // 定义 socket 实例
     }
   },
   watch: {
     showChart(newVal) {
-      console.log('showChart changed:', newVal) // 添加调试日志
       if (newVal) {
-        console.log('Calling initChart...') // 调试日志
         this.initChart()
       }
     }
@@ -273,11 +285,12 @@ export default {
     },
     resetTemp() {
       this.temp = {
-        asset_id: undefined,
+        jar_id: undefined,
         jar_name: '',
         jar_pos: '',
         jar_height: '',
         wine_level: '',
+        wine_vol: '',
         level_update_time: ''
       }
     },
@@ -330,7 +343,7 @@ export default {
           const tempData = Object.assign({}, this.temp)
           // tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
           updateJar(tempData).then(() => {
-            const index = this.list.findIndex(v => v.asset_id === this.temp.asset_id)
+            const index = this.list.findIndex(v => v.jar_id === this.temp.jar_id)
             this.list.splice(index, 1, this.temp)
             this.dialogFormVisible = false
             this.$notify({
@@ -376,32 +389,53 @@ export default {
     },
     handleHistory(row, index) {
       getHistory(row).then(response => {
-        console.log('getHistory-response')
-        let message = response.message
+        console.log('1212345')
+        const message = response.message
+        console.log(message)
         // 如果 response.message 是字符串，尝试将其解析为数组
         if (typeof message === 'string') {
-          message = message.replace(/'/g, '"')
-          this.historyData = JSON.parse(message)
+          console.log('888')
+          // message = message.replace(/'/g, '"')
+          this.historyData = message.level_msg
+          console.log(this.historyData)
+          this.lidOpenData = message.lid_msg
+          console.log(this.lidOpenData)
         } else {
-          this.historyData = response.message // 直接赋值
+          this.historyData = response.message.level_msg // 直接赋值
+          console.log(this.historyData)
+          this.lidOpenData = response.message.lid_msg // 直接赋值
+          console.log(this.lidOpenData)
         }
         this.showChart = true
-        console.log('History Data:', this.historyData)
       })
     },
     initChart() {
-      console.log('initChart')
       this.$nextTick(() => {
         const chartElement = this.$refs.chartContainer
-        console.log('Chart Element:', chartElement)
-
         if (chartElement) {
-          console.log('chartElement')
           this.chart = echarts.init(chartElement)
           // this.chart = echarts.init(document.getElementById(this.id));
 
           const timestamps = this.historyData.map(item => item.rec_time) // 提取时间
           const recLevels = this.historyData.map(item => item.rec_lv) // 提取 rec_lv
+          const openLidTimes = this.lidOpenData.map(item => item.open_time) // 提取 open_time
+          const openLidValue = this.lidOpenData.map(item => item.value) // 提取值（无实际意义）
+          // 创建一个时间点集合
+          const allTimestamps = Array.from(new Set([...timestamps, ...openLidTimes]))
+          // 对时间戳进行排序
+          allTimestamps.sort((a, b) => new Date(a) - new Date(b))
+          // 对齐数据
+          const alignedRecLevels = allTimestamps.map(time => {
+            const index = timestamps.indexOf(time)
+            return index !== -1 ? recLevels[index] : null // 如果没有对应的值，则填充 null
+          })
+
+          const alignedOpenLidValues = allTimestamps.map(time => {
+            const index = openLidTimes.indexOf(time)
+            return index !== -1 ? openLidValue[index] : null // 如果没有对应的值，则填充 null
+          })
+          console.log(alignedRecLevels)
+          console.log(alignedOpenLidValues)
           this.chart.setOption({
             backgroundColor: '#394056',
             title: {
@@ -414,7 +448,7 @@ export default {
               left: '1%'
             },
             tooltip: {
-              trigger: 'axis',
+              trigger: 'item',
               axisPointer: {
                 lineStyle: {
                   color: '#57617B'
@@ -449,7 +483,7 @@ export default {
                   color: '#57617B'
                 }
               },
-              data: timestamps // 使用动态时间数据
+              data: allTimestamps // 使用动态时间数据
             }],
             yAxis: [{
               type: 'value',
@@ -475,8 +509,9 @@ export default {
               }
             }],
             series: [{
-              name: '液位',
-              type: 'line',
+              name: '液位值',
+              type: 'scatter',
+              connectNulls: true, // 连接 null 值
               smooth: true,
               symbol: 'circle',
               symbolSize: 5,
@@ -490,10 +525,10 @@ export default {
                 normal: {
                   color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
                     offset: 0,
-                    color: 'rgba(137, 189, 27, 0.3)'
+                    color: 'rgba(137, 189, 27, 0.2)'
                   }, {
                     offset: 0.8,
-                    color: 'rgba(137, 189, 27, 0)'
+                    color: 'rgba(137, 189, 27, 0.2)'
                   }], false),
                   shadowColor: 'rgba(0, 0, 0, 0.1)',
                   shadowBlur: 10
@@ -506,7 +541,40 @@ export default {
                   borderWidth: 12
                 }
               },
-              data: recLevels // 使用动态 rec_lv 数据
+              data: alignedRecLevels
+            }, {
+              name: '开缸点',
+              type: 'scatter',
+              smooth: true,
+              symbol: 'circle',
+              symbolSize: 8,
+              showSymbol: false,
+              lineStyle: {
+                normal: {
+                  width: 1
+                }
+              },
+              areaStyle: {
+                normal: {
+                  color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                    offset: 0,
+                    color: 'rgba(0, 136, 212, 0.3)'
+                  }, {
+                    offset: 0.8,
+                    color: 'rgba(0, 136, 212, 0)'
+                  }], false),
+                  shadowColor: 'rgba(0, 0, 0, 0.1)',
+                  shadowBlur: 10
+                }
+              },
+              itemStyle: {
+                normal: {
+                  color: 'rgb(0,136,212)',
+                  borderColor: 'rgba(0,136,212,0.2)',
+                  borderWidth: 12
+                }
+              },
+              data: alignedOpenLidValues
             }]
           })
           setTimeout(() => {
@@ -533,8 +601,8 @@ export default {
     },
     exportCurrentPage() {
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['asset_id', 'jar_name', 'jar_height', 'jar_pos', 'wine_level', 'level_update_time']
-        const filterVal = ['asset_id', 'jar_name', 'jar_height', 'jar_pos', 'wine_level', 'level_update_time']
+        const tHeader = ['jar_id', 'jar_name', 'jar_height', 'jar_pos', 'wine_level', 'wine_vol', 'level_update_time']
+        const filterVal = ['jar_id', 'jar_name', 'jar_height', 'jar_pos', 'wine_level', 'wine_vol', 'level_update_time']
         const data = this.formatJson(filterVal)
 
         excel.export_json_to_excel({
@@ -589,7 +657,6 @@ export default {
   color: white; /* 设置标题文字颜色 */
   background-color: #394056 !important;; /* 设置标题栏背景颜色 */
   height: 50px; /* 设置标题栏的最小高度 */
-
 }
 
 .custom-dialog .el-dialog__body {

@@ -44,7 +44,7 @@ module.exports = {
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
     // it can be accessed in index.html to inject the correct title.
-    name: name,
+    name: '数智化陶坛监测系统',
     resolve: {
       alias: {
         '@': resolve('src')
@@ -53,7 +53,7 @@ module.exports = {
         // 其他webpack配置...在这里定义全局变量API_URL
     plugins: [
         new webpack.DefinePlugin({
-          'process.env.API_URL': JSON.stringify('http://192.168.3.38:5000')
+          'process.env.API_URL': JSON.stringify('http://192.168.3.77:5000')
         })
     ]
   },

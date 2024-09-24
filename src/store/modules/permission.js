@@ -53,13 +53,32 @@ const actions = {
       // 配置显示内容
       const accessedRoutes = [
         {
+          path: '/views/wine/cellar_list',
+          component: Layout,
+          redirect: '/dashboard',
+          // alwaysShow: true, // will always show the root menu
+          children: [
+            {
+              path: '',
+              component: () => import('@/views/wine/cellar_list'),
+              name: '酒库管理',
+              meta: {
+                title: '酒库管理',
+                icon: 'dashboard',
+                affix: true
+                // roles: ['admin'] // or you can only set roles in sub nav
+              }
+            }
+          ]
+        },
+        {
           path: '/views/wine/jar_list',
           component: Layout,
           redirect: '/dashboard',
           // alwaysShow: true, // will always show the root menu
           children: [
             {
-              path: '/views/wine/jar_list',
+              path: '',
               component: () => import('@/views/wine/jar_list'),
               name: '陶坛管理',
               meta: {
@@ -78,7 +97,7 @@ const actions = {
           // alwaysShow: true, // will always show the root menu
           children: [
             {
-              path: '/views/wine/plan_list',
+              path: '',
               component: () => import('@/views/wine/plan_list'),
               name: '方案管理',
               meta: {
@@ -97,7 +116,7 @@ const actions = {
           // alwaysShow: true, // will always show the root menu
           children: [
             {
-              path: '/views/wine/user_list',
+              path: '',
               component: () => import('@/views/wine/user_list'),
               name: '用户管理',
               meta: {
@@ -116,7 +135,7 @@ const actions = {
           // alwaysShow: true, // will always show the root menu
           children: [
             {
-              path: '/views/wine/device_list',
+              path: '',
               component: () => import('@/views/wine/device_list'),
               name: '设备管理',
               meta: {
