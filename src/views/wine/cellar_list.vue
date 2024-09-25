@@ -328,7 +328,7 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           if (this.temp.all_jar_volume > 0) {
-            this.temp.cellar_usage_rate = this.temp.all_wine_volume / this.temp.all_jar_volume
+            this.temp.cellar_usage_rate = (this.temp.all_wine_volume / this.temp.all_jar_volume).toFixed(3)
           } else {
             this.temp.cellar_usage_rate = 0 // 或根据需求设置为其他值
           }
@@ -359,7 +359,7 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           if (this.temp.all_jar_volume > 0) {
-            this.temp.cellar_usage_rate = this.temp.all_wine_volume / this.temp.all_jar_volume
+            this.temp.cellar_usage_rate = (this.temp.all_wine_volume / this.temp.all_jar_volume).toFixed(3)
           } else {
             this.temp.cellar_usage_rate = 0 // 或根据需求设置为其他值
           }

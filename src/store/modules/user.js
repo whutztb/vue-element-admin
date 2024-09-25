@@ -1,6 +1,7 @@
 import { login, logout, getInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
+import StartSSE from '@/utils/start_sse' // 导入 SSE 逻辑
 
 const state = {
   token: getToken(),
@@ -34,13 +35,15 @@ const actions = {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password: password })
-        .then((response) => {
+        .then(async(response) => {
           commit('SET_TOKEN', response.token)
           setToken(response.token)
           if (response.code === 0) {
             console.log(response.message)
             router.push({ path: '/' })
             resolve()
+            // 启动SSE与后端通讯
+            await StartSSE.startSSE() // 调用 startSSE 方法
           } else {
             console.log(response.message)
           }
@@ -82,7 +85,6 @@ const actions = {
           resolve(data)
         })
         .catch((error) => {
-          console.log('catch getInfo')
           reject(error)
         })
     })
