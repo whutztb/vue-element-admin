@@ -1,11 +1,15 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.jar_id" placeholder="陶坛ID" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.jar_name" placeholder="陶坛名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.jar_pos" placeholder="陶坛位置" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.jar_id" placeholder="陶坛ID" style="width: 150px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.jar_pos" placeholder="位置" style="width: 150px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.jar_type" placeholder="缸型" style="width: 150px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.wine_name" placeholder="品名" style="width: 150px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         查询
+      </el-button>
+      <el-button v-waves class="filter-item" type="primary" icon="el-icon-document" @click="handleAddUp">
+        统计
       </el-button>
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         新增
@@ -42,21 +46,19 @@
           <span>{{ scope.row.jar_id }}</span>
         </template>
       </el-table-column>
-
-      <el-table-column min-width="130px" align="center" label="陶坛名称">
-        <template slot-scope="scope">
-          <span>{{ scope.row.jar_name }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column min-width="85px" label="陶坛位置" align="center">
+      <el-table-column min-width="90px" label="陶坛位置" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.jar_pos }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="90px" label="容积(L)" align="center">
+      <el-table-column min-width="90px" align="center" label="缸型">
         <template slot-scope="scope">
-          <span>{{ scope.row.jar_height }}</span>
+          <span>{{ scope.row.jar_type }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column min-width="90px" label="品名" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.wine_name }}</span>
         </template>
       </el-table-column>
       <el-table-column min-width="90px" label="液位(mm)" align="center">
@@ -64,12 +66,17 @@
           <span>{{ scope.row.wine_level }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="90px" label="酒度(°)" align="center">
+      <el-table-column min-width="80px" label="容积(m³)" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.wine_volume }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column min-width="70px" label="酒度(°)" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.wine_vol }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="150px" align="center" label="液位更新日期">
+      <el-table-column min-width="155px" align="center" label="液位更新日期">
         <template slot-scope="scope">
           <span>{{ scope.row.level_update_time }}</span>
         </template>
@@ -98,25 +105,28 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="陶坛ID" prop="jar_id" label-width="100px">
+        <el-form-item label="陶坛ID" prop="jar_id" label-width="150px">
           <el-input v-model="temp.jar_id" :readonly="readOnly" />
         </el-form-item>
-        <el-form-item label="陶坛名称" prop="jar_name" label-width="100px">
-          <el-input v-model="temp.jar_name" />
+        <el-form-item label="缸型" prop="jar_type" label-width="150px">
+          <el-input v-model="temp.jar_type" />
         </el-form-item>
-        <el-form-item label="陶坛位置" prop="jar_pos" label-width="100px">
+        <el-form-item label="缸位置" prop="jar_pos" label-width="150px">
           <el-input v-model="temp.jar_pos" />
         </el-form-item>
-        <el-form-item label="陶坛高度(mm)" prop="jar_height" label-width="120px">
+        <el-form-item label="缸高(mm)" prop="jar_height" label-width="150px">
           <el-input v-model="temp.jar_height" />
         </el-form-item>
-        <el-form-item label="液位(mm)" prop="wine_level" label-width="100px">
+        <el-form-item label="液位(mm)" prop="wine_level" label-width="150px">
           <el-input v-model="temp.wine_level" />
         </el-form-item>
-        <el-form-item label="酒度(°)" prop="wine_vol" label-width="100px">
+        <el-form-item label="酒度(°)" prop="wine_vol" label-width="150px">
           <el-input v-model="temp.wine_vol" />
         </el-form-item>
-        <el-form-item label="更新日期" prop="level_update_time" label-width="100px">
+        <el-form-item label="品名" prop="wine_name" label-width="150px">
+          <el-input v-model="temp.wine_name" />
+        </el-form-item>
+        <el-form-item label="更新日期" prop="level_update_time" label-width="150px">
           <el-date-picker v-model="temp.level_update_time" type="datetime" placeholder="请选择日期" />
         </el-form-item>
       </el-form>
@@ -143,11 +153,12 @@
 </template>
 
 <script>
-import { fetchList, deleteJar, createJar, updateJar, exportJarList, getHistory } from '@/api/wine_jar'
+import { fetchList, deleteJar, createJar, updateJar, exportJarList, getHistory, getTotalVolume } from '@/api/wine_jar'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import echarts from 'echarts'
+import { MessageBox } from 'element-ui'
 
 export default {
   name: 'ComplexTable',
@@ -172,19 +183,22 @@ export default {
       listQuery: {
         page: 1,
         limit: 20,
-        jar_name: '',
+        jar_type: '',
         jar_id: '',
-        jar_pos: ''
+        jar_pos: '',
+        wine_name: ''
       },
 
       showReviewer: false,
       temp: {
         jar_id: undefined,
-        jar_name: '',
+        jar_type: '',
         jar_pos: '',
         jar_height: '',
         wine_level: '',
         wine_vol: '',
+        wine_volume: '',
+        wine_name: '',
         level_update_time: ''
       },
       readOnly: false,
@@ -200,7 +214,7 @@ export default {
         jar_id: [
           { required: true, message: '请输入陶坛ID', trigger: 'blur' }
         ],
-        jar_name: [
+        jar_type: [
           { required: true, message: '请输入陶坛名称', trigger: 'blur' }
         ],
         jar_pos: [
@@ -215,6 +229,9 @@ export default {
         wine_vol: [
           { required: true, message: '请输入陶坛酒度', trigger: 'blur' }
         ],
+        wine_name: [
+          { required: true, message: '请输入品名', trigger: 'blur' }
+        ],
         level_update_time: [
           { required: true, message: '请输入液位陶坛更新时间', trigger: 'blur' }
         ]
@@ -225,7 +242,8 @@ export default {
       chartTitle: '',
       className: 'chart',
       historyData: [], // 初始化为空数组
-      lidOpenData: [] // 初始化为空数组
+      lidOpenData: [], // 初始化为空数组
+      volHistoryData: []
       // socket: null  // 定义 socket 实例
     }
   },
@@ -286,13 +304,28 @@ export default {
     resetTemp() {
       this.temp = {
         jar_id: undefined,
-        jar_name: '',
+        jar_type: '',
         jar_pos: '',
         jar_height: '',
         wine_level: '',
         wine_vol: '',
+        wine_volume: '',
+        wine_name: '',
         level_update_time: ''
       }
+    },
+    handleAddUp() {
+      getTotalVolume(this.listQuery).then(response => {
+        MessageBox.alert(
+          `符合查询条件总容量(m³): ${response.message}`,
+          '新消息',
+          {
+            confirmButtonText: '确定',
+            type: 'info',
+            dangerouslyUseHTMLString: true // 允许使用 HTML
+          }
+        )
+      })
     },
     handleCreate() {
       this.readOnly = false
@@ -309,6 +342,8 @@ export default {
           const date = new Date(this.temp.level_update_time)
           const formattedDateTime = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`
           this.temp.level_update_time = formattedDateTime
+          // 将测量的液位转换成容积，采用液位*0.000666的策略(这里主要是解决显示异常问题--容积不更新，实际后台会采用该策略处理)
+          this.temp.wine_volume = (0.000666 * this.temp.wine_level).toFixed(2)
           createJar(this.temp).then(() => {
             this.list.unshift(this.temp)
             this.dialogFormVisible = false
@@ -340,6 +375,9 @@ export default {
           const date = new Date(this.temp.level_update_time)
           const formattedDateTime = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`
           this.temp.level_update_time = formattedDateTime
+          // 将测量的液位转换成容积，采用液位*0.000666的策略(这里主要是解决显示异常问题--容积不更新，实际后台会采用该策略处理)
+          this.temp.wine_volume = (0.000666 * this.temp.wine_level).toFixed(2)
+
           const tempData = Object.assign({}, this.temp)
           // tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
           updateJar(tempData).then(() => {
@@ -389,22 +427,15 @@ export default {
     },
     handleHistory(row, index) {
       getHistory(row).then(response => {
-        console.log('1212345')
         const message = response.message
         console.log(message)
         // 如果 response.message 是字符串，尝试将其解析为数组
         if (typeof message === 'string') {
           console.log('888')
-          // message = message.replace(/'/g, '"')
-          this.historyData = message.level_msg
-          console.log(this.historyData)
-          this.lidOpenData = message.lid_msg
-          console.log(this.lidOpenData)
         } else {
           this.historyData = response.message.level_msg // 直接赋值
-          console.log(this.historyData)
           this.lidOpenData = response.message.lid_msg // 直接赋值
-          console.log(this.lidOpenData)
+          this.volHistoryData = response.message.vol_msg // 直接赋值
         }
         this.showChart = true
       })
@@ -414,28 +445,32 @@ export default {
         const chartElement = this.$refs.chartContainer
         if (chartElement) {
           this.chart = echarts.init(chartElement)
-          // this.chart = echarts.init(document.getElementById(this.id));
-
           const timestamps = this.historyData.map(item => item.rec_time) // 提取时间
           const recLevels = this.historyData.map(item => item.rec_lv) // 提取 rec_lv
+          const recVols = this.volHistoryData.map(item => item.rec_vol) // 提取 rec_vol
           const openLidTimes = this.lidOpenData.map(item => item.open_time) // 提取 open_time
           const openLidValue = this.lidOpenData.map(item => item.value) // 提取值（无实际意义）
+
           // 创建一个时间点集合
           const allTimestamps = Array.from(new Set([...timestamps, ...openLidTimes]))
           // 对时间戳进行排序
           allTimestamps.sort((a, b) => new Date(a) - new Date(b))
+
           // 对齐数据
           const alignedRecLevels = allTimestamps.map(time => {
             const index = timestamps.indexOf(time)
             return index !== -1 ? recLevels[index] : null // 如果没有对应的值，则填充 null
+          })
+          const alignedRecVols = allTimestamps.map(time => {
+            const index = timestamps.indexOf(time)
+            return index !== -1 ? recVols[index] : null // 如果没有对应的值，则填充 null
           })
 
           const alignedOpenLidValues = allTimestamps.map(time => {
             const index = openLidTimes.indexOf(time)
             return index !== -1 ? openLidValue[index] : null // 如果没有对应的值，则填充 null
           })
-          console.log(alignedRecLevels)
-          console.log(alignedOpenLidValues)
+          // console.log("alignedRecVols",alignedRecVols)
           this.chart.setOption({
             backgroundColor: '#394056',
             title: {
@@ -448,7 +483,7 @@ export default {
               left: '1%'
             },
             tooltip: {
-              trigger: 'item',
+              trigger: 'axis',
               axisPointer: {
                 lineStyle: {
                   color: '#57617B'
@@ -457,11 +492,12 @@ export default {
             },
             legend: {
               top: 10,
+              left: 'center', // 将图例水平居中
+              orient: 'horizontal', // 设置图例为水平布局
               icon: 'rect',
               itemWidth: 14,
               itemHeight: 5,
               itemGap: 13,
-              // data: ['液位'],
               right: '4%',
               textStyle: {
                 fontSize: 12,
@@ -476,41 +512,83 @@ export default {
               containLabel: true
             },
             xAxis: [{
-              type: 'category',
+              type: 'category', // category,time
               boundaryGap: false,
               axisLine: {
                 lineStyle: {
-                  color: '#57617B'
-                }
-              },
-              data: allTimestamps // 使用动态时间数据
-            }],
-            yAxis: [{
-              type: 'value',
-              name: '液位(mm)',
-              axisTick: {
-                show: false
-              },
-              axisLine: {
-                lineStyle: {
-                  color: '#57617B'
+                  color: '#F1F1F3'
                 }
               },
               axisLabel: {
-                margin: 10,
-                textStyle: {
-                  fontSize: 14
+                formatter: function(value) {
+                  const date = new Date(value)
+                  return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')} ${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}`
                 }
               },
-              splitLine: {
-                lineStyle: {
-                  color: '#57617B'
-                }
-              }
+              data: allTimestamps // 转换为 Date 对象
             }],
+            yAxis: [
+              {
+                type: 'value',
+                name: '液位(mm)',
+                nameTextStyle: {
+                  color: '#F1F1F3' // 设置液位 Y 轴名称的颜色为白色
+                },
+                axisTick: {
+                  show: false
+                },
+                axisLine: {
+                  lineStyle: {
+                    color: '#57617B'
+                  }
+                },
+                axisLabel: {
+                  margin: 10,
+                  textStyle: {
+                    fontSize: 12,
+                    color: '#F1F1F3'
+                  }
+                },
+                splitLine: {
+                  lineStyle: {
+                    color: '#57617B'
+                  }
+                }
+              },
+              {
+                type: 'value',
+                name: '酒度（°）',
+                nameTextStyle: {
+                  color: '#F1F1F3' // 设置液位 Y 轴名称的颜色为白色
+                },
+                min: 30,
+                max: 80,
+                axisTick: {
+                  show: false
+                },
+                axisLine: {
+                  lineStyle: {
+                    color: '#57617B'
+                  }
+                },
+                axisLabel: {
+                  margin: 10,
+                  textStyle: {
+                    fontSize: 12,
+                    color: '#F1F1F3'
+                  }
+                },
+                splitLine: {
+                  lineStyle: {
+                    color: '#57617B'
+                  }
+                },
+                position: 'right', // 将第二个Y轴放在右侧
+                offset: 0
+              }],
             series: [{
               name: '液位值',
-              type: 'scatter',
+              type: 'line',
               connectNulls: true, // 连接 null 值
               smooth: true,
               symbol: 'circle',
@@ -521,19 +599,6 @@ export default {
                   width: 1
                 }
               },
-              areaStyle: {
-                normal: {
-                  color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-                    offset: 0,
-                    color: 'rgba(137, 189, 27, 0.2)'
-                  }, {
-                    offset: 0.8,
-                    color: 'rgba(137, 189, 27, 0.2)'
-                  }], false),
-                  shadowColor: 'rgba(0, 0, 0, 0.1)',
-                  shadowBlur: 10
-                }
-              },
               itemStyle: {
                 normal: {
                   color: 'rgb(137,189,27)',
@@ -542,6 +607,29 @@ export default {
                 }
               },
               data: alignedRecLevels
+
+            }, {
+              name: '酒度值',
+              type: 'line',
+              yAxisIndex: 1, // 指定使用第二个Y轴
+              connectNulls: true, // 连接 null 值
+              smooth: true,
+              symbol: 'circle',
+              symbolSize: 5,
+              showSymbol: false,
+              lineStyle: {
+                normal: {
+                  width: 1
+                }
+              },
+              itemStyle: {
+                normal: {
+                  color: 'rgb(237,89,227)',
+                  borderColor: 'rgba(137,189,2,0.27)',
+                  borderWidth: 12
+                }
+              },
+              data: alignedRecVols
             }, {
               name: '开缸点',
               type: 'scatter',
@@ -601,8 +689,8 @@ export default {
     },
     exportCurrentPage() {
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['jar_id', 'jar_name', 'jar_height', 'jar_pos', 'wine_level', 'wine_vol', 'level_update_time']
-        const filterVal = ['jar_id', 'jar_name', 'jar_height', 'jar_pos', 'wine_level', 'wine_vol', 'level_update_time']
+        const tHeader = ['jar_id', 'jar_type', 'jar_height', 'jar_pos', 'wine_level', 'wine_vol', 'wine_volume', 'wine_name', 'level_update_time']
+        const filterVal = ['jar_id', 'jar_type', 'jar_height', 'jar_pos', 'wine_level', 'wine_vol', 'wine_volume', 'wine_name', 'level_update_time']
         const data = this.formatJson(filterVal)
 
         excel.export_json_to_excel({

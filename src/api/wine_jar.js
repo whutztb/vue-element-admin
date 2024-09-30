@@ -53,3 +53,12 @@ export function getHistory(data) {
     data
   })
 }
+
+export function getTotalVolume(query) {
+  // console.log('fetch jar List request')
+  return request({
+    url: `${process.env.API_URL}/get_total_volume`,
+    method: 'get',
+    params: query
+  })
+}

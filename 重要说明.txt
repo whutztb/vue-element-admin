@@ -1,6 +1,6 @@
 运行步骤：
 (1)安装node.js (https://nodejs.org/zh-cn)
-(2)npm install（漫长的等待）
+(2)npm install（漫长的等待-开启代理安装）
 (3)npm run dev
 
 

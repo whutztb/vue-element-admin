@@ -53,7 +53,7 @@ module.exports = {
         // 其他webpack配置...在这里定义全局变量API_URL
     plugins: [
         new webpack.DefinePlugin({
-          'process.env.API_URL': JSON.stringify('http://192.168.3.77:5000')
+          'process.env.API_URL': JSON.stringify('http://127.0.0.1:5000')
         })
     ]
   },

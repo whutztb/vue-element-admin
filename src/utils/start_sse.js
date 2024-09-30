@@ -8,7 +8,7 @@ class StartSSE {
 
   async startSSE() {
     try {
-      const response = await fetch('http://192.168.3.77:5000/api/start-sse')
+      const response = await fetch(`${process.env.API_URL}/api/start-sse`)
       if (response.ok) {
         this.initializeEventSource()
       } else {
@@ -21,7 +21,7 @@ class StartSSE {
 
   initializeEventSource() {
     console.log('initializeEventSource')
-    this.eventSource = new EventSource('http://192.168.3.77:5000/stream')
+    this.eventSource = new EventSource(`${process.env.API_URL}/stream`)
 
     this.eventSource.onmessage = (event) => {
       console.log(event.data) // 处理接收到的事件
