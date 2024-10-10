@@ -554,7 +554,7 @@ export default {
             end: 35
           }],
           series: [{
-            name: '总容量(L)',
+            name: '总容量(m³)',
             type: 'bar',
             barMaxWidth: 35,
             barGap: '10%', // 设置间隔
@@ -575,7 +575,7 @@ export default {
             },
             data: allJarVolumeData
           }, {
-            name: '总酒量(L)',
+            name: '总酒量(m³)',
             type: 'bar',
             itemStyle: {
               normal: {

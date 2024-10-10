@@ -159,6 +159,7 @@ import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import echarts from 'echarts'
 import { MessageBox } from 'element-ui'
+import { EventBus } from '@/utils/eventBus'
 
 export default {
   name: 'ComplexTable',
@@ -255,12 +256,16 @@ export default {
     }
   },
   created() {
+    // 监听 EventBus 事件
+    EventBus.$on('updateJarListUI', this.getList)
     this.getList()
   },
   mounted() {
     this.initChart()
   },
   beforeDestroy() {
+    // 清除事件监听
+    EventBus.$off('updateJarListUI', this.getList)
     if (this.chart) {
       this.chart.dispose()
       this.chart = null
@@ -343,7 +348,7 @@ export default {
           const formattedDateTime = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`
           this.temp.level_update_time = formattedDateTime
           // 将测量的液位转换成容积，采用液位*0.000666的策略(这里主要是解决显示异常问题--容积不更新，实际后台会采用该策略处理)
-          this.temp.wine_volume = (0.000666 * this.temp.wine_level).toFixed(2)
+          this.temp.wine_volume = (0.000666 * this.temp.wine_level).toFixed(3)
           createJar(this.temp).then(() => {
             this.list.unshift(this.temp)
             this.dialogFormVisible = false
@@ -376,7 +381,7 @@ export default {
           const formattedDateTime = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`
           this.temp.level_update_time = formattedDateTime
           // 将测量的液位转换成容积，采用液位*0.000666的策略(这里主要是解决显示异常问题--容积不更新，实际后台会采用该策略处理)
-          this.temp.wine_volume = (0.000666 * this.temp.wine_level).toFixed(2)
+          this.temp.wine_volume = (0.000666 * this.temp.wine_level).toFixed(3)
 
           const tempData = Object.assign({}, this.temp)
           // tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
