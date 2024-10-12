@@ -1,15 +1,17 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.plan_id" placeholder="方案ID" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.plan_name" placeholder="方案名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.jar_id" placeholder="陶坛ID" style="width: 180px;" class="filter-item" />
+      <el-input v-model="listQuery.jar_pos" placeholder="缸位置" style="width: 180px;" class="filter-item" />
+      <el-select v-model="listQuery.status" placeholder="选择状态" style="width: 180px;" class="filter-item">
+        <el-option label="全部" value="" />
+        <el-option label="已处理" value="已处理" />
+        <el-option label="未处理" value="未处理" />
+      </el-select>
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         查询
       </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
-        新增
-      </el-button>
-      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="showDialog = true">
+      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" style="margin-right: 10px;" @click="showDialog = true">
         导出
       </el-button>
       <el-dialog
@@ -24,6 +26,9 @@
           <el-button @click="showDialog = false">取消</el-button>
         </div>
       </el-dialog>
+      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-document" @click="clearWarning">
+        清空告警
+      </el-button>
     </div>
 
     <el-table
@@ -36,61 +41,64 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column align="center" label="方案ID" min-width="250">
-        <template slot-scope="{row}">
-          <span>{{ row.plan_id }}</span>
+      <el-table-column align="center" label="陶坛ID" min-width="135">
+        <template slot-scope="scope">
+          <span>{{ scope.row.jar_id }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="250px" align="center" label="方案名称">
-        <template slot-scope="{row}">
-          <span>{{ row.plan_name }}</span>
+      <el-table-column min-width="90px" label="陶坛位置" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.jar_pos }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="100px" label="增益" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.gain }}</span>
+      <el-table-column min-width="120px" align="center" label="异动时间">
+        <template slot-scope="scope">
+          <span>{{ scope.row.open_time }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="100px" label="峰值" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.peak }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column min-width="100px" label="补偿值" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.compensation }}</span>
+      <el-table-column min-width="90px" align="center" label="状态">
+        <template slot-scope="scope">
+          <span>{{ scope.row.deal_status }}</span>
         </template>
       </el-table-column>
       <el-table-column label="" align="center" min-width="230" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
-          <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(row)">
-            编辑
-          </el-button>
-          <el-button v-if="row.status!='deleted'" size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(row,$index)">
-            删除
+          <el-button v-if="row.status!='deleted'&& row.deal_status === '未处理'" size="mini" type="primary" icon="el-icon-document" @click="handleWarning(row,$index)">
+            处理告警
           </el-button>
         </template>
       </el-table-column>
     </el-table>
 
+    <el-dialog :visible.sync="showChart" :title="chartTitle" width="650px" :styles="{ height: '300px' }" class="custom-dialog">
+      <div ref="chartContainer" class="chart-container" :style="{ height: '300px', width: '100%' }" />
+    </el-dialog>
+    <!--<history_chart v-if="historyData.length" :historyData="historyData" />-->
+
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
 
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
+    <!--<el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="方案ID" prop="plan_id" label-width="100px">
-          <el-input v-model="temp.plan_id" :readonly="readOnly" />
+        <el-form-item label="陶坛ID" prop="jar_id" label-width="150px">
+          <el-input v-model="temp.jar_id" :readonly="readOnly" />
         </el-form-item>
-        <el-form-item label="方案名称" prop="plan_name" label-width="100px">
-          <el-input v-model="temp.plan_name" />
+        <el-form-item label="缸型" prop="jar_type" label-width="150px">
+          <el-input v-model="temp.jar_type" />
         </el-form-item>
-        <el-form-item label="增益" prop="gain" label-width="100px">
-          <el-input v-model="temp.gain" />
+        <el-form-item label="缸位置" prop="jar_pos" label-width="150px">
+          <el-input v-model="temp.jar_pos" />
         </el-form-item>
-        <el-form-item label="峰值" prop="peak" label-width="100px">
-          <el-input v-model="temp.peak" />
+        <el-form-item label="缸高(mm)" prop="jar_height" label-width="150px">
+          <el-input v-model="temp.jar_height" />
         </el-form-item>
-        <el-form-item label="补偿值" prop="compensation" label-width="100px">
-          <el-input v-model="temp.compensation" />
+        <el-form-item label="液位(mm)" prop="wine_level" label-width="150px">
+          <el-input v-model="temp.wine_level" />
+        </el-form-item>
+        <el-form-item label="品名" prop="wine_name" label-width="150px">
+          <el-input v-model="temp.wine_name" />
+        </el-form-item>
+        <el-form-item label="更新日期" prop="level_update_time" label-width="150px">
+          <el-date-picker v-model="temp.level_update_time" type="datetime" placeholder="请选择日期" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -101,7 +109,7 @@
           确认
         </el-button>
       </div>
-    </el-dialog>
+    </el-dialog>-->
 
     <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
       <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
@@ -116,10 +124,11 @@
 </template>
 
 <script>
-import { fetchList, deletePlan, createPlan, updatePlan, exportPlanList } from '@/api/wine_plan'
+import { fetchList, dealWarning, clearAllWarning, exportLidOpenList } from '@/api/wine_lid_open'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import { EventBus } from '@/utils/eventBus'
 
 export default {
   name: 'ComplexTable',
@@ -144,17 +153,16 @@ export default {
       listQuery: {
         page: 1,
         limit: 20,
-        plan_id: '',
-        plan_name: ''
+        jar_id: '',
+        jar_pos: '',
+        status: ''
       },
 
       showReviewer: false,
       temp: {
-        plan_id: undefined,
-        plan_name: '',
-        gain: '',
-        peak: '',
-        compensation: ''
+        jar_id: undefined,
+        jar_pos: '',
+        deal_status: ''
       },
       readOnly: false,
       dialogFormVisible: false,
@@ -166,28 +174,57 @@ export default {
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        plan_id: [
-          { required: true, message: '请输入方案ID', trigger: 'blur' }
+        jar_id: [
+          { required: true, message: '请输入陶坛ID', trigger: 'blur' }
         ],
-        paln_name: [
-          { required: true, message: '请输入方案名称', trigger: 'blur' }
+        jar_type: [
+          { required: true, message: '请输入陶坛名称', trigger: 'blur' }
         ],
-        gain: [
-          { required: true, message: '请输入增益', trigger: 'blur' }
+        jar_pos: [
+          { required: true, message: '请输入陶坛位置', trigger: 'blur' }
         ],
-        peak: [
-          { required: true, message: '请输入峰值', trigger: 'blur' }
+        jar_height: [
+          { required: true, message: '请输入陶坛高度', trigger: 'blur' }
         ],
-        compensation: [
-          { required: true, message: '请输入补偿值', trigger: 'blur' }
+        wine_level: [
+          { required: true, message: '请输入陶坛液位', trigger: 'blur' }
+        ],
+        wine_name: [
+          { required: true, message: '请输入品名', trigger: 'blur' }
+        ],
+        level_update_time: [
+          { required: true, message: '请输入液位陶坛更新时间', trigger: 'blur' }
         ]
       },
       downloadLoading: false,
-      showDialog: false
+      showDialog: false,
+      showChart: false,
+      chartTitle: '',
+      className: 'chart',
+      historyData: [], // 初始化为空数组
+      lidOpenData: [], // 初始化为空数组
+      volHistoryData: []
+      // socket: null  // 定义 socket 实例
     }
   },
+  watch: {
+
+  },
   created() {
+    // 监听 EventBus 事件
+    EventBus.$on('updateLidOpenListUI', this.getList)
     this.getList()
+  },
+  mounted() {
+
+  },
+  beforeDestroy() {
+    // 清除事件监听
+    EventBus.$off('updateLidOpenListUI', this.getList)
+    if (this.chart) {
+      this.chart.dispose()
+      this.chart = null
+    }
   },
   methods: {
     getList() {
@@ -201,7 +238,6 @@ export default {
     },
     handleFilter() {
       this.listQuery.page = 1
-      console.log('listQuery', this.listQuery)
       this.getList()
     },
     handleModifyStatus(row, status) {
@@ -227,89 +263,31 @@ export default {
     },
     resetTemp() {
       this.temp = {
-        plan_id: undefined,
-        plan_name: '',
-        gain: '',
-        peak: '',
-        compensation: ''
+        jar_id: undefined,
+        jar_pos: '',
+        deal_status: ''
+
       }
     },
-    handleCreate() {
-      this.readOnly = false
-      this.resetTemp()
-      this.dialogStatus = 'create'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    createData() {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          console.log(this.temp)
-          createPlan(this.temp).then(() => {
-            this.list.unshift(this.temp)
-            this.dialogFormVisible = false
-            this.getList() // 调用 getList 方法以刷新数据
-            this.$notify({
-              title: '操作成功',
-              message: '创建成功',
-              type: 'success',
-              duration: 2000
-            })
-          })
-        }
-      })
-    },
-    handleUpdate(row) {
-      this.readOnly = true
-      this.temp = Object.assign({}, row) // copy obj
-      this.dialogStatus = 'update'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    updateData() {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          const tempData = Object.assign({}, this.temp)
-          updatePlan(tempData).then(() => {
-            const index = this.list.findIndex(v => v.plan_id === this.temp.plan_id)
-            this.list.splice(index, 1, this.temp)
-
-            this.dialogFormVisible = false
-
-            this.$notify({
-              title: '操作成功',
-              message: '修改成功',
-              type: 'success',
-              duration: 2000
-            })
-          })
-        }
-      })
-    },
-    handleDelete(row, index) {
-      this.$confirm('确定删除该方案, 是否继续?', '提示', {
+    clearWarning() {
+      this.$confirm('确定清空告警, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deletePlan(row).then(response => {
+        clearAllWarning().then(response => {
           this.$notify({
             title: '操作成功',
-            message: '删除成功',
+            message: '处理成功',
             type: 'success',
             duration: 2000
           })
           this.getList() // 调用 getList 方法以刷新数据
-          this.list.splice(index, 1)
         }).catch(error => {
-          console.error('删除失败:', error)
+          console.error('处理失败:', error)
           this.$notify({
             title: '错误',
-            message: '删除失败',
+            message: '处理失败',
             type: 'error',
             duration: 2000
           })
@@ -317,7 +295,38 @@ export default {
       }).catch(() => {
         this.$message({
           type: 'info',
-          message: '删除异常'
+          message: '处理异常'
+        })
+      })
+    },
+    handleWarning(row, index) {
+      this.$confirm('确定处理告警, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        dealWarning(row).then(response => {
+          this.$notify({
+            title: '操作成功',
+            message: '处理成功',
+            type: 'success',
+            duration: 2000
+          })
+          this.getList() // 调用 getList 方法以刷新数据
+          this.list.splice(index, 1)
+        }).catch(error => {
+          console.error('处理失败:', error)
+          this.$notify({
+            title: '错误',
+            message: '处理失败',
+            type: 'error',
+            duration: 2000
+          })
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '处理异常'
         })
       })
     },
@@ -338,14 +347,14 @@ export default {
     },
     exportCurrentPage() {
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['方案ID', '方案名称', '峰值', '增益', '补偿值']
-        const filterVal = ['plan_id', 'plan_name', 'gain', 'peak', 'compensation']
+        const tHeader = ['陶坛ID', '陶坛位置', '异动时间', '状态']
+        const filterVal = ['jar_id', 'jar_pos', 'open_time', 'deal_status']
         const data = this.formatJson(filterVal)
 
         excel.export_json_to_excel({
           header: tHeader,
           data,
-          filename: 'current-page-plan-list'
+          filename: 'current-page-lid-open-list'
         })
         this.downloadLoading = false
       })
@@ -354,12 +363,12 @@ export default {
       this.downloadLoading = true // 开始下载时显示加载状态
 
       // 发起请求以获取 Excel 文件，传递查询参数
-      exportPlanList(this.listQuery)
+      exportLidOpenList(this.listQuery)
         .then(blob => { // 直接获取 Blob 对象
           const url = window.URL.createObjectURL(blob) // 创建 Blob URL
           const a = document.createElement('a') // 创建一个链接元素
           a.href = url
-          a.download = 'all-page-plan-list.xlsx' // 设置下载的文件名
+          a.download = 'all-page-lid-open-list.xlsx' // 设置下载的文件名
           document.body.appendChild(a) // 将链接添加到文档
           a.click() // 模拟点击
           a.remove() // 下载后移除链接

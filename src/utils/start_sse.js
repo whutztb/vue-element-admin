@@ -42,11 +42,13 @@ class StartSSE {
             type: 'warning',
             dangerouslyUseHTMLString: true // 允许使用 HTML
           }
+
         )
+        EventBus.$emit('updateLidOpenListUI')
       } else if (msg_type === 'new_record') {
+        /*
         const jarId = mainObj.jar_id
         const rec_lv = mainObj.rec_lv
-
         MessageBox.alert(
           `陶坛ID: ${jarId}<br>当前液位（mm）: ${rec_lv}`,
           '陶坛信息采集提示',
@@ -55,7 +57,7 @@ class StartSSE {
             type: 'info',
             dangerouslyUseHTMLString: true // 允许使用 HTML
           }
-        )
+        )*/
         // 发送事件到 EventBus
         EventBus.$emit('updateJarListUI')
       } else if (msg_type === 'wine_leak') {

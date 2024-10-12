@@ -300,7 +300,7 @@ export default {
           this.getList() // 调用 getList 方法以刷新数据
           this.list.splice(index, 1)
         }).catch(error => {
-          console.error('Error deleting user:', error)
+          console.error('删除失败:', error)
           this.$notify({
             title: '错误',
             message: '删除失败',
@@ -332,7 +332,7 @@ export default {
     },
     exportCurrentPage() {
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['device_id', 'device_name', 'card_num', 'expiration_time']
+        const tHeader = ['设备ID', '设备名称', '物联卡号', '到期时间']
         const filterVal = ['device_id', 'device_name', 'card_num', 'expiration_time']
         const data = this.formatJson(filterVal)
 

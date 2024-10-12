@@ -1,18 +1,28 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.jar_id" placeholder="陶坛ID" style="width: 150px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.jar_pos" placeholder="位置" style="width: 150px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.jar_type" placeholder="缸型" style="width: 150px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.wine_name" placeholder="品名" style="width: 150px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-date-picker
+        v-model="listQuery.startDate"
+        type="datetime"
+        placeholder="选择起始时间"
+        class="filter-item"
+        style="width: 180px;"
+      />
+      <el-date-picker
+        v-model="listQuery.endDate"
+        type="datetime"
+        placeholder="选择结束时间"
+        class="filter-item"
+        style="width: 180px;"
+      />
+      <el-input v-model="listQuery.jar_pos" placeholder="位置" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.jar_type" placeholder="缸型" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.wine_name" placeholder="品名" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         查询
       </el-button>
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-document" @click="handleAddUp">
         统计
-      </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
-        新增
       </el-button>
       <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="showDialog = true">
         导出
@@ -61,7 +71,7 @@
           <span>{{ scope.row.wine_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="90px" label="液位(mm)" align="center">
+      <el-table-column min-width="110px" label="当前液位(mm)" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.wine_level }}</span>
         </template>
@@ -71,21 +81,17 @@
           <span>{{ scope.row.wine_volume }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="155px" align="center" label="数据更新日期">
+      <el-table-column min-width="175px" align="center" label="指定时段内出入库酒量(t)">
         <template slot-scope="scope">
-          <span>{{ scope.row.level_update_time }}</span>
+          <span :style="{ color: scope.row.in_out_bound > 0 ? 'red' : 'blue' }">
+            {{ scope.row.in_out_bound }}
+          </span>
         </template>
       </el-table-column>
       <el-table-column label="" align="center" min-width="230" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
-          <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(row)">
-            编辑
-          </el-button>
-          <el-button v-if="row.status!='deleted'" size="mini" type="info" icon="el-icon-document" @click="handleHistory(row,$index)">
-            历史
-          </el-button>
-          <el-button v-if="row.status!='deleted'" size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(row,$index)">
-            删除
+          <el-button v-if="row.status!='deleted'" size="mini" type="primary" icon="el-icon-document" @click="handleHistory(row,$index)">
+            酒量变化
           </el-button>
         </template>
       </el-table-column>
@@ -98,7 +104,7 @@
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
 
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
+    <!--<el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
         <el-form-item label="陶坛ID" prop="jar_id" label-width="150px">
           <el-input v-model="temp.jar_id" :readonly="readOnly" />
@@ -130,7 +136,7 @@
           确认
         </el-button>
       </div>
-    </el-dialog>
+    </el-dialog>-->
 
     <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
       <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
@@ -145,13 +151,12 @@
 </template>
 
 <script>
-import { fetchList, deleteJar, createJar, updateJar, exportJarList, getHistory, getTotalVolume } from '@/api/wine_jar'
+import { fetchList, getHistory, getTotalInOutBound, exportInOutBoundList } from '@/api/wine_in_out_bound'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import echarts from 'echarts'
 import { MessageBox } from 'element-ui'
-import { EventBus } from '@/utils/eventBus'
 
 export default {
   name: 'ComplexTable',
@@ -179,7 +184,9 @@ export default {
         jar_type: '',
         jar_id: '',
         jar_pos: '',
-        wine_name: ''
+        wine_name: '',
+        startDate: '',
+        endDate: ''
       },
 
       showReviewer: false,
@@ -192,7 +199,7 @@ export default {
         wine_vol: '',
         wine_volume: '',
         wine_name: '',
-        level_update_time: ''
+        in_out_bound: ''
       },
       readOnly: false,
       dialogFormVisible: false,
@@ -245,16 +252,12 @@ export default {
     }
   },
   created() {
-    // 监听 EventBus 事件
-    EventBus.$on('updateJarListUI', this.getList)
     this.getList()
   },
   mounted() {
     this.initChart()
   },
   beforeDestroy() {
-    // 清除事件监听
-    EventBus.$off('updateJarListUI', this.getList)
     if (this.chart) {
       this.chart.dispose()
       this.chart = null
@@ -302,16 +305,16 @@ export default {
         jar_pos: '',
         jar_height: '',
         wine_level: '',
-        wine_vol: 60,
+        wine_vol: '',
         wine_volume: '',
         wine_name: '',
-        level_update_time: ''
+        in_out_bound: ''
       }
     },
     handleAddUp() {
-      getTotalVolume(this.listQuery).then(response => {
+      getTotalInOutBound(this.listQuery).then(response => {
         MessageBox.alert(
-          `符合查询条件总酒量(t): ${response.message}`,
+          `符合查询条件出入库酒量(t): ${response.message}`,
           '新消息',
           {
             confirmButtonText: '确定',
@@ -321,107 +324,10 @@ export default {
         )
       })
     },
-    handleCreate() {
-      this.readOnly = false
-      this.resetTemp()
-      this.dialogStatus = 'create'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    createData() {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          const date = new Date(this.temp.level_update_time)
-          const formattedDateTime = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`
-          this.temp.level_update_time = formattedDateTime
-          // 将测量的液位转换成容积，采用液位*0.000666的策略(这里主要是解决显示异常问题--容积不更新，实际后台会采用该策略处理)
-          this.temp.wine_volume = (0.000666 * this.temp.wine_level).toFixed(3)
-          createJar(this.temp).then(() => {
-            this.list.unshift(this.temp)
-            this.dialogFormVisible = false
-            this.getList() // 调用 getList 方法以刷新数据
-            this.$notify({
-              title: '操作成功',
-              message: '创建成功',
-              type: 'success',
-              duration: 2000
-            })
-          })
-        }
-      })
-    },
-    handleUpdate(row) {
-      this.readOnly = true
-      this.temp = Object.assign({}, row) // copy obj
-      // this.temp.timestamp = new Date(this.temp.timestamp)
-      this.dialogStatus = 'update'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    updateData() {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          // 格式化日期（将Wed May 01 2024 16:15:23 GMT+0800 (中国标准时间)格式化为2024-05-01 16:15:23）
-          const date = new Date(this.temp.level_update_time)
-          const formattedDateTime = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`
-          this.temp.level_update_time = formattedDateTime
-          // 将测量的液位转换成容积，采用液位*0.000666的策略(这里主要是解决显示异常问题--容积不更新，实际后台会采用该策略处理)
-          this.temp.wine_volume = (0.000666 * this.temp.wine_level).toFixed(3)
-
-          const tempData = Object.assign({}, this.temp)
-          // tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          updateJar(tempData).then(() => {
-            const index = this.list.findIndex(v => v.jar_id === this.temp.jar_id)
-            this.list.splice(index, 1, this.temp)
-            this.dialogFormVisible = false
-            this.$notify({
-              title: '操作成功',
-              message: '修改成功',
-              type: 'success',
-              duration: 2000
-            })
-          })
-        }
-      })
-    },
-    handleDelete(row, index) {
-      this.$confirm('确定删除该陶坛, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        deleteJar(row).then(response => {
-          this.$notify({
-            title: '操作成功',
-            message: '删除成功',
-            type: 'success',
-            duration: 2000
-          })
-          this.getList() // 调用 getList 方法以刷新数据
-          this.list.splice(index, 1)
-        }).catch(error => {
-          console.error('删除失败:', error)
-          this.$notify({
-            title: '错误',
-            message: '删除失败',
-            type: 'error',
-            duration: 2000
-          })
-        })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '删除异常'
-        })
-      })
-    },
     handleHistory(row, index) {
       getHistory(row).then(response => {
         const message = response.message
+        console.log(message)
         // 如果 response.message 是字符串，尝试将其解析为数组
         if (typeof message === 'string') {
           console.log('888')
@@ -443,6 +349,7 @@ export default {
           // 提取时间和对应的酒量
           const timestamps = sortedHistoryData.map(item => item.rec_time) // 提取时间
           const recLevels = sortedHistoryData.map(item => item.rec_volume) // 提取 rec_volume
+
           /*
           const recVols = this.volHistoryData.map(item => item.rec_vol) // 提取 rec_vol
           const openLidTimes = this.lidOpenData.map(item => item.open_time) // 提取 open_time
@@ -585,7 +492,7 @@ export default {
               }*/],
             series: [{
               name: '现有酒量(t)',
-              type: 'line',
+              type: 'scatter',
               connectNulls: true, // 连接 null 值
               smooth: false,
               symbol: 'circle',
@@ -686,14 +593,14 @@ export default {
     },
     exportCurrentPage() {
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['陶坛ID', '缸型', '缸高', '位置', '液位(mm)', '现有酒量(t)', '品名', '更新时间']
-        const filterVal = ['jar_id', 'jar_type', 'jar_height', 'jar_pos', 'wine_level', 'wine_volume', 'wine_name', 'level_update_time']
+        const tHeader = ['陶坛ID', '陶坛位置', '缸型', '品名', '当前液位(mm)', '现有酒量(t)', '指定时间段出入库酒量']
+        const filterVal = ['jar_id', 'jar_pos', 'jar_type', 'wine_name', 'wine_level', 'wine_volume', 'in_out_bound']
         const data = this.formatJson(filterVal)
 
         excel.export_json_to_excel({
           header: tHeader,
           data,
-          filename: 'current-page-jar-list'
+          filename: 'current-page-in_out_bound-list'
         })
         this.downloadLoading = false
       })
@@ -702,12 +609,12 @@ export default {
       this.downloadLoading = true // 开始下载时显示加载状态
 
       // 发起请求以获取 Excel 文件，传递查询参数
-      exportJarList(this.listQuery)
+      exportInOutBoundList(this.listQuery)
         .then(blob => { // 直接获取 Blob 对象
           const url = window.URL.createObjectURL(blob) // 创建 Blob URL
           const a = document.createElement('a') // 创建一个链接元素
           a.href = url
-          a.download = 'all-page-jar-list.xlsx' // 设置下载的文件名
+          a.download = 'all-page-in_out_bound-list.xlsx' // 设置下载的文件名
           document.body.appendChild(a) // 将链接添加到文档
           a.click() // 模拟点击
           a.remove() // 下载后移除链接

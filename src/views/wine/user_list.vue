@@ -41,7 +41,7 @@
           <span>{{ row.user_id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="用户名" min-width="200px" align="center">
+      <el-table-column label="用户名" min-width="120px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.user_name }}</span>
         </template>
@@ -75,6 +75,9 @@
           </el-button>
           <el-button type="info" size="mini" icon="el-icon-lock" @click="handleChangePwd(row)">
             修改密码
+          </el-button>
+          <el-button type="info" size="mini" icon="el-icon-lock" @click="handleRole(row)">
+            权限配制
           </el-button>
           <el-button v-if="row.status!='deleted'" size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(row,$index)">
             删除
@@ -408,7 +411,7 @@ export default {
     },
     exportCurrentPage() {
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['user_id', 'user_name', 'phone_num', 'department', 'gender']
+        const tHeader = ['用户ID', '用户名', '电话', '部门', '性别']
         const filterVal = ['user_id', 'user_name', 'phone_num', 'department', 'gender'] // 包含
         const data = this.formatJson(filterVal)
 

@@ -407,7 +407,7 @@ export default {
           this.getList() // 调用 getList 方法以刷新数据
           this.list.splice(index, 1)
         }).catch(error => {
-          console.error('Error deleting user:', error)
+          console.error('删除失败:', error)
           this.$notify({
             title: '错误',
             message: '删除失败',
@@ -614,12 +614,12 @@ export default {
       // 可以在这里添加关闭弹窗时的逻辑
       done()
     },
+
     exportCurrentPage() {
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['jar_id', 'jar_type', 'jar_height', 'jar_pos', 'wine_level', 'level_update_time']
-        const filterVal = ['jar_id', 'jar_type', 'jar_height', 'jar_pos', 'wine_level', 'level_update_time']
+        const tHeader = ['酒库ID', '酒库名称', '酒库位置', '缸型', '总数', '空缸', '漏缸', '总酒量(m³)', '总容量(m³)', '利用率']
+        const filterVal = ['cellar_id', 'cellar_name', 'cellar_pos', 'jar_type', 'all_jar_num', 'empty_jar_num', 'bad_jar_num', 'all_wine_volume', 'all_jar_volume', 'cellar_usage_rate']
         const data = this.formatJson(filterVal)
-
         excel.export_json_to_excel({
           header: tHeader,
           data,
@@ -637,7 +637,7 @@ export default {
           const url = window.URL.createObjectURL(blob) // 创建 Blob URL
           const a = document.createElement('a') // 创建一个链接元素
           a.href = url
-          a.download = 'all-page-jar-list.xlsx' // 设置下载的文件名
+          a.download = 'all-page-cellar-list.xlsx' // 设置下载的文件名
           document.body.appendChild(a) // 将链接添加到文档
           a.click() // 模拟点击
           a.remove() // 下载后移除链接

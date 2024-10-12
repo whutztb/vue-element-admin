@@ -91,6 +91,63 @@ const actions = {
           ]
         },
         {
+          path: '/views/wine/in_out_bound_list',
+          component: Layout,
+          redirect: '/dashboard',
+          // alwaysShow: true, // will always show the root menu
+          children: [
+            {
+              path: '',
+              component: () => import('@/views/wine/in_out_bound_list'),
+              name: '出入库管理',
+              meta: {
+                title: '出入库管理',
+                icon: 'dashboard',
+                affix: true
+                // roles: ['admin'] // or you can only set roles in sub nav
+              }
+            }
+          ]
+        },
+        {
+          path: '/views/wine/lid_open_list',
+          component: Layout,
+          redirect: '/dashboard',
+          // alwaysShow: true, // will always show the root menu
+          children: [
+            {
+              path: '',
+              component: () => import('@/views/wine/lid_open_list'),
+              name: '缸盖异动报警',
+              meta: {
+                title: '缸盖异动报警',
+                icon: 'dashboard',
+                affix: true
+                // roles: ['admin'] // or you can only set roles in sub nav
+              }
+            }
+          ]
+        },
+        {
+          path: '/views/wine/wine_leak_list',
+          component: Layout,
+          redirect: '/dashboard',
+          // alwaysShow: true, // will always show the root menu
+          children: [
+            {
+              path: '',
+              component: () => import('@/views/wine/wine_leak_list'),
+              name: '漏酒报警',
+              meta: {
+                title: '漏酒报警',
+                icon: 'dashboard',
+                affix: true
+                // roles: ['admin'] // or you can only set roles in sub nav
+              }
+            }
+          ]
+        },
+        {
           path: '/views/wine/plan_list',
           component: Layout,
           redirect: '/dashboard',
