@@ -51,7 +51,7 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column align="center" label="陶坛ID" min-width="135">
+      <el-table-column align="center" label="陶坛ID" min-width="110">
         <template slot-scope="scope">
           <span>{{ scope.row.jar_id }}</span>
         </template>
@@ -61,34 +61,41 @@
           <span>{{ scope.row.jar_pos }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="90px" align="center" label="缸型">
+      <el-table-column min-width="70px" label="缸型" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.jar_type }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="90px" label="品名" align="center">
+      <el-table-column min-width="70px" label="品名" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.wine_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="110px" label="当前液位(mm)" align="center">
+      <el-table-column min-width="90px" label="当前液位(mm)" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.wine_level }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="100px" label="现有酒量(t)" align="center">
+      <el-table-column min-width="80px" label="当前酒量(t)" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.wine_volume }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="175px" align="center" label="指定时段内出入库酒量(t)">
+      <el-table-column min-width="80px" align="center" label="出入库酒量(t)">
         <template slot-scope="scope">
           <span :style="{ color: scope.row.in_out_bound > 0 ? 'red' : 'blue' }">
             {{ scope.row.in_out_bound }}
           </span>
         </template>
       </el-table-column>
-      <el-table-column label="" align="center" min-width="230" class-name="small-padding fixed-width">
+      <el-table-column min-width="80px" align="center" label="损耗酒量(t)">
+        <template slot-scope="scope">
+          <span :style="{ color: 'red'}">
+            {{ scope.row.wine_leak }}
+          </span>
+        </template>
+      </el-table-column>
+      <el-table-column label="" align="center" min-width="110" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button v-if="row.status!='deleted'" size="mini" type="primary" icon="el-icon-document" @click="handleHistory(row,$index)">
             酒量变化
@@ -199,7 +206,8 @@ export default {
         wine_vol: '',
         wine_volume: '',
         wine_name: '',
-        in_out_bound: ''
+        in_out_bound: '',
+        wine_leak: ''
       },
       readOnly: false,
       dialogFormVisible: false,
@@ -308,13 +316,15 @@ export default {
         wine_vol: '',
         wine_volume: '',
         wine_name: '',
-        in_out_bound: ''
+        in_out_bound: '',
+        wine_leak: ''
       }
     },
     handleAddUp() {
       getTotalInOutBound(this.listQuery).then(response => {
+        console.log(response)
         MessageBox.alert(
-          `符合查询条件出入库酒量(t): ${response.message}`,
+          `符合查询条件:<br>出入库酒量(吨): ${response.in_out_bound}<br>损耗酒量(吨):${response.wine_leak}`,
           '新消息',
           {
             confirmButtonText: '确定',
@@ -593,8 +603,8 @@ export default {
     },
     exportCurrentPage() {
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['陶坛ID', '陶坛位置', '缸型', '品名', '当前液位(mm)', '现有酒量(t)', '指定时间段出入库酒量']
-        const filterVal = ['jar_id', 'jar_pos', 'jar_type', 'wine_name', 'wine_level', 'wine_volume', 'in_out_bound']
+        const tHeader = ['陶坛ID', '陶坛位置', '缸型', '品名', '当前液位(mm)', '现有酒量(t)', '出入库酒量(t)', '损耗酒量(t)']
+        const filterVal = ['jar_id', 'jar_pos', 'jar_type', 'wine_name', 'wine_level', 'wine_volume', 'in_out_bound', 'wine_leak']
         const data = this.formatJson(filterVal)
 
         excel.export_json_to_excel({

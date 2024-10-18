@@ -61,12 +61,17 @@
           <span>{{ scope.row.wine_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="90px" label="液位(mm)" align="center">
+      <el-table-column min-width="84px" label="缸高(mm)" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.jar_height }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column min-width="84px" label="液位(mm)" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.wine_level }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="100px" label="现有酒量(t)" align="center">
+      <el-table-column min-width="84" label="酒量(t)" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.wine_volume }}</span>
         </template>
@@ -427,8 +432,8 @@ export default {
           console.log('888')
         } else {
           this.historyData = response.message.level_msg // 直接赋值
-          this.lidOpenData = response.message.lid_msg // 直接赋值
-          this.volHistoryData = response.message.vol_msg // 直接赋值
+          // this.lidOpenData = response.message.lid_msg // 直接赋值
+          // this.volHistoryData = response.message.vol_msg // 直接赋值
         }
         this.showChart = true
       })

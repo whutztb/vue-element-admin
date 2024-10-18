@@ -32,6 +32,7 @@ class StartSSE {
       // 提取 msg_type
       const msg_type = mainObj.msg_type
       if (msg_type === 'open_lid') {
+        /*
         const jarId = mainObj.jar_id
         const openTime = mainObj.open_time
         MessageBox.alert(
@@ -43,7 +44,7 @@ class StartSSE {
             dangerouslyUseHTMLString: true // 允许使用 HTML
           }
 
-        )
+        )*/
         EventBus.$emit('updateLidOpenListUI')
       } else if (msg_type === 'new_record') {
         /*
