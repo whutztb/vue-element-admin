@@ -10,6 +10,9 @@ NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
 const whiteList = ['/login', '/auth-redirect'] // no redirect whitelist
 
+// 在调用 getInfo 之前，可以使用一个 Promise 缓存机制，确保在角色数据未加载时不重复调用,避免重复调用getinfo及addRoutes
+let getInfoPromise = null
+
 router.beforeEach(async(to, from, next) => {
   // start progress bar
   NProgress.start()
@@ -31,6 +34,28 @@ router.beforeEach(async(to, from, next) => {
       if (hasRoles) {
         next()
       } else {
+        // 新写法
+        if (!getInfoPromise) {
+          getInfoPromise = store.dispatch('user/getInfo')
+            .then(async() => {
+              const roles = store.getters.roles
+              const accessRoutes = await store.dispatch('permission/generateRoutes', roles)
+              router.addRoutes(accessRoutes)
+              next({ ...to, replace: true })
+            })
+            .catch(async(error) => {
+              await store.dispatch('user/resetToken')
+              Message.error(error || 'Has Error')
+              next(`/login?redirect=${to.path}`)
+            })
+            .finally(() => {
+              getInfoPromise = null // 清除 Promise 缓存
+              NProgress.done()
+            })
+        }
+        await getInfoPromise // 等待 Promise 完成
+        // 原来的写法
+        /*
         try {
           // get user info
           // note: roles must be a object array! such as: ['admin'] or ,['developer','editor']
@@ -51,7 +76,7 @@ router.beforeEach(async(to, from, next) => {
           Message.error(error || 'Has Error')
           next(`/login?redirect=${to.path}`)
           NProgress.done()
-        }
+        }*/
       }
     }
   } else {

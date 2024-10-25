@@ -61,3 +61,17 @@ export function getTotalVolume(query) {
     params: query
   })
 }
+
+export function getCellarPosOptions() {
+  return request({
+    url: `${process.env.API_URL}/get_cellar_pos_options`,
+    method: 'get'
+  })
+}
+
+export function getJarTypeOptions() {
+  return request({
+    url: `${process.env.API_URL}/get_jar_type_options`,
+    method: 'get'
+  })
+}

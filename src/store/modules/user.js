@@ -36,6 +36,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password: password })
         .then(async(response) => {
+          console.log('response', response)
           commit('SET_TOKEN', response.token)
           setToken(response.token)
           if (response.code === 0) {
@@ -49,6 +50,7 @@ const actions = {
           }
         })
         .catch((error) => {
+          console.log('login error', error)
           reject(error)
         })
     })
@@ -58,22 +60,22 @@ const actions = {
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
       getInfo(state.token)
-        .then((response) => {
+        .then(response => {
           // 直接写固定值
           const data = {
-            roles: ['普通用户'],
-            introduction: '用户',
-            // avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
+            roles: [response.roles],
+            introduction: '',
             avatar: require('@/assets/images/logo.png'),
-            name: '普通用户'
+            name: ''
           }
+          // console.log("data",data)
 
           if (!data) {
             reject('Verification failed, please Login again.')
           }
 
           const { roles, name, avatar, introduction } = data
-
+          // console.log("getInfo roles:",roles)
           // roles must be a non-empty array
           if (!roles || roles.length <= 0) {
             reject('getInfo: roles must be a non-null array!')

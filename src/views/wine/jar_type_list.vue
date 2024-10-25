@@ -1,14 +1,9 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.cellar_id" placeholder="酒库ID" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.cellar_name" placeholder="酒库名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.cellar_pos" placeholder="酒库位置" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.jar_type_name" placeholder="陶坛类型名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         查询
-      </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-document" @click="handleStock">
-        统计
       </el-button>
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         新增
@@ -40,65 +35,93 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column align="center" label="酒库ID" min-width="95">
+      <el-table-column align="center" label="类型ID" min-width="95">
         <template slot-scope="scope">
-          <span>{{ scope.row.cellar_id }}</span>
+          <span>{{ scope.row.jar_type_id }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column min-width="100px" align="center" label="酒库名称">
+      <el-table-column min-width="100px" align="center" label="类型名称">
         <template slot-scope="scope">
-          <span>{{ scope.row.cellar_name }}</span>
+          <span>{{ scope.row.jar_type_name }}</span>
         </template>
       </el-table-column>
-
-      <el-table-column min-width="100px" label="酒库位置" align="center">
+      <el-table-column min-width="100px" align="center">
+        <template slot="header">
+          <span>标准高度<br>(mm)</span>
+        </template>
         <template slot-scope="scope">
-          <span>{{ scope.row.cellar_pos }}</span>
+          <span>{{ scope.row.jar_std_height }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="80px" label="缸型" align="center">
+      <el-table-column min-width="80px" align="center">
+        <template slot="header">
+          <span>标准容量<br>(L)</span>
+        </template>
         <template slot-scope="scope">
-          <span>{{ scope.row.jar_type }}</span>
+          <span>{{ scope.row.jar_std_volume }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="50px" label="缸数" align="center">
+      <el-table-column min-width="80px" align="center">
+        <template slot="header">
+          <span>颈高<br>(mm)</span>
+        </template>
         <template slot-scope="scope">
-          <span>{{ scope.row.all_jar_num }}</span>
+          <span>{{ scope.row.neck_height }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="50px" label="空缸" align="center">
+      <el-table-column min-width="80px" align="center">
+        <template slot="header">
+          <span>肩高<br>(mm)</span>
+        </template>
         <template slot-scope="scope">
-          <span>{{ scope.row.empty_jar_num }}</span>
+          <span>{{ scope.row.shoulder_height }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="50px" label="漏缸" align="center">
+      <el-table-column min-width="80px" align="center">
+        <template slot="header">
+          <span>颈周长<br>(mm)</span>
+        </template>
         <template slot-scope="scope">
-          <span>{{ scope.row.bad_jar_num }}</span>
+          <span>{{ scope.row.neck_cir }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="100px" label="现有酒量(t)" align="center">
+      <el-table-column min-width="80px" align="center">
+        <template slot="header">
+          <span>肩周长<br>(mm)</span>
+        </template>
         <template slot-scope="scope">
-          <span>{{ scope.row.all_wine_volume }}</span>
+          <span>{{ scope.row.shoulder_cir }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="110px" label="可容纳酒量(t)" align="center">
+      <el-table-column min-width="80px" align="center">
+        <template slot="header">
+          <span>底周长<br>(mm)</span>
+        </template>
         <template slot-scope="scope">
-          <span>{{ scope.row.all_jar_volume }}</span>
+          <span>{{ scope.row.bottom_cir }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="70px" label="利用率" align="center">
+      <el-table-column min-width="60px" align="center">
+        <template slot="header">
+          <span>底厚<br>(mm)</span>
+        </template>
         <template slot-scope="scope">
-          <span>{{ scope.row.cellar_usage_rate }}</span>
+          <span>{{ scope.row.bottom_height }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="" align="center" min-width="250" class-name="small-padding fixed-width">
+      <el-table-column min-width="60px" align="center">
+        <template slot="header">
+          <span>壁厚<br>(mm)</span>
+        </template>
+        <template slot-scope="scope">
+          <span>{{ scope.row.thickness }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="" align="center" min-width="180" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(row)">
             编辑
-          </el-button>
-          <el-button v-if="row.status!='deleted'" size="mini" type="info" icon="el-icon-eye" @click="handleMonitor(row,$index)">
-            视频监控
           </el-button>
           <el-button v-if="row.status!='deleted'" size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(row,$index)">
             删除
@@ -116,34 +139,38 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="酒库ID" prop="cellar_id" label-width="100px">
-          <el-input v-model="temp.cellar_id" :readonly="readOnly" />
+        <el-form-item label="陶坛类型ID" prop="jar_type_id" label-width="120px">
+          <el-input v-model="temp.jar_type_id" :readonly="readOnly" />
         </el-form-item>
-        <el-form-item label="酒库名称" prop="cellar_name" label-width="100px">
-          <el-input v-model="temp.cellar_name" />
+        <el-form-item label="陶坛类型名称" prop="jar_type_name" label-width="120px">
+          <el-input v-model="temp.jar_type_name" />
         </el-form-item>
-        <el-form-item label="酒库位置" prop="cellar_pos" label-width="100px">
-          <el-input v-model="temp.cellar_pos" />
+        <el-form-item label="标准高度(mm)" prop="jar_std_height" label-width="120px">
+          <el-input v-model="temp.jar_std_height" />
         </el-form-item>
-        <el-form-item label="缸型" prop="jar_type" label-width="100px">
-          <el-select v-model="temp.jar_type" class="filter-item" placeholder="请选择">
-            <el-option v-for="item in jarTypeOptions" :key="item" :label="item" :value="item" />
-          </el-select>
+        <el-form-item label="标准容量(L)" prop="jar_std_volume" label-width="120px">
+          <el-input v-model="temp.jar_std_volume" />
         </el-form-item>
-        <el-form-item label="缸数" prop="all_jar_num" label-width="100px">
-          <el-input v-model="temp.all_jar_num" />
+        <el-form-item label="颈高(mm)" prop="neck_height" label-width="120px">
+          <el-input v-model="temp.neck_height" />
         </el-form-item>
-        <el-form-item label="空缸" prop="empty_jar_num" label-width="100px">
-          <el-input v-model="temp.empty_jar_num" />
+        <el-form-item label="肩高(mm)" prop="shoulder_height" label-width="120px">
+          <el-input v-model="temp.shoulder_height" />
         </el-form-item>
-        <el-form-item label="漏缸" prop="bad_jar_num" label-width="100px">
-          <el-input v-model="temp.bad_jar_num" />
+        <el-form-item label="颈周长(mm)" prop="neck_cir" label-width="120px">
+          <el-input v-model="temp.neck_cir" />
         </el-form-item>
-        <el-form-item label="酒容积(m³)" prop="all_wine_volume" label-width="100px">
-          <el-input v-model="temp.all_wine_volume" />
+        <el-form-item label="肩周长(mm)" prop="shoulder_cir" label-width="120px">
+          <el-input v-model="temp.shoulder_cir" />
         </el-form-item>
-        <el-form-item label="总容积(m³)" prop="all_jar_volume" label-width="100px">
-          <el-input v-model="temp.all_jar_volume" />
+        <el-form-item label="底周长(mm)" prop="bottom_cir" label-width="120px">
+          <el-input v-model="temp.bottom_cir" />
+        </el-form-item>
+        <el-form-item label="底高(mm)" prop="bottom_height" label-width="120px">
+          <el-input v-model="temp.bottom_height" />
+        </el-form-item>
+        <el-form-item label="壁厚(mm)" prop="thickness" label-width="120px">
+          <el-input v-model="temp.thickness" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -169,12 +196,10 @@
 </template>
 
 <script>
-import { getJarTypeOptions } from '@/api/wine_jar'
-import { fetchList, deleteCellar, createCellar, updateCellar, exportCellarList, getStock } from '@/api/wine_cellar'
+import { fetchList, deleteJarType, createJarType, updateJarType, exportJarTypeList } from '@/api/wine_jar_type'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
-import echarts from 'echarts'
 
 export default {
   name: 'ComplexTable',
@@ -199,25 +224,23 @@ export default {
       listQuery: {
         page: 1,
         limit: 20,
-        cellar_name: '',
-        cellar_id: '',
-        cellar_pos: ''
+        jar_type_name: ''
       },
 
       showReviewer: false,
       temp: {
-        cellar_id: undefined,
-        cellar_name: '',
-        cellar_pos: '',
-        jar_type: '',
-        all_jar_num: '',
-        empty_jar_num: '',
-        bad_jar_num: '',
-        all_wine_volume: '',
-        all_jar_volume: '',
-        cellar_usage_rate: ''
+        jar_type_id: undefined,
+        jar_type_name: '',
+        jar_std_height: 0,
+        jar_std_volume: 0,
+        neck_height: 0,
+        shoulder_height: 0,
+        neck_cir: 0,
+        shoulder_cir: 0,
+        bottom_cir: 0,
+        bottom_height: 0,
+        thickness: 0
       },
-      jarTypeOptions: [],
       readOnly: false,
       dialogFormVisible: false,
       dialogStatus: '',
@@ -228,32 +251,38 @@ export default {
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        cellar_id: [
-          { required: true, message: '请输入酒库ID', trigger: 'blur' }
+        jar_type_id: [
+          { required: true, message: '请输入陶坛类型ID', trigger: 'blur' }
         ],
-        cellar_name: [
-          { required: true, message: '请输入酒库名称', trigger: 'blur' }
+        jar_type_name: [
+          { required: true, message: '请输入陶坛类型名称', trigger: 'blur' }
         ],
-        cellar_pos: [
-          { required: true, message: '请输入酒库位置', trigger: 'blur' }
+        jar_std_height: [
+          { required: true, message: '请输入标准高度', trigger: 'blur' }
         ],
-        jar_type: [
-          { required: true, message: '请输入缸型', trigger: 'blur' }
+        jar_std_volume: [
+          { required: true, message: '请输入标准容量', trigger: 'blur' }
         ],
-        all_jar_num: [
-          { required: true, message: '请输入总缸数', trigger: 'blur' }
+        neck_height: [
+          { required: true, message: '请输入颈高', trigger: 'blur' }
         ],
-        empty_jar_num: [
-          { required: true, message: '请输入空缸数', trigger: 'blur' }
+        shoulder_height: [
+          { required: true, message: '请输入肩高', trigger: 'blur' }
         ],
-        bad_jar_num: [
-          { required: true, message: '请输入漏缸数', trigger: 'blur' }
+        neck_cir: [
+          { required: true, message: '请输入颈周长', trigger: 'blur' }
         ],
-        all_wine_volume: [
-          { required: true, message: '请输入酒容积', trigger: 'blur' }
+        shoulder_cir: [
+          { required: true, message: '请输入肩周长', trigger: 'blur' }
         ],
-        all_jar_volume: [
-          { required: true, message: '请输入总容积', trigger: 'blur' }
+        bottom_cir: [
+          { required: true, message: '请输入底周长', trigger: 'blur' }
+        ],
+        bottom_height: [
+          { required: true, message: '请输入底高', trigger: 'blur' }
+        ],
+        thickness: [
+          { required: true, message: '请输入壁厚', trigger: 'blur' }
         ]
       },
       downloadLoading: false,
@@ -264,19 +293,11 @@ export default {
       stockData: null // 初始化为空数组,库存数据
     }
   },
-  watch: {
-    showChart(newVal) {
-      if (newVal) {
-        this.initChart()
-      }
-    }
-  },
   created() {
     this.getList()
   },
   mounted() {
-    this.initChart()
-    this.fetchJarTypeOptions()
+
   },
   beforeDestroy() {
     if (this.chart) {
@@ -285,12 +306,6 @@ export default {
     }
   },
   methods: {
-    // 获取陶坛类型
-    fetchJarTypeOptions() {
-      getJarTypeOptions().then(response => {
-        this.jarTypeOptions = response.items.map(item => item.jar_type_name)
-      })
-    },
     getList() {
       // console.log("jar listQuery",this.listQuery)
       this.listLoading = true
@@ -327,16 +342,17 @@ export default {
     },
     resetTemp() {
       this.temp = {
-        cellar_id: undefined,
-        cellar_name: '',
-        cellar_pos: '',
-        jar_type: '',
-        all_jar_num: 0,
-        empty_jar_num: 0,
-        bad_jar_num: 0,
-        all_wine_volume: 0,
-        all_jar_volume: 0,
-        cellar_usage_rate: 0.0
+        jar_type_id: undefined,
+        jar_type_name: '',
+        jar_std_height: '',
+        jar_std_volume: '',
+        neck_height: 0,
+        shoulder_height: 0,
+        neck_cir: 0,
+        shoulder_cir: 0,
+        bottom_cir: 0,
+        bottom_height: 0,
+        thickness: 0
       }
     },
     handleCreate() {
@@ -356,7 +372,7 @@ export default {
           } else {
             this.temp.cellar_usage_rate = 0 // 或根据需求设置为其他值
           }
-          createCellar(this.temp).then(() => {
+          createJarType(this.temp).then(() => {
             this.list.unshift(this.temp)
             this.dialogFormVisible = false
             this.getList() // 调用 getList 方法以刷新数据
@@ -388,7 +404,7 @@ export default {
             this.temp.cellar_usage_rate = 0 // 或根据需求设置为其他值
           }
           const tempData = Object.assign({}, this.temp)
-          updateCellar(tempData).then(() => {
+          updateJarType(tempData).then(() => {
             const index = this.list.findIndex(v => v.cellar_id === this.temp.cellar_id)
             this.list.splice(index, 1, this.temp)
             this.dialogFormVisible = false
@@ -408,7 +424,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteCellar(row).then(response => {
+        deleteJarType(row).then(response => {
           this.$notify({
             title: '操作成功',
             message: '删除成功',
@@ -436,180 +452,6 @@ export default {
     handleMonitor(row, index) {
 
     },
-    handleStock() {
-      getStock().then(response => {
-        this.stockData = response.items
-        this.showChart = true
-        this.$nextTick(() => { // 确保 DOM 更新后再初始化图表
-          this.initChart()
-        })
-      })
-    },
-    initChart() {
-      const chartElement = this.$refs.chartContainer
-      if (chartElement) {
-        this.chart = echarts.init(chartElement)
-        // 提取数据
-        const xData = this.stockData.map(item => item.cellar_name)
-        const allWineVolumeData = this.stockData.map(item => item.all_wine_volume)
-        const allJarVolumeData = this.stockData.map(item => item.all_jar_volume)
-
-        this.chart.setOption({
-          // backgroundColor: '#344b58',
-          title: {
-            x: '20',
-            top: '20',
-            textStyle: {
-              color: '#fff',
-              fontSize: '22'
-            },
-            subtextStyle: {
-              color: '#90979c',
-              fontSize: '16'
-            }
-          },
-          tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-              textStyle: {
-                color: '#fff'
-              }
-            }
-          },
-          grid: {
-            left: '7%',
-            right: '5%',
-            borderWidth: 0,
-            top: 100,
-            bottom: 50,
-            textStyle: {
-              color: '#fff'
-            }
-          },
-          legend: {
-            x: '5%',
-            top: '10%',
-            textStyle: {
-              color: '#90979c'
-            },
-            data: ['可容纳酒量(吨)', '现有酒量(吨)']
-          },
-          calculable: true,
-          xAxis: [{
-            type: 'category',
-            axisLine: {
-              lineStyle: {
-                color: '#90979c'
-              }
-            },
-            splitLine: {
-              show: false
-            },
-            axisTick: {
-              show: false
-            },
-            splitArea: {
-              show: false
-            },
-            axisLabel: {
-              interval: 0
-
-            },
-            data: xData
-          }],
-          yAxis: [{
-            type: 'value',
-            min: 0,
-            splitLine: {
-              show: false
-            },
-            axisLine: {
-              lineStyle: {
-                color: '#90979c'
-              }
-            },
-            axisTick: {
-              show: false
-            },
-            axisLabel: {
-              interval: 0
-            },
-            splitArea: {
-              show: false
-            }
-          }],
-          dataZoom: [{
-            show: false,
-            height: 30,
-            xAxisIndex: [
-              0
-            ],
-            bottom: 30,
-            start: 0,
-            end: 100,
-            handleIcon: 'path://M306.1,413c0,2.2-1.8,4-4,4h-59.8c-2.2,0-4-1.8-4-4V200.8c0-2.2,1.8-4,4-4h59.8c2.2,0,4,1.8,4,4V413z',
-            handleSize: '110%',
-            handleStyle: {
-              color: '#d3dee5'
-
-            },
-            textStyle: {
-              color: '#fff' },
-            borderColor: '#90979c'
-
-          }, {
-            type: 'inside',
-            show: true,
-            height: 15,
-            start: 1,
-            end: 35
-          }],
-          series: [{
-            name: '可容纳酒量(吨)',
-            type: 'bar',
-            barMaxWidth: 35,
-            barGap: '10%', // 设置间隔
-            itemStyle: {
-              normal: {
-                color: 'rgba(255,144,128,1)',
-                label: {
-                  show: true,
-                  textStyle: {
-                    color: '#fff'
-                  },
-                  position: 'top', // 在顶部显示
-                  formatter(p) {
-                    return p.value > 0 ? p.value : ''
-                  }
-                }
-              }
-            },
-            data: allJarVolumeData
-          }, {
-            name: '现有酒量(吨)',
-            type: 'bar',
-            itemStyle: {
-              normal: {
-                color: 'rgba(0,191,183,1)',
-                barBorderRadius: 0,
-                label: {
-                  show: true,
-                  position: 'top', // 在内部显示
-                  formatter(p) {
-                    return p.value > 0 ? p.value : ''
-                  }
-                }
-              }
-            },
-            data: allWineVolumeData
-          }]
-        })
-        setTimeout(() => {
-          this.chart.resize()
-        }, 100) // 确保在弹窗打开后再调整大小
-      }
-    },
-
     handleDownload(type) {
       this.showDialog = false // 关闭弹窗
       this.downloadLoading = true // 开始下载
@@ -628,13 +470,13 @@ export default {
 
     exportCurrentPage() {
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['酒库ID', '酒库名称', '酒库位置', '缸型', '总数', '空缸', '漏缸', '总酒量(m³)', '总容量(m³)', '利用率']
-        const filterVal = ['cellar_id', 'cellar_name', 'cellar_pos', 'jar_type', 'all_jar_num', 'empty_jar_num', 'bad_jar_num', 'all_wine_volume', 'all_jar_volume', 'cellar_usage_rate']
+        const tHeader = ['陶坛类型ID', '陶坛类型名称', '标准高度', '标准容量', '颈高', '肩高', '颈周长', '肩周长', '底周长', '底厚', '壁厚']
+        const filterVal = ['jar_type_id', 'jar_type_name', 'jar_std_height', 'jar_std_volume', 'neck_height', 'shoulder_height', 'neck_cir', 'shoulder_cir', 'bottom_cir', 'bottom_height', 'thickness']
         const data = this.formatJson(filterVal)
         excel.export_json_to_excel({
           header: tHeader,
           data,
-          filename: 'current-page-jar-list'
+          filename: 'current-page-jar-type-list'
         })
         this.downloadLoading = false
       })
@@ -643,12 +485,12 @@ export default {
       this.downloadLoading = true // 开始下载时显示加载状态
 
       // 发起请求以获取 Excel 文件，传递查询参数
-      exportCellarList(this.listQuery)
+      exportJarTypeList(this.listQuery)
         .then(blob => { // 直接获取 Blob 对象
           const url = window.URL.createObjectURL(blob) // 创建 Blob URL
           const a = document.createElement('a') // 创建一个链接元素
           a.href = url
-          a.download = 'all-page-cellar-list.xlsx' // 设置下载的文件名
+          a.download = 'all-page-jar-type-list.xlsx' // 设置下载的文件名
           document.body.appendChild(a) // 将链接添加到文档
           a.click() // 模拟点击
           a.remove() // 下载后移除链接

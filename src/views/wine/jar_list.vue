@@ -76,7 +76,7 @@
           <span>{{ scope.row.wine_volume }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="155px" align="center" label="数据更新日期">
+      <el-table-column min-width="155px" align="center" label="测量数据更新日期">
         <template slot-scope="scope">
           <span>{{ scope.row.level_update_time }}</span>
         </template>
@@ -109,10 +109,14 @@
           <el-input v-model="temp.jar_id" :readonly="readOnly" />
         </el-form-item>
         <el-form-item label="缸型" prop="jar_type" label-width="150px">
-          <el-input v-model="temp.jar_type" />
+          <el-select v-model="temp.jar_type" class="filter-item" placeholder="请选择">
+            <el-option v-for="item in jarTypeOptions" :key="item" :label="item" :value="item" />
+          </el-select>
         </el-form-item>
         <el-form-item label="缸位置" prop="jar_pos" label-width="150px">
-          <el-input v-model="temp.jar_pos" />
+          <el-select v-model="temp.jar_pos" class="filter-item" placeholder="请选择">
+            <el-option v-for="item in cellarPosOptions" :key="item" :label="item" :value="item" />
+          </el-select>
         </el-form-item>
         <el-form-item label="缸高(mm)" prop="jar_height" label-width="150px">
           <el-input v-model="temp.jar_height" />
@@ -123,7 +127,7 @@
         <el-form-item label="品名" prop="wine_name" label-width="150px">
           <el-input v-model="temp.wine_name" />
         </el-form-item>
-        <el-form-item label="更新日期" prop="level_update_time" label-width="150px">
+        <el-form-item label="更新时间" prop="level_update_time" label-width="150px">
           <el-date-picker v-model="temp.level_update_time" type="datetime" placeholder="请选择日期" />
         </el-form-item>
       </el-form>
@@ -150,7 +154,7 @@
 </template>
 
 <script>
-import { fetchList, deleteJar, createJar, updateJar, exportJarList, getHistory, getTotalVolume } from '@/api/wine_jar'
+import { fetchList, deleteJar, createJar, updateJar, exportJarList, getHistory, getTotalVolume, getJarTypeOptions, getCellarPosOptions } from '@/api/wine_jar'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -199,6 +203,8 @@ export default {
         wine_name: '',
         level_update_time: ''
       },
+      cellarPosOptions: [],
+      jarTypeOptions: [],
       readOnly: false,
       dialogFormVisible: false,
       dialogStatus: '',
@@ -256,6 +262,8 @@ export default {
   },
   mounted() {
     this.initChart()
+    this.fetchCellarPosOptions()
+    this.fetchJarTypeOptions()
   },
   beforeDestroy() {
     // 清除事件监听
@@ -266,6 +274,19 @@ export default {
     }
   },
   methods: {
+    // 获取酒库位置
+    fetchCellarPosOptions() {
+      getCellarPosOptions().then(response => {
+        this.cellarPosOptions = response.items.map(item => item.cellar_name)
+      })
+    },
+    // 获取陶坛类型
+    fetchJarTypeOptions() {
+      getJarTypeOptions().then(response => {
+        this.jarTypeOptions = response.items.map(item => item.jar_type_name)
+      })
+    },
+
     getList() {
       // console.log("jar listQuery",this.listQuery)
       this.listLoading = true

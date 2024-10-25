@@ -68,6 +68,11 @@
           <span>{{ row.gender }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="角色" align="center" min-width="100">
+        <template slot-scope="{row}">
+          <span>{{ row.user_role }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="" align="center" min-width="280" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(row)">
@@ -75,9 +80,6 @@
           </el-button>
           <el-button type="info" size="mini" icon="el-icon-lock" @click="handleChangePwd(row)">
             修改密码
-          </el-button>
-          <el-button type="info" size="mini" icon="el-icon-lock" @click="handleRole(row)">
-            权限配制
           </el-button>
           <el-button v-if="row.status!='deleted'" size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(row,$index)">
             删除
@@ -99,6 +101,11 @@
         <el-form-item v-if="dialogStatus === 'create'" label="密码" prop="user_pwd">
           <el-input v-model="temp.user_pwd" />
         </el-form-item>
+        <el-form-item v-if="dialogStatus !== 'change_pwd'" label="角色" prop="user_role">
+          <el-select v-model="temp.user_role" class="filter-item" placeholder="请选择">
+            <el-option v-for="item in roleOptions" :key="item" :label="item" :value="item" />
+          </el-select>
+        </el-form-item>
         <el-form-item v-if="dialogStatus === 'change_pwd' " label="旧密码" prop="user_old_pwd">
           <el-input v-model="temp.user_old_pwd" />
         </el-form-item>
@@ -116,6 +123,7 @@
             <el-option v-for="item in genderOptions" :key="item" :label="item" :value="item" />
           </el-select>
         </el-form-item>
+
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
@@ -171,8 +179,6 @@ export default {
         user_name: '',
         user_id: ''
       },
-
-      genderOptions: ['男', '女'],
       showReviewer: false,
       temp: {
         user_id: '',
@@ -181,8 +187,12 @@ export default {
         user_old_pwd: '',
         user_new_pwd: '',
         phone_num: '',
-        department: ''
+        department: '',
+        user_role: '普通用户',
+        gender: '男'
       },
+      genderOptions: ['男', '女'],
+      roleOptions: ['管理员', '普通用户'],
       readOnly: false,
       dialogFormVisible: false,
       dialogStatus: '',
@@ -199,6 +209,9 @@ export default {
         ],
         user_name: [
           { required: false, message: '请输入用户名', trigger: 'blur' }
+        ],
+        user_role: [
+          { required: true, message: '请输入用户角色', trigger: 'blur' }
         ],
         phone_num: [
           { required: false, message: '请输入电话', trigger: 'blur' }
@@ -272,8 +285,15 @@ export default {
     },
     resetTemp() {
       this.temp = {
-        user_id: undefined,
-        user_name: ''
+        user_id: '',
+        user_name: '',
+        user_pwd: '',
+        user_old_pwd: '',
+        user_new_pwd: '',
+        phone_num: '',
+        department: '',
+        user_role: '普通用户',
+        gender: '男'
       }
     },
     handleCreate() {

@@ -36,13 +36,13 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column align="center" label="设备ID" min-width="260">
+      <el-table-column align="center" label="设备ID" min-width="200">
         <template slot-scope="scope">
           <span>{{ scope.row.device_id }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column min-width="150px" align="center" label="设备名称">
+      <el-table-column min-width="200px" align="center" label="设备名称">
         <template slot-scope="scope">
           <span>{{ scope.row.device_name }}</span>
         </template>

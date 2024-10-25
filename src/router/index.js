@@ -7,10 +7,10 @@ Vue.use(Router)
 import Layout from '@/layout'
 
 /* Router Modules */
-import componentsRouter from './modules/components'
-import chartsRouter from './modules/charts'
-import tableRouter from './modules/table'
-import nestedRouter from './modules/nested'
+// import componentsRouter from './modules/components'
+// import chartsRouter from './modules/charts'
+// import tableRouter from './modules/table'
+// import nestedRouter from './modules/nested'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -39,27 +39,27 @@ import nestedRouter from './modules/nested'
  * all roles can be accessed
  */
 export const constantRoutes = [
-  {
-    path: '/redirect',
-    component: Layout,
-    hidden: true,
-    children: [
-      {
-        path: '/redirect/:path(.*)',
-        component: () => import('@/views/redirect/index')
-      }
-    ]
-  },
+  // {
+  //   path: '/redirect',
+  //   component: Layout,
+  //   hidden: true,
+  //   children: [
+  //     {
+  //       path: '/redirect/:path(.*)',
+  //       component: () => import('@/views/redirect/index')
+  //     }
+  //   ]
+  // },
   {
     path: '/login',
     component: () => import('@/views/login/index'),
     hidden: true
   },
-  {
-    path: '/auth-redirect',
-    component: () => import('@/views/login/auth-redirect'),
-    hidden: true
-  },
+  // {
+  //   path: '/auth-redirect',
+  //   component: () => import('@/views/login/auth-redirect'),
+  //   hidden: true
+  // },
   {
     path: '/404',
     component: () => import('@/views/error-page/404'),
@@ -73,13 +73,12 @@ export const constantRoutes = [
   {
     path: '/',
     component: Layout,
-    redirect: '/dashboard',
     children: [
       {
-        path: 'dashboard',
+        path: '/dashboard',
         component: () => import('@/views/dashboard/index'),
         name: '首页',
-        meta: { title: '首页', icon: 'dashboard', affix: true }
+        meta: { title: '首页', icon: 'guide', affix: true }
       }
     ]
   }
@@ -130,6 +129,158 @@ export const constantRoutes = [
  */
 export const asyncRoutes = [
   {
+    path: '/views/wine/cellar_list',
+    component: Layout,
+    // redirect: '/dashboard',
+    // alwaysShow: true, // will always show the root menu
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/wine/cellar_list'),
+        name: '酒库管理',
+        meta: {
+          title: '酒库管理',
+          icon: 'list',
+          affix: true,
+          roles: ['管理员', '普通用户'] // or you can only set roles in sub nav
+        }
+      }
+    ]
+  },
+  {
+    path: '/views/wine/jar_list',
+    component: Layout,
+    // redirect: '/dashboard',
+    // alwaysShow: true, // will always show the root menu
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/wine/jar_list'),
+        name: '陶坛管理',
+        meta: {
+          title: '陶坛管理',
+          icon: 'documentation',
+          affix: true,
+          roles: ['管理员', '普通用户'] // or you can only set roles in sub nav
+        }
+      }
+    ]
+  },
+  {
+    path: '/views/wine/in_out_bound_list',
+    component: Layout,
+    // redirect: '/dashboard',
+    // alwaysShow: true, // will always show the root menu
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/wine/in_out_bound_list'),
+        name: '出入库管理',
+        meta: {
+          title: '出入库管理',
+          icon: 'icon',
+          affix: true,
+          roles: ['管理员', '普通用户'] // or you can only set roles in sub nav
+        }
+      }
+    ]
+  },
+  {
+    path: '/views/wine/lid_open_list',
+    component: Layout,
+    // redirect: '/dashboard',
+    // alwaysShow: true, // will always show the root menu
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/wine/lid_open_list'),
+        name: '缸盖异动报警',
+        meta: {
+          title: '缸盖异动报警',
+          icon: 'message',
+          affix: true,
+          roles: ['管理员', '普通用户'] // or you can only set roles in sub nav
+        }
+      }
+    ]
+  },
+  {
+    path: '/views/wine/jar_type_list',
+    component: Layout,
+    // redirect: '/dashboard',
+    // alwaysShow: true, // will always show the root menu
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/wine/jar_type_list'),
+        name: '陶坛属性管理',
+        meta: {
+          title: '陶坛属性管理',
+          icon: 'message',
+          affix: true,
+          roles: ['管理员'] // or you can only set roles in sub nav
+        }
+      }
+    ]
+  },
+  {
+    path: '/views/wine/plan_list',
+    component: Layout,
+    // redirect: '/dashboard',
+    // alwaysShow: true, // will always show the root menu
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/wine/plan_list'),
+        name: '方案管理',
+        meta: {
+          title: '方案管理',
+          icon: 'component',
+          affix: true,
+          roles: ['管理员'] // or you can only set roles in sub nav
+        }
+      }
+    ]
+  },
+  {
+    path: '/views/wine/user_list',
+    component: Layout,
+    // redirect: '/dashboard',
+    // alwaysShow: true, // will always show the root menu
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/wine/user_list'),
+        name: '用户管理',
+        meta: {
+          title: '用户管理',
+          icon: 'user',
+          affix: true,
+          roles: ['管理员'] // or you can only set roles in sub nav
+        }
+      }
+    ]
+  },
+  {
+    path: '/views/wine/device_list',
+    component: Layout,
+    // redirect: '/dashboard',
+    // alwaysShow: true, // will always show the root menu
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/wine/device_list'),
+        name: '设备管理',
+        meta: {
+          title: '设备管理',
+          icon: 'tree',
+          affix: true,
+          roles: ['管理员'] // or you can only set roles in sub nav
+        }
+      }
+    ]
+  },
+  /* {
     path: '/permission',
     component: Layout,
     redirect: '/permission/page',
@@ -182,9 +333,10 @@ export const asyncRoutes = [
         meta: { title: 'Icons', icon: 'icon', noCache: true }
       }
     ]
-  },
+  },*/
 
   /** when your routing map is too long, you can split it into small modules **/
+  /*
   componentsRouter,
   chartsRouter,
   nestedRouter,
@@ -382,6 +534,7 @@ export const asyncRoutes = [
       }
     ]
   },
+  */
 
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
