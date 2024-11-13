@@ -8,10 +8,10 @@
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         查询
       </el-button>
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-document" @click="handleAddUp">
+      <el-button v-waves class="filter-item" type="primary" icon="el-icon-s-data" @click="handleAddUp">
         统计
       </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
+      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-circle-plus" @click="handleCreate">
         新增
       </el-button>
       <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="showDialog = true">
@@ -288,7 +288,7 @@ export default {
     },
 
     getList() {
-      // console.log("jar listQuery",this.listQuery)
+      console.log('jar listQuery', this.listQuery)
       this.listLoading = true
       fetchList(this.listQuery).then(response => {
         this.list = response.items
@@ -337,8 +337,8 @@ export default {
     handleAddUp() {
       getTotalVolume(this.listQuery).then(response => {
         MessageBox.alert(
-          `符合查询条件总酒量(t): ${response.message}`,
-          '新消息',
+          `符合查询条件总酒量(吨): ${response.message}`,
+          '统计结果',
           {
             confirmButtonText: '确定',
             type: 'info',
@@ -363,7 +363,7 @@ export default {
           const formattedDateTime = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`
           this.temp.level_update_time = formattedDateTime
           // 将测量的液位转换成容积，采用液位*0.000666的策略(这里主要是解决显示异常问题--容积不更新，实际后台会采用该策略处理)
-          this.temp.wine_volume = (0.000666 * this.temp.wine_level).toFixed(3)
+          // this.temp.wine_volume = (0.000666 * this.temp.wine_level).toFixed(3)
           createJar(this.temp).then(() => {
             this.list.unshift(this.temp)
             this.dialogFormVisible = false
@@ -395,12 +395,10 @@ export default {
           const date = new Date(this.temp.level_update_time)
           const formattedDateTime = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`
           this.temp.level_update_time = formattedDateTime
-          // 将测量的液位转换成容积，采用液位*0.000666的策略(这里主要是解决显示异常问题--容积不更新，实际后台会采用该策略处理)
-          this.temp.wine_volume = (0.000666 * this.temp.wine_level).toFixed(3)
-
           const tempData = Object.assign({}, this.temp)
           // tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          updateJar(tempData).then(() => {
+          updateJar(tempData).then((response) => {
+            this.temp.wine_volume = response.wine_volume // 将 wine_volume 赋值给 this.temp.wine_volume
             const index = this.list.findIndex(v => v.jar_id === this.temp.jar_id)
             this.list.splice(index, 1, this.temp)
             this.dialogFormVisible = false
@@ -495,7 +493,7 @@ export default {
           })
           */
           this.chart.setOption({
-            backgroundColor: '#394056',
+            // backgroundColor: '#394056',
             title: {
               top: 20,
               textStyle: {

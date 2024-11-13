@@ -1,22 +1,58 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-date-picker
-        v-model="listQuery.startDate"
-        type="datetime"
-        placeholder="选择起始时间"
-        class="filter-item"
-        style="width: 180px;"
-      />
-      <el-date-picker
-        v-model="listQuery.endDate"
-        type="datetime"
-        placeholder="选择结束时间"
-        class="filter-item"
-        style="width: 180px;"
-      />
+      <div class="filter-item">
+        <el-select v-model="listQuery.condition" placeholder="日期选择" style="width: 120px;">
+          <el-option label="按照年度" value="year" />
+          <el-option label="按照季度" value="quarter" />
+          <el-option label="按照月份" value="month" />
+          <el-option label="指定区间" value="range" />
+        </el-select>
+      </div>
+      <div v-if="listQuery.condition === 'year'" class="filter-item">
+        <el-select v-model="listQuery.year" placeholder="选择年份" style="width: 120px;">
+          <el-option v-for="year in years" :key="year" :label="year" :value="year" />
+        </el-select>
+      </div>
+      <div v-if="listQuery.condition === 'quarter'" class="filter-item">
+        <el-select v-model="listQuery.quarter" placeholder="选择季度" style="width: 180px;">
+          <template v-for="year in years">
+            <el-option
+              v-for="quarter in quarters"
+              :key="`${year}-${quarter}`"
+              :label="`${year}年${quarter}`"
+              :value="`${year}-${quarter}`"
+            />
+          </template>
+        </el-select>
+      </div>
+      <div v-if="listQuery.condition === 'month'" class="filter-item">
+        <el-select v-model="listQuery.month" placeholder="选择月份" style="width: 120px;">
+          <template v-for="year in years">
+            <el-option
+              v-for="month in months"
+              :key="`${year}-${month}`"
+              :label="`${year}年${month}月`"
+              :value="`${year}-${month}`"
+            />
+          </template>
+        </el-select>
+      </div>
+      <div v-if="listQuery.condition === 'range'" class="filter-item">
+        <el-date-picker
+          v-model="listQuery.startDate"
+          type="datetime"
+          placeholder="选择起始时间"
+          style="width: 180px;"
+        />
+        <el-date-picker
+          v-model="listQuery.endDate"
+          type="datetime"
+          placeholder="选择结束时间"
+          style="width: 180px;"
+        />
+      </div>
       <el-input v-model="listQuery.jar_pos" placeholder="位置" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.jar_type" placeholder="缸型" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.wine_name" placeholder="品名" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         查询
@@ -195,6 +231,10 @@ export default {
         startDate: '',
         endDate: ''
       },
+      years: Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - i), // 倒序的年份
+      quarters: ['第4季度', '第3季度', '第2季度', '第1季度'], // 倒序的季度
+      months: Array.from({ length: 12 }, (_, i) => (12 - i).toString().padStart(2, '0')), // 倒序的月份
+      showSelectedOptions: false, // 控制是否显示已选择的选项
 
       showReviewer: false,
       temp: {
@@ -281,7 +321,45 @@ export default {
         this.listLoading = false
       })
     },
+    handleConditionChange() {
+      // Reset startDate and endDate
+      if (this.listQuery.condition !== 'range') {
+        this.listQuery.startDate = ''
+        this.listQuery.endDate = ''
+      }
+
+      const year = this.listQuery.year
+      const month = this.listQuery.month
+      const quarter = this.listQuery.quarter
+
+      if (this.listQuery.condition === 'year' && year) {
+        this.listQuery.startDate = new Date(year, 0, 1) // 1月1日
+        this.listQuery.endDate = new Date(year, 11, 31) // 12月31日
+      } else if (this.listQuery.condition === 'quarter' && quarter) {
+        const [qYear, q] = quarter.split('-')
+        if (q === '第1季度') {
+          this.listQuery.startDate = new Date(qYear, 0, 1) // 1月1日
+          this.listQuery.endDate = new Date(qYear, 2, 31) // 3月31日
+        } else if (q === '第2季度') {
+          this.listQuery.startDate = new Date(qYear, 3, 1) // 4月1日
+          this.listQuery.endDate = new Date(qYear, 5, 30) // 6月30日
+        } else if (q === '第3季度') {
+          this.listQuery.startDate = new Date(qYear, 6, 1) // 7月1日
+          this.listQuery.endDate = new Date(qYear, 8, 30) // 9月30日
+        } else if (q === '第4季度') {
+          this.listQuery.startDate = new Date(qYear, 9, 1) // 10月1日
+          this.listQuery.endDate = new Date(qYear, 11, 31) // 12月31日
+        }
+      } else if (this.listQuery.condition === 'month' && month) {
+        const [mYear, m] = month.split('-')
+        this.listQuery.startDate = new Date(mYear, m - 1, 1) // 每月1日
+        this.listQuery.endDate = new Date(mYear, m, 0) // 该月最后一天
+      }
+    },
     handleFilter() {
+      this.handleConditionChange()
+      // console.log("startDate",this.listQuery.startDate)
+      // console.log("endDate",this.listQuery.endDate)
       this.listQuery.page = 1
       this.getList()
     },
@@ -321,11 +399,14 @@ export default {
       }
     },
     handleAddUp() {
+      this.handleConditionChange()
+      // console.log("startDate1",this.listQuery.startDate)
+      // console.log("endDate1",this.listQuery.endDate)
       getTotalInOutBound(this.listQuery).then(response => {
         console.log(response)
         MessageBox.alert(
           `符合查询条件:<br>出入库酒量(吨): ${response.in_out_bound}<br>损耗酒量(吨):${response.wine_leak}`,
-          '新消息',
+          '统计结果',
           {
             confirmButtonText: '确定',
             type: 'info',
@@ -386,7 +467,7 @@ export default {
           })
           */
           this.chart.setOption({
-            backgroundColor: '#394056',
+            // backgroundColor: '#394056',
             title: {
               top: 20,
               textStyle: {

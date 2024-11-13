@@ -216,7 +216,7 @@ export const asyncRoutes = [
         name: '陶坛属性管理',
         meta: {
           title: '陶坛属性管理',
-          icon: 'message',
+          icon: 'example',
           affix: true,
           roles: ['管理员'] // or you can only set roles in sub nav
         }
@@ -274,6 +274,25 @@ export const asyncRoutes = [
         meta: {
           title: '设备管理',
           icon: 'tree',
+          affix: true,
+          roles: ['管理员'] // or you can only set roles in sub nav
+        }
+      }
+    ]
+  },
+  {
+    path: '/views/wine/system_settings',
+    component: Layout,
+    // redirect: '/dashboard',
+    // alwaysShow: true, // will always show the root menu
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/wine/system_settings'),
+        name: '系统设置',
+        meta: {
+          title: '系统设置',
+          icon: 'el-icon-s-tools',
           affix: true,
           roles: ['管理员'] // or you can only set roles in sub nav
         }

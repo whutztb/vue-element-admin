@@ -7,10 +7,10 @@
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         查询
       </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-document" @click="handleStock">
+      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-s-data" @click="handleStock">
         统计
       </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
+      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-circle-plus" @click="handleCreate">
         新增
       </el-button>
       <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="showDialog = true">
@@ -97,8 +97,8 @@
           <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(row)">
             编辑
           </el-button>
-          <el-button v-if="row.status!='deleted'" size="mini" type="info" icon="el-icon-eye" @click="handleMonitor(row,$index)">
-            视频监控
+          <el-button v-if="row.status!='deleted'" size="mini" type="info" icon="el-icon-video-camera" @click="handleMonitor(row,$index)">
+            监控
           </el-button>
           <el-button v-if="row.status!='deleted'" size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(row,$index)">
             删除

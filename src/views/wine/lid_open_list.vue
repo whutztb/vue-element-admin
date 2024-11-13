@@ -26,7 +26,7 @@
           <el-button @click="showDialog = false">取消</el-button>
         </div>
       </el-dialog>
-      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-document" @click="clearWarning">
+      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-circle-close" @click="clearWarning">
         清空告警
       </el-button>
     </div>

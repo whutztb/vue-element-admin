@@ -5,7 +5,7 @@
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         查询
       </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
+      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-circle-plus" @click="handleCreate">
         新增
       </el-button>
       <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="showDialog = true">
@@ -367,11 +367,6 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          if (this.temp.all_jar_volume > 0) {
-            this.temp.cellar_usage_rate = (this.temp.all_wine_volume / this.temp.all_jar_volume).toFixed(3)
-          } else {
-            this.temp.cellar_usage_rate = 0 // 或根据需求设置为其他值
-          }
           createJarType(this.temp).then(() => {
             this.list.unshift(this.temp)
             this.dialogFormVisible = false
@@ -398,14 +393,9 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          if (this.temp.all_jar_volume > 0) {
-            this.temp.cellar_usage_rate = (this.temp.all_wine_volume / this.temp.all_jar_volume).toFixed(3)
-          } else {
-            this.temp.cellar_usage_rate = 0 // 或根据需求设置为其他值
-          }
           const tempData = Object.assign({}, this.temp)
           updateJarType(tempData).then(() => {
-            const index = this.list.findIndex(v => v.cellar_id === this.temp.cellar_id)
+            const index = this.list.findIndex(v => v.jar_type_id === this.temp.jar_type_id)
             this.list.splice(index, 1, this.temp)
             this.dialogFormVisible = false
             this.$notify({

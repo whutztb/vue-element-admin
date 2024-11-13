@@ -38,6 +38,11 @@ module.exports = {
       warnings: false,
       errors: true
     },
+    disableHostCheck: true,
+    allowedHosts: [
+      'http://7xp4019ui152.vicp.fun/',
+      'http://sdyg.a1.luyouxia.net:24703/'
+       ]
     //假数据
     //before: require('./mock/mock-server.js')
   },
@@ -53,7 +58,9 @@ module.exports = {
         // 其他webpack配置...在这里定义全局变量API_URL
     plugins: [
         new webpack.DefinePlugin({
+          //'process.env.API_URL': JSON.stringify('http://sdyg.w1.luyouxia.net')
           'process.env.API_URL': JSON.stringify('http://127.0.0.1:5000')
+          
         })
     ]
   },
