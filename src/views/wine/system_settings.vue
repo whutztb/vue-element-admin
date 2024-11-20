@@ -13,7 +13,11 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item label="登录超时时间" prop="timeout">
+      <el-form-item label="折算酒度(%vol)" prop="timeout">
+        <el-input-number v-model="settings.volConvert" :min="1" />
+      </el-form-item>
+
+      <el-form-item label="登录超时时间(s)" prop="timeout">
         <el-input-number v-model="settings.timeout" :min="1" />
       </el-form-item>
 
@@ -41,10 +45,12 @@ export default {
       settings: {
         systemName: '',
         calculateType: '',
+        volConvert: '',
         timeout: 30
       },
       rules: {
         systemName: [{ required: true, message: '请输入系统名称', trigger: 'blur' }],
+        volConvert: [{ required: true, message: '请输入折算酒度', trigger: 'blur' }],
         timeout: [{ required: true, message: '请输入超时时间', trigger: 'blur' }]
       },
       dialogVisible: false,
@@ -79,6 +85,7 @@ export default {
         this.settings.systemName = response.systemName
         this.settings.calculateType = response.calculateType
         this.settings.timeout = response.timeout
+        this.settings.volConvert = response.volConvert
       }).catch(error => {
         console.error('获取设置失败:', error)
         this.dialogMessage = '获取设置失败，请重试！'

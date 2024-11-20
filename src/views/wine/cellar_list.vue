@@ -1,9 +1,9 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
+      <el-input v-model="listQuery.cellar_pos" placeholder="酒库位置" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.cellar_id" placeholder="酒库ID" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.cellar_name" placeholder="酒库名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.cellar_pos" placeholder="酒库位置" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         查询
       </el-button>
@@ -40,21 +40,19 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column align="center" label="酒库ID" min-width="95">
+      <el-table-column min-width="100px" label="酒库位置" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.cellar_pos }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="酒库ID" min-width="80">
         <template slot-scope="scope">
           <span>{{ scope.row.cellar_id }}</span>
         </template>
       </el-table-column>
-
-      <el-table-column min-width="100px" align="center" label="酒库名称">
+      <el-table-column min-width="80px" align="center" label="酒库名称">
         <template slot-scope="scope">
           <span>{{ scope.row.cellar_name }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column min-width="100px" label="酒库位置" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.cellar_pos }}</span>
         </template>
       </el-table-column>
       <el-table-column min-width="80px" label="缸型" align="center">
@@ -77,14 +75,28 @@
           <span>{{ scope.row.bad_jar_num }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="100px" label="现有酒量(t)" align="center">
+      <el-table-column min-width="80px" align="center">
+        <template slot="header">
+          <span>现有酒量<br>(m³)</span>
+        </template>
         <template slot-scope="scope">
           <span>{{ scope.row.all_wine_volume }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="110px" label="可容纳酒量(t)" align="center">
+      <el-table-column min-width="80px" align="center">
+        <template slot="header">
+          <span>库容<br>(m³)</span>
+        </template>
         <template slot-scope="scope">
           <span>{{ scope.row.all_jar_volume }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column min-width="80px" align="center">
+        <template slot="header">
+          <span>折算重量<br>(t)</span>
+        </template>
+        <template slot-scope="scope">
+          <span>{{ scope.row.all_wine_mass }}</span>
         </template>
       </el-table-column>
       <el-table-column min-width="70px" label="利用率" align="center">
@@ -139,10 +151,10 @@
         <el-form-item label="漏缸" prop="bad_jar_num" label-width="100px">
           <el-input v-model="temp.bad_jar_num" />
         </el-form-item>
-        <el-form-item label="酒容积(m³)" prop="all_wine_volume" label-width="100px">
+        <el-form-item label="现有酒量(m³)" prop="all_wine_volume" label-width="110px">
           <el-input v-model="temp.all_wine_volume" />
         </el-form-item>
-        <el-form-item label="总容积(m³)" prop="all_jar_volume" label-width="100px">
+        <el-form-item label="库容(m³)" prop="all_jar_volume" label-width="100px">
           <el-input v-model="temp.all_jar_volume" />
         </el-form-item>
       </el-form>
@@ -215,6 +227,7 @@ export default {
         bad_jar_num: '',
         all_wine_volume: '',
         all_jar_volume: '',
+        all_wine_mass: '',
         cellar_usage_rate: ''
       },
       jarTypeOptions: [],
@@ -336,6 +349,7 @@ export default {
         bad_jar_num: 0,
         all_wine_volume: 0,
         all_jar_volume: 0,
+        all_wine_mass: 0,
         cellar_usage_rate: 0.0
       }
     },
@@ -492,7 +506,7 @@ export default {
             textStyle: {
               color: '#90979c'
             },
-            data: ['可容纳酒量(吨)', '现有酒量(吨)']
+            data: ['库容(m³)', '现有酒量(m³)']
           },
           calculable: true,
           xAxis: [{
@@ -565,7 +579,7 @@ export default {
             end: 35
           }],
           series: [{
-            name: '可容纳酒量(吨)',
+            name: '库容(m³)',
             type: 'bar',
             barMaxWidth: 35,
             barGap: '10%', // 设置间隔
@@ -586,7 +600,7 @@ export default {
             },
             data: allJarVolumeData
           }, {
-            name: '现有酒量(吨)',
+            name: '现有酒量(m³)',
             type: 'bar',
             itemStyle: {
               normal: {

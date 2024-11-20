@@ -1,10 +1,11 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.jar_id" placeholder="陶坛ID" style="width: 150px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.jar_pos" placeholder="位置" style="width: 150px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.jar_type" placeholder="缸型" style="width: 150px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.wine_name" placeholder="品名" style="width: 150px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.jar_id" placeholder="陶坛ID" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.cellar_pos" placeholder="酒库位置" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.jar_pos" placeholder="陶坛位置" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.jar_type" placeholder="缸型" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.wine_name" placeholder="品名" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         查询
       </el-button>
@@ -41,17 +42,39 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column align="center" label="陶坛ID" min-width="135">
+      <el-table-column align="center" min-width="140">
+        <template slot="header">
+          <span>陶坛<br>ID</span>
+        </template>
         <template slot-scope="scope">
           <span>{{ scope.row.jar_id }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="90px" label="陶坛位置" align="center">
+      <el-table-column min-width="65px" align="center">
+        <template slot="header">
+          <span>酒库<br>位置</span>
+        </template>
+        <template slot-scope="scope">
+          <span>{{ scope.row.cellar_pos }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column min-width="85px" align="center">
+        <template slot="header">
+          <span>陶坛<br>位置</span>
+        </template>
         <template slot-scope="scope">
           <span>{{ scope.row.jar_pos }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="90px" align="center" label="缸型">
+      <el-table-column min-width="65px" align="center">
+        <template slot="header">
+          <span>陶坛<br>编号</span>
+        </template>
+        <template slot-scope="scope">
+          <span>{{ scope.row.jar_no }}</span>
+        </template>
+      </el-table-column>
+      <!--<el-table-column min-width="90px" align="center" label="缸型">
         <template slot-scope="scope">
           <span>{{ scope.row.jar_type }}</span>
         </template>
@@ -61,28 +84,72 @@
           <span>{{ scope.row.wine_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="84px" label="缸高(mm)" align="center">
+      <el-table-column min-width="60px" align="center">
+        <template slot="header">
+          <span>缸高<br>(mm)</span>
+        </template>
         <template slot-scope="scope">
           <span>{{ scope.row.jar_height }}</span>
         </template>
-      </el-table-column>
-      <el-table-column min-width="84px" label="液位(mm)" align="center">
+      </el-table-column>-->
+      <el-table-column min-width="60px" align="center">
+        <template slot="header">
+          <span>液位<br>(mm)</span>
+        </template>
         <template slot-scope="scope">
           <span>{{ scope.row.wine_level }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="84" label="酒量(t)" align="center">
+      <el-table-column min-width="60" align="center">
+        <template slot="header">
+          <span>体积<br>(m³)</span>
+        </template>
         <template slot-scope="scope">
           <span>{{ scope.row.wine_volume }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="155px" align="center" label="测量数据更新日期">
+      <el-table-column min-width="65" align="center">
+        <template slot="header">
+          <span>酒度<br>(%vol)</span>
+        </template>
+        <template slot-scope="scope">
+          <span>{{ scope.row.wine_vol }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column min-width="65" align="center">
+        <template slot="header">
+          <span>密度<br>(t/m³)</span>
+        </template>
+        <template slot-scope="scope">
+          <span>{{ scope.row.wine_rou }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column min-width="80" align="center">
+        <template slot="header">
+          <span>原度重量<br>(t)</span>
+        </template>
+        <template slot-scope="scope">
+          <span>{{ scope.row.wine_weight }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column min-width="80" align="center">
+        <template slot="header">
+          <span>折算重量<br>(t)</span>
+        </template>
+        <template slot-scope="scope">
+          <span>{{ scope.row.wine_weight_convert }}</span>
+        </template>
+      </el-table-column>
+      <!--<el-table-column min-width="155px" align="center" label="测量数据更新日期">
         <template slot-scope="scope">
           <span>{{ scope.row.level_update_time }}</span>
         </template>
-      </el-table-column>
-      <el-table-column label="" align="center" min-width="230" class-name="small-padding fixed-width">
+      </el-table-column>-->
+      <el-table-column label="" align="center" min-width="320" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
+          <el-button type="info" size="mini" icon="el-icon-more" @click="handleMoreDetail(row)">
+            更多
+          </el-button>
           <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(row)">
             编辑
           </el-button>
@@ -113,19 +180,45 @@
             <el-option v-for="item in jarTypeOptions" :key="item" :label="item" :value="item" />
           </el-select>
         </el-form-item>
-        <el-form-item label="缸位置" prop="jar_pos" label-width="150px">
+        <el-form-item label="酒库位置" prop="cellar_pos" label-width="150px">
+          <el-select v-model="temp.cellar_pos" class="filter-item" placeholder="请选择">
+            <el-option v-for="item in factoryPosOptions" :key="item" :label="item" :value="item" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="陶坛位置" prop="jar_pos" label-width="150px">
           <el-select v-model="temp.jar_pos" class="filter-item" placeholder="请选择">
             <el-option v-for="item in cellarPosOptions" :key="item" :label="item" :value="item" />
           </el-select>
         </el-form-item>
-        <el-form-item label="缸高(mm)" prop="jar_height" label-width="150px">
+        <el-form-item label="陶坛编号" prop="jar_no" label-width="150px">
+          <el-input v-model="temp.jar_no" />
+        </el-form-item>
+        <el-form-item label="陶坛高(mm)" prop="jar_height" label-width="150px">
           <el-input v-model="temp.jar_height" />
         </el-form-item>
         <el-form-item label="液位(mm)" prop="wine_level" label-width="150px">
           <el-input v-model="temp.wine_level" />
         </el-form-item>
+        <el-form-item label="标准酒度(%vol)" prop="wine_vol" label-width="150px">
+          <el-input v-model="temp.wine_vol" />
+        </el-form-item>
         <el-form-item label="品名" prop="wine_name" label-width="150px">
           <el-input v-model="temp.wine_name" />
+        </el-form-item>
+        <el-form-item label="香型" prop="wine_type" label-width="150px">
+          <el-input v-model="temp.wine_type" />
+        </el-form-item>
+        <el-form-item label="生产厂区" prop="factory" label-width="150px">
+          <el-input v-model="temp.factory" />
+        </el-form-item>
+        <el-form-item label="生产日期" prop="wine_date" label-width="150px">
+          <el-date-picker v-model="temp.wine_date" type="date" placeholder="请选择日期" />
+        </el-form-item>
+        <el-form-item label="当前温度(℃)" prop="wine_temp" label-width="150px">
+          <el-input v-model="temp.wine_temp" />
+        </el-form-item>
+        <el-form-item label="原始酒度(%vol)" prop="wine_temp" label-width="150px">
+          <el-input v-model="temp.wine_vol_original" />
         </el-form-item>
         <el-form-item label="更新时间" prop="level_update_time" label-width="150px">
           <el-date-picker v-model="temp.level_update_time" type="datetime" placeholder="请选择日期" />
@@ -154,7 +247,7 @@
 </template>
 
 <script>
-import { fetchList, deleteJar, createJar, updateJar, exportJarList, getHistory, getTotalVolume, getJarTypeOptions, getCellarPosOptions } from '@/api/wine_jar'
+import { fetchList, deleteJar, createJar, updateJar, exportJarList, getHistory, getTotalMass, getJarTypeOptions, getCellarPosOptions, getFactoryPosOptions } from '@/api/wine_jar'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -188,6 +281,7 @@ export default {
         jar_type: '',
         jar_id: '',
         jar_pos: '',
+        cellar_pos: '',
         wine_name: ''
       },
 
@@ -196,14 +290,27 @@ export default {
         jar_id: undefined,
         jar_type: '',
         jar_pos: '',
+        cellar_pos: '',
+        jar_no: '',
         jar_height: '',
         wine_level: '',
         wine_vol: '',
+        wine_rou: '',
+        wine_weight: '',
+        wine_weight_convert: '',
         wine_volume: '',
         wine_name: '',
+        wine_temp: '',
+        convert_fraction: '',
+        wine_date: '',
+        factory: '',
+        wine_type: '',
+        wine_vol_original: '',
+        wine_vol_convert: '',
         level_update_time: ''
       },
       cellarPosOptions: [],
+      factoryPosOptions: [],
       jarTypeOptions: [],
       readOnly: false,
       dialogFormVisible: false,
@@ -224,14 +331,35 @@ export default {
         jar_pos: [
           { required: true, message: '请输入陶坛位置', trigger: 'blur' }
         ],
+        cellar_pos: [
+          { required: true, message: '请输入陶坛位置', trigger: 'blur' }
+        ],
+        jar_no: [
+          { required: true, message: '请输入陶坛编号', trigger: 'blur' }
+        ],
         jar_height: [
           { required: true, message: '请输入陶坛高度', trigger: 'blur' }
         ],
         wine_level: [
           { required: true, message: '请输入陶坛液位', trigger: 'blur' }
         ],
+        wine_temp: [
+          { required: true, message: '请输入温度', trigger: 'blur' }
+        ],
+        wine_vol: [
+          { required: true, message: '请输入酒度', trigger: 'blur' }
+        ],
         wine_name: [
           { required: true, message: '请输入品名', trigger: 'blur' }
+        ],
+        wine_type: [
+          { required: true, message: '请输入香型', trigger: 'blur' }
+        ],
+        wine_date: [
+          { required: true, message: '请输入生产年份', trigger: 'blur' }
+        ],
+        factory: [
+          { required: true, message: '请输入生产厂区', trigger: 'blur' }
         ],
         level_update_time: [
           { required: true, message: '请输入液位陶坛更新时间', trigger: 'blur' }
@@ -263,6 +391,7 @@ export default {
   mounted() {
     this.initChart()
     this.fetchCellarPosOptions()
+    this.fetchFactoryPosOptions()
     this.fetchJarTypeOptions()
   },
   beforeDestroy() {
@@ -280,6 +409,12 @@ export default {
         this.cellarPosOptions = response.items.map(item => item.cellar_name)
       })
     },
+    // 获取厂区位置
+    fetchFactoryPosOptions() {
+      getFactoryPosOptions().then(response => {
+        this.factoryPosOptions = response.items.map(item => item.cellar_pos)
+      })
+    },
     // 获取陶坛类型
     fetchJarTypeOptions() {
       getJarTypeOptions().then(response => {
@@ -288,7 +423,7 @@ export default {
     },
 
     getList() {
-      console.log('jar listQuery', this.listQuery)
+      // console.log('jar listQuery', this.listQuery)
       this.listLoading = true
       fetchList(this.listQuery).then(response => {
         this.list = response.items
@@ -326,18 +461,30 @@ export default {
         jar_id: undefined,
         jar_type: '',
         jar_pos: '',
+        cellar_pos: '',
+        jar_no: '',
         jar_height: '',
         wine_level: '',
         wine_vol: 60,
         wine_volume: '',
+        wine_rou: '',
+        wine_weight: '',
+        wine_weight_convert: '',
         wine_name: '',
+        convert_fraction: '',
+        wine_date: '',
+        factory: '',
+        wine_type: '',
+        wine_temp: '',
+        wine_vol_original: '',
+        wine_vol_convert: '',
         level_update_time: ''
       }
     },
     handleAddUp() {
-      getTotalVolume(this.listQuery).then(response => {
+      getTotalMass(this.listQuery).then(response => {
         MessageBox.alert(
-          `符合查询条件总酒量(吨): ${response.message}`,
+          `符合查询条件折算酒量(吨): ${response.message}`,
           '统计结果',
           {
             confirmButtonText: '确定',
@@ -362,8 +509,9 @@ export default {
           const date = new Date(this.temp.level_update_time)
           const formattedDateTime = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`
           this.temp.level_update_time = formattedDateTime
-          // 将测量的液位转换成容积，采用液位*0.000666的策略(这里主要是解决显示异常问题--容积不更新，实际后台会采用该策略处理)
-          // this.temp.wine_volume = (0.000666 * this.temp.wine_level).toFixed(3)
+          const date2 = new Date(this.temp.wine_date)
+          const formattedDateTime2 = `${date2.getFullYear()}-${String(date2.getMonth() + 1).padStart(2, '0')}-${String(date2.getDate()).padStart(2, '0')}`
+          this.temp.wine_date = formattedDateTime2
           createJar(this.temp).then(() => {
             this.list.unshift(this.temp)
             this.dialogFormVisible = false
@@ -377,6 +525,18 @@ export default {
           })
         }
       })
+    },
+    handleMoreDetail(row) {
+      this.temp = Object.assign({}, row)
+      MessageBox.alert(
+        `陶坛ID: ${this.temp.jar_id}<br>品名: ${this.temp.wine_name}<br>香型: ${this.temp.wine_type}<br>陶坛类型: ${this.temp.jar_type}<br>陶坛高度(mm): ${this.temp.jar_height}<br>折酒系数: ${this.temp.convert_fraction}<br>生产年份: ${this.temp.wine_date}<br>生产厂区: ${this.temp.factory}<br>温度(℃): ${this.temp.wine_temp}<br>原始酒度: ${this.temp.wine_vol_original}<br>折算酒度: ${this.temp.wine_vol_convert}<br>测量数据更新日期: ${this.temp.level_update_time}`,
+        '更多细节',
+        {
+          confirmButtonText: '确定',
+          type: 'info',
+          dangerouslyUseHTMLString: true // 允许使用 HTML
+        }
+      )
     },
     handleUpdate(row) {
       this.readOnly = true
@@ -395,10 +555,20 @@ export default {
           const date = new Date(this.temp.level_update_time)
           const formattedDateTime = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`
           this.temp.level_update_time = formattedDateTime
+          const date2 = new Date(this.temp.wine_date)
+          const formattedDateTime2 = `${date2.getFullYear()}-${String(date2.getMonth() + 1).padStart(2, '0')}-${String(date2.getDate()).padStart(2, '0')}`
+          this.temp.wine_date = formattedDateTime2
           const tempData = Object.assign({}, this.temp)
           // tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
           updateJar(tempData).then((response) => {
             this.temp.wine_volume = response.wine_volume // 将 wine_volume 赋值给 this.temp.wine_volume
+            this.temp.wine_weight = response.wine_weight
+            this.temp.wine_weight_convert = response.wine_weight_convert
+            this.temp.convert_fraction = response.convert_fraction
+            this.temp.wine_rou = response.wine_rou
+            this.temp.wine_temp = response.wine_temp
+            this.temp.wine_vol_original = response.wine_vol_original
+            this.temp.wine_vol_convert = response.wine_vol_convert
             const index = this.list.findIndex(v => v.jar_id === this.temp.jar_id)
             this.list.splice(index, 1, this.temp)
             this.dialogFormVisible = false
@@ -466,7 +636,7 @@ export default {
           const sortedHistoryData = this.historyData.sort((a, b) => new Date(a.rec_time) - new Date(b.rec_time))
           // 提取时间和对应的酒量
           const timestamps = sortedHistoryData.map(item => item.rec_time) // 提取时间
-          const recLevels = sortedHistoryData.map(item => item.rec_volume) // 提取 rec_volume
+          const recLevels = sortedHistoryData.map(item => item.rec_weight) // 提取 rec_weight
           /*
           const recVols = this.volHistoryData.map(item => item.rec_vol) // 提取 rec_vol
           const openLidTimes = this.lidOpenData.map(item => item.open_time) // 提取 open_time

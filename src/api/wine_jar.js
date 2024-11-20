@@ -54,9 +54,9 @@ export function getHistory(data) {
   })
 }
 
-export function getTotalVolume(query) {
+export function getTotalMass(query) {
   return request({
-    url: `${process.env.API_URL}/get_total_volume`,
+    url: `${process.env.API_URL}/get_total_mass`,
     method: 'get',
     params: query
   })
@@ -65,6 +65,13 @@ export function getTotalVolume(query) {
 export function getCellarPosOptions() {
   return request({
     url: `${process.env.API_URL}/get_cellar_pos_options`,
+    method: 'get'
+  })
+}
+
+export function getFactoryPosOptions() {
+  return request({
+    url: `${process.env.API_URL}/get_factory_pos_options`,
     method: 'get'
   })
 }
