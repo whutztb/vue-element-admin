@@ -82,3 +82,11 @@ export function getJarTypeOptions() {
     method: 'get'
   })
 }
+
+export function importJarCsv(data) {
+  return request({
+    url: `${process.env.API_URL}/import_jar_csv`,
+    method: 'post',
+    data
+  })
+}

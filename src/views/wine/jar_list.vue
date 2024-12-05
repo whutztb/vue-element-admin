@@ -4,7 +4,7 @@
       <el-input v-model="listQuery.jar_id" placeholder="陶坛ID" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.cellar_pos" placeholder="酒库位置" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.jar_pos" placeholder="陶坛位置" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.jar_type" placeholder="缸型" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <!--<el-input v-model="listQuery.jar_type" placeholder="缸型" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />-->
       <el-input v-model="listQuery.wine_name" placeholder="品名" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         查询
@@ -15,9 +15,13 @@
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-circle-plus" @click="handleCreate">
         新增
       </el-button>
-      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="showDialog = true">
+      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="exportAllPages">
         导出
       </el-button>
+      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-upload" @click="triggerFileInput">
+        导入
+      </el-button>
+      <input ref="csvFileInput" type="file" accept=".csv" style="display: none;" @change="importJarList">
       <el-dialog
         title="导出选项"
         :visible.sync="showDialog"
@@ -100,6 +104,22 @@
           <span>{{ scope.row.wine_level }}</span>
         </template>
       </el-table-column>
+      <el-table-column min-width="65" align="center">
+        <template slot="header">
+          <span>酒度<br>(%vol)</span>
+        </template>
+        <template slot-scope="scope">
+          <span>{{ scope.row.wine_vol }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column min-width="55" align="center">
+        <template slot="header">
+          <span>温度<br>(℃)</span>
+        </template>
+        <template slot-scope="scope">
+          <span>{{ scope.row.wine_temp }}</span>
+        </template>
+      </el-table-column>
       <el-table-column min-width="60" align="center">
         <template slot="header">
           <span>体积<br>(m³)</span>
@@ -108,12 +128,12 @@
           <span>{{ scope.row.wine_volume }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="65" align="center">
+      <el-table-column min-width="80" align="center">
         <template slot="header">
-          <span>酒度<br>(%vol)</span>
+          <span>折算酒度<br>(%vol)</span>
         </template>
         <template slot-scope="scope">
-          <span>{{ scope.row.wine_vol }}</span>
+          <span>{{ scope.row.wine_vol_convert }}</span>
         </template>
       </el-table-column>
       <el-table-column min-width="65" align="center">
@@ -199,8 +219,11 @@
         <el-form-item label="液位(mm)" prop="wine_level" label-width="150px">
           <el-input v-model="temp.wine_level" />
         </el-form-item>
-        <el-form-item label="标准酒度(%vol)" prop="wine_vol" label-width="150px">
+        <el-form-item label="酒度(%vol)" prop="wine_vol" label-width="150px">
           <el-input v-model="temp.wine_vol" />
+        </el-form-item>
+        <el-form-item label="温度(℃)" prop="wine_temp" label-width="150px">
+          <el-input v-model="temp.wine_temp" />
         </el-form-item>
         <el-form-item label="品名" prop="wine_name" label-width="150px">
           <el-input v-model="temp.wine_name" />
@@ -214,14 +237,22 @@
         <el-form-item label="生产日期" prop="wine_date" label-width="150px">
           <el-date-picker v-model="temp.wine_date" type="date" placeholder="请选择日期" />
         </el-form-item>
-        <el-form-item label="当前温度(℃)" prop="wine_temp" label-width="150px">
-          <el-input v-model="temp.wine_temp" />
-        </el-form-item>
-        <el-form-item label="原始酒度(%vol)" prop="wine_temp" label-width="150px">
-          <el-input v-model="temp.wine_vol_original" />
-        </el-form-item>
         <el-form-item label="更新时间" prop="level_update_time" label-width="150px">
           <el-date-picker v-model="temp.level_update_time" type="datetime" placeholder="请选择日期" />
+        </el-form-item>
+        <el-form-item label="密度(t/m³)" prop="wine_rou_input" label-width="150px">
+          <el-tooltip
+            class="item"
+            effect="dark"
+            content="如果不为空，将按照输入密度计算酒量，如果为空，自动根据酒度温度查表计算密度"
+            placement="top"
+            :visible-arrow="false"
+          >
+            <el-input
+              v-model="temp.wine_rou_input"
+              placeholder="点击输入密度(按指定密度计算)"
+            />
+          </el-tooltip>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -247,7 +278,7 @@
 </template>
 
 <script>
-import { fetchList, deleteJar, createJar, updateJar, exportJarList, getHistory, getTotalMass, getJarTypeOptions, getCellarPosOptions, getFactoryPosOptions } from '@/api/wine_jar'
+import { fetchList, deleteJar, createJar, updateJar, exportJarList, getHistory, getTotalMass, getJarTypeOptions, getCellarPosOptions, getFactoryPosOptions, importJarCsv } from '@/api/wine_jar'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -296,6 +327,7 @@ export default {
         wine_level: '',
         wine_vol: '',
         wine_rou: '',
+        wine_rou_input: '',
         wine_weight: '',
         wine_weight_convert: '',
         wine_volume: '',
@@ -305,7 +337,6 @@ export default {
         wine_date: '',
         factory: '',
         wine_type: '',
-        wine_vol_original: '',
         wine_vol_convert: '',
         level_update_time: ''
       },
@@ -348,6 +379,9 @@ export default {
         ],
         wine_vol: [
           { required: true, message: '请输入酒度', trigger: 'blur' }
+        ],
+        wine_rou_input: [
+          { required: false, message: '请输入密度', trigger: 'blur' }
         ],
         wine_name: [
           { required: true, message: '请输入品名', trigger: 'blur' }
@@ -465,9 +499,10 @@ export default {
         jar_no: '',
         jar_height: '',
         wine_level: '',
-        wine_vol: 60,
+        wine_vol: '',
         wine_volume: '',
         wine_rou: '',
+        wine_rou_input: '',
         wine_weight: '',
         wine_weight_convert: '',
         wine_name: '',
@@ -476,7 +511,6 @@ export default {
         factory: '',
         wine_type: '',
         wine_temp: '',
-        wine_vol_original: '',
         wine_vol_convert: '',
         level_update_time: ''
       }
@@ -529,7 +563,7 @@ export default {
     handleMoreDetail(row) {
       this.temp = Object.assign({}, row)
       MessageBox.alert(
-        `陶坛ID: ${this.temp.jar_id}<br>品名: ${this.temp.wine_name}<br>香型: ${this.temp.wine_type}<br>陶坛类型: ${this.temp.jar_type}<br>陶坛高度(mm): ${this.temp.jar_height}<br>折酒系数: ${this.temp.convert_fraction}<br>生产年份: ${this.temp.wine_date}<br>生产厂区: ${this.temp.factory}<br>温度(℃): ${this.temp.wine_temp}<br>原始酒度: ${this.temp.wine_vol_original}<br>折算酒度: ${this.temp.wine_vol_convert}<br>测量数据更新日期: ${this.temp.level_update_time}`,
+        `陶坛ID: ${this.temp.jar_id}<br>品名: ${this.temp.wine_name}<br>香型: ${this.temp.wine_type}<br>陶坛类型: ${this.temp.jar_type}<br>陶坛高度(mm): ${this.temp.jar_height}<br>折酒系数: ${this.temp.convert_fraction}<br>生产年份: ${this.temp.wine_date}<br>生产厂区: ${this.temp.factory}<br>温度(℃): ${this.temp.wine_temp}<br>原始酒度: ${this.temp.wine_vol}<br>折算酒度: ${this.temp.wine_vol_convert}<br>测量数据更新日期: ${this.temp.level_update_time}`,
         '更多细节',
         {
           confirmButtonText: '确定',
@@ -558,7 +592,12 @@ export default {
           const date2 = new Date(this.temp.wine_date)
           const formattedDateTime2 = `${date2.getFullYear()}-${String(date2.getMonth() + 1).padStart(2, '0')}-${String(date2.getDate()).padStart(2, '0')}`
           this.temp.wine_date = formattedDateTime2
-          const tempData = Object.assign({}, this.temp)
+          // const tempData = Object.assign({}, this.temp)
+          // 确保 wine_rou_input 字段存在，即使为空
+          const tempData = {
+            ...this.temp,
+            wine_rou_input: this.temp.wine_rou_input || '' // 确保 wine_rou_input 被传递
+          }
           // tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
           updateJar(tempData).then((response) => {
             this.temp.wine_volume = response.wine_volume // 将 wine_volume 赋值给 this.temp.wine_volume
@@ -567,7 +606,7 @@ export default {
             this.temp.convert_fraction = response.convert_fraction
             this.temp.wine_rou = response.wine_rou
             this.temp.wine_temp = response.wine_temp
-            this.temp.wine_vol_original = response.wine_vol_original
+            this.temp.wine_vol = response.wine_vol
             this.temp.wine_vol_convert = response.wine_vol_convert
             const index = this.list.findIndex(v => v.jar_id === this.temp.jar_id)
             this.list.splice(index, 1, this.temp)
@@ -901,7 +940,7 @@ export default {
           const url = window.URL.createObjectURL(blob) // 创建 Blob URL
           const a = document.createElement('a') // 创建一个链接元素
           a.href = url
-          a.download = 'all-page-jar-list.xlsx' // 设置下载的文件名
+          a.download = '陶坛清单.xlsx' // 设置下载的文件名
           document.body.appendChild(a) // 将链接添加到文档
           a.click() // 模拟点击
           a.remove() // 下载后移除链接
@@ -912,6 +951,37 @@ export default {
         })
         .finally(() => {
           this.downloadLoading = false // 确保下载完成后隐藏加载状态
+        })
+    },
+    triggerFileInput() {
+      this.$refs.csvFileInput.click() // 触发文件输入框
+    },
+    importJarList(event) {
+      const fileInput = event.target
+      const file = fileInput.files[0]
+
+      if (!file) {
+        this.$message.error('请选择一个 CSV 文件')
+        return
+      }
+
+      const formData = new FormData()
+      formData.append('file', file)
+
+      this.downloadLoading = true // 设置加载状态
+
+      importJarCsv(formData)
+        .then(response => {
+          this.$message.success('导入成功!')
+          console.log('成功:', response)
+        })
+        .catch(error => {
+          this.$message.error('导入失败: ' + error.message)
+          console.error('错误:', error)
+        })
+        .finally(() => {
+          this.downloadLoading = false // 结束加载状态
+          fileInput.value = '' // 重置文件输入
         })
     },
     formatJson(filterVal) {

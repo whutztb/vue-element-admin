@@ -61,7 +61,7 @@
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-document" @click="handleAddUp">
         统计
       </el-button>
-      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="showDialog = true">
+      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="exportAllPages">
         导出
       </el-button>
       <el-dialog
@@ -714,7 +714,7 @@ export default {
           const url = window.URL.createObjectURL(blob) // 创建 Blob URL
           const a = document.createElement('a') // 创建一个链接元素
           a.href = url
-          a.download = 'all-page-in_out_bound-list.xlsx' // 设置下载的文件名
+          a.download = '出入库列表.xlsx' // 设置下载的文件名
           document.body.appendChild(a) // 将链接添加到文档
           a.click() // 模拟点击
           a.remove() // 下载后移除链接

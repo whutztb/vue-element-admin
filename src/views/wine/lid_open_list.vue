@@ -11,7 +11,7 @@
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         查询
       </el-button>
-      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" style="margin-right: 10px;" @click="showDialog = true">
+      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" style="margin-right: 10px;" @click="exportAllPages">
         导出
       </el-button>
       <el-dialog
@@ -323,11 +323,18 @@ export default {
             duration: 2000
           })
         })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '处理异常'
-        })
+      }).catch((err) => {
+        if (err === 'cancel') {
+          this.$message({
+            type: 'info',
+            message: '取消处理'
+          })
+        } else {
+          this.$message({
+            type: 'info',
+            message: '处理异常'
+          })
+        }
       })
     },
     handleDownload(type) {
@@ -368,7 +375,7 @@ export default {
           const url = window.URL.createObjectURL(blob) // 创建 Blob URL
           const a = document.createElement('a') // 创建一个链接元素
           a.href = url
-          a.download = 'all-page-lid-open-list.xlsx' // 设置下载的文件名
+          a.download = '缸盖异动列表.xlsx' // 设置下载的文件名
           document.body.appendChild(a) // 将链接添加到文档
           a.click() // 模拟点击
           a.remove() // 下载后移除链接

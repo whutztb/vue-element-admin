@@ -13,8 +13,12 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item label="折算酒度(%vol)" prop="timeout">
+      <el-form-item label="折算酒度(%vol)" prop="volConvert">
         <el-input-number v-model="settings.volConvert" :min="1" />
+      </el-form-item>
+
+      <el-form-item label="出入库阈值(mm)" prop="inOutThreshold">
+        <el-input-number v-model="settings.inOutThreshold" :min="1" />
       </el-form-item>
 
       <el-form-item label="登录超时时间(s)" prop="timeout">
@@ -46,11 +50,13 @@ export default {
         systemName: '',
         calculateType: '',
         volConvert: '',
+        inOutThreshold: '',
         timeout: 30
       },
       rules: {
         systemName: [{ required: true, message: '请输入系统名称', trigger: 'blur' }],
         volConvert: [{ required: true, message: '请输入折算酒度', trigger: 'blur' }],
+        inOutThreshold: [{ required: true, message: '请输入出入库阈值', trigger: 'blur' }],
         timeout: [{ required: true, message: '请输入超时时间', trigger: 'blur' }]
       },
       dialogVisible: false,
@@ -81,10 +87,11 @@ export default {
     },
     loadSettings() {
       getSystemSettings().then(response => {
-        // console.log("response",response)
+        console.log('response', response)
         this.settings.systemName = response.systemName
         this.settings.calculateType = response.calculateType
         this.settings.timeout = response.timeout
+        this.settings.inOutThreshold = response.inOutThreshold
         this.settings.volConvert = response.volConvert
       }).catch(error => {
         console.error('获取设置失败:', error)
