@@ -14,11 +14,12 @@ export function exportCellarList(query) {
 }
 
 export function fetchList(query) {
-  // console.log('fetch jar List request')
+  console.log('fetch cellar List request')
   return request({
     url: `${process.env.API_URL}/get_cellar_list`,
     method: 'get',
-    params: query
+    params: query,
+    timeout: 3000 // 设置超时时间为 3 秒
   })
 }
 

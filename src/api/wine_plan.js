@@ -13,10 +13,12 @@ export function exportPlanList(query) {
 }
 
 export function fetchList(query) {
+  console.log('fetch plan list request')
   return request({
     url: `${process.env.API_URL}/get_plan_list`,
     method: 'get',
-    params: query
+    params: query,
+    timeout: 3000
   })
 }
 

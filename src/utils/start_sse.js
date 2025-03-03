@@ -12,6 +12,7 @@ class StartSSE {
       const response = await fetch(`${process.env.API_URL}/api/start-sse`)
       if (response.ok) {
         this.initializeEventSource()
+        console.log('startSSE ok')
       } else {
         console.error('Failed to start SSE:', response.statusText)
       }
@@ -21,7 +22,7 @@ class StartSSE {
   }
 
   initializeEventSource() {
-    console.log('initializeEventSource')
+    console.log('Initialize Event Source')
     this.eventSource = new EventSource(`${process.env.API_URL}/stream`)
 
     this.eventSource.onmessage = (event) => {
@@ -32,7 +33,6 @@ class StartSSE {
       // 提取 msg_type
       const msg_type = mainObj.msg_type
       if (msg_type === 'open_lid') {
-        /*
         const jarId = mainObj.jar_id
         const openTime = mainObj.open_time
         MessageBox.alert(
@@ -44,7 +44,7 @@ class StartSSE {
             dangerouslyUseHTMLString: true // 允许使用 HTML
           }
 
-        )*/
+        )
         EventBus.$emit('updateLidOpenListUI')
       } else if (msg_type === 'new_record') {
         /*

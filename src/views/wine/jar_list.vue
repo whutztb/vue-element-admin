@@ -62,7 +62,7 @@
           <span>{{ scope.row.cellar_pos }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="85px" align="center">
+      <el-table-column min-width="65px" align="center">
         <template slot="header">
           <span>陶坛<br>位置</span>
         </template>
@@ -104,6 +104,14 @@
           <span>{{ scope.row.wine_level }}</span>
         </template>
       </el-table-column>
+      <el-table-column min-width="60" align="center">
+        <template slot="header">
+          <span>体积<br>(m³)</span>
+        </template>
+        <template slot-scope="scope">
+          <span>{{ scope.row.wine_volume }}</span>
+        </template>
+      </el-table-column>
       <el-table-column min-width="65" align="center">
         <template slot="header">
           <span>酒度<br>(%vol)</span>
@@ -120,14 +128,7 @@
           <span>{{ scope.row.wine_temp }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="60" align="center">
-        <template slot="header">
-          <span>体积<br>(m³)</span>
-        </template>
-        <template slot-scope="scope">
-          <span>{{ scope.row.wine_volume }}</span>
-        </template>
-      </el-table-column>
+
       <el-table-column min-width="80" align="center">
         <template slot="header">
           <span>折算酒度<br>(%vol)</span>
@@ -234,7 +235,7 @@
         <el-form-item label="生产厂区" prop="factory" label-width="150px">
           <el-input v-model="temp.factory" />
         </el-form-item>
-        <el-form-item label="生产日期" prop="wine_date" label-width="150px">
+        <el-form-item label="入库时间" prop="wine_date" label-width="150px">
           <el-date-picker v-model="temp.wine_date" type="date" placeholder="请选择日期" />
         </el-form-item>
         <el-form-item label="更新时间" prop="level_update_time" label-width="150px">
@@ -390,7 +391,7 @@ export default {
           { required: true, message: '请输入香型', trigger: 'blur' }
         ],
         wine_date: [
-          { required: true, message: '请输入生产年份', trigger: 'blur' }
+          { required: true, message: '请输入入库时间', trigger: 'blur' }
         ],
         factory: [
           { required: true, message: '请输入生产厂区', trigger: 'blur' }
@@ -563,7 +564,7 @@ export default {
     handleMoreDetail(row) {
       this.temp = Object.assign({}, row)
       MessageBox.alert(
-        `陶坛ID: ${this.temp.jar_id}<br>品名: ${this.temp.wine_name}<br>香型: ${this.temp.wine_type}<br>陶坛类型: ${this.temp.jar_type}<br>陶坛高度(mm): ${this.temp.jar_height}<br>折酒系数: ${this.temp.convert_fraction}<br>生产年份: ${this.temp.wine_date}<br>生产厂区: ${this.temp.factory}<br>温度(℃): ${this.temp.wine_temp}<br>原始酒度: ${this.temp.wine_vol}<br>折算酒度: ${this.temp.wine_vol_convert}<br>测量数据更新日期: ${this.temp.level_update_time}`,
+        `陶坛ID: ${this.temp.jar_id}<br>品名: ${this.temp.wine_name}<br>香型: ${this.temp.wine_type}<br>陶坛类型: ${this.temp.jar_type}<br>陶坛高度(mm): ${this.temp.jar_height}<br>折酒系数: ${this.temp.convert_fraction}<br>入库时间: ${this.temp.wine_date}<br>生产厂区: ${this.temp.factory}<br>温度(℃): ${this.temp.wine_temp}<br>原始酒度: ${this.temp.wine_vol}<br>折算酒度: ${this.temp.wine_vol_convert}<br>测量数据更新日期: ${this.temp.level_update_time}`,
         '更多细节',
         {
           confirmButtonText: '确定',
@@ -1021,5 +1022,12 @@ export default {
   height: 100%; /* 高度填满 */
   width: 100%; /* 宽度填满 */
   background-color: #394056; /* 设置图表的背景颜色 */
+}
+.ellipsis {
+  display: inline-block;
+  width: 100%; /* 或者根据实际需求设置固定宽度 */
+  white-space: nowrap; /* 不换行 */
+  overflow: hidden; /* 超出部分隐藏 */
+  text-overflow: ellipsis; /* 超出部分显示省略号 */
 }
 </style>

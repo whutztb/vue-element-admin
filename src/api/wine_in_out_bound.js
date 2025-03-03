@@ -14,10 +14,12 @@ export function exportInOutBoundList(query) {
 }
 
 export function fetchList(query) {
+  console.log('fetch bound List request')
   return request({
     url: `${process.env.API_URL}/get_in_out_bound_list`,
     method: 'get',
-    params: query
+    params: query,
+    timeout: 3000
   })
 }
 

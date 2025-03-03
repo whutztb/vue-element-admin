@@ -13,10 +13,12 @@ export function exportUserList(query) {
 }
 
 export function fetchList(query) {
+  console.log('fetch user list request')
   return request({
     url: `${process.env.API_URL}/get_user_list`,
     method: 'get',
-    params: query
+    params: query,
+    timeout: 3000
   })
 }
 

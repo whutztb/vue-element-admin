@@ -14,11 +14,12 @@ export function exportJarList(query) {
 }
 
 export function fetchList(query) {
-  // console.log('fetch jar List request')
+  console.log('fetch jar list request')
   return request({
     url: `${process.env.API_URL}/get_jar_list`,
     method: 'get',
-    params: query
+    params: query,
+    timeout: 3000
   })
 }
 

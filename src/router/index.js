@@ -204,6 +204,7 @@ export const asyncRoutes = [
       }
     ]
   },
+
   {
     path: '/views/wine/jar_type_list',
     component: Layout,
@@ -243,25 +244,6 @@ export const asyncRoutes = [
     ]
   },
   {
-    path: '/views/wine/user_list',
-    component: Layout,
-    // redirect: '/dashboard',
-    // alwaysShow: true, // will always show the root menu
-    children: [
-      {
-        path: '',
-        component: () => import('@/views/wine/user_list'),
-        name: '用户管理',
-        meta: {
-          title: '用户管理',
-          icon: 'user',
-          affix: true,
-          roles: ['管理员'] // or you can only set roles in sub nav
-        }
-      }
-    ]
-  },
-  {
     path: '/views/wine/device_list',
     component: Layout,
     // redirect: '/dashboard',
@@ -274,6 +256,26 @@ export const asyncRoutes = [
         meta: {
           title: '设备管理',
           icon: 'tree',
+          affix: true,
+          roles: ['管理员'] // or you can only set roles in sub nav
+        }
+      }
+    ]
+  },
+
+  {
+    path: '/views/wine/user_list',
+    component: Layout,
+    // redirect: '/dashboard',
+    // alwaysShow: true, // will always show the root menu
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/wine/user_list'),
+        name: '用户管理',
+        meta: {
+          title: '用户管理',
+          icon: 'user',
           affix: true,
           roles: ['管理员'] // or you can only set roles in sub nav
         }

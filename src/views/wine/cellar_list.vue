@@ -45,12 +45,12 @@
           <span>{{ scope.row.cellar_pos }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="酒库ID" min-width="80">
+      <el-table-column align="center" label="酒库ID" min-width="90">
         <template slot-scope="scope">
           <span>{{ scope.row.cellar_id }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="80px" align="center" label="酒库名称">
+      <el-table-column min-width="120px" align="center" label="酒库名称">
         <template slot-scope="scope">
           <span>{{ scope.row.cellar_name }}</span>
         </template>
@@ -99,18 +99,15 @@
           <span>{{ scope.row.all_wine_mass }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="70px" label="利用率" align="center">
+      <!--<el-table-column min-width="70px" label="利用率" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.cellar_usage_rate }}</span>
         </template>
-      </el-table-column>
-      <el-table-column label="" align="center" min-width="250" class-name="small-padding fixed-width">
+      </el-table-column>-->
+      <el-table-column label="" align="center" min-width="200" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(row)">
             编辑
-          </el-button>
-          <el-button v-if="row.status!='deleted'" size="mini" type="info" icon="el-icon-video-camera" @click="handleMonitor(row,$index)">
-            监控
           </el-button>
           <el-button v-if="row.status!='deleted'" size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(row,$index)">
             删除

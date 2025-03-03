@@ -1,6 +1,7 @@
 import request from '@/utils/request'
 
 export function login(data) {
+  console.log('login...')
   return request({
     url: `${process.env.API_URL}/login`,
     method: 'post',

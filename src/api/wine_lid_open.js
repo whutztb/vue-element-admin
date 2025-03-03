@@ -1,10 +1,12 @@
 import request from '@/utils/request'
 
 export function fetchList(query) {
+  console.log('fetch lid List request')
   return request({
     url: `${process.env.API_URL}/get_lid_open_list`,
     method: 'get',
-    params: query
+    params: query,
+    timeout: 3000
   })
 }
 

@@ -13,10 +13,12 @@ export function exportDeviceList(query) {
 }
 
 export function fetchList(query) {
+  console.log('fetch device List request')
   return request({
     url: `${process.env.API_URL}/get_device_list`,
     method: 'get',
-    params: query
+    params: query,
+    timeout: 3000
   })
 }
 
