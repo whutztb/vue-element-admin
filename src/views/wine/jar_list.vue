@@ -46,7 +46,7 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column align="center" min-width="140">
+      <el-table-column align="center" min-width="100">
         <template slot="header">
           <span>陶坛<br>ID</span>
         </template>
@@ -166,7 +166,7 @@
           <span>{{ scope.row.level_update_time }}</span>
         </template>
       </el-table-column>-->
-      <el-table-column label="" align="center" min-width="320" class-name="small-padding fixed-width">
+      <el-table-column label="" align="center" min-width="230" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="info" size="mini" icon="el-icon-more" @click="handleMoreDetail(row)">
             更多
@@ -177,7 +177,10 @@
           <el-button v-if="row.status!='deleted'" size="mini" type="info" icon="el-icon-document" @click="handleHistory(row,$index)">
             历史
           </el-button>
-          <el-button v-if="row.status!='deleted'" size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(row,$index)">
+          <!--<el-button v-if="row.status!='deleted'" size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(row,$index)">
+            删除
+          </el-button>-->
+          <el-button v-if="row.status != 'deleted' && isAdministrator" size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(row, $index)">
             删除
           </el-button>
         </template>
@@ -409,6 +412,12 @@ export default {
       lidOpenData: [], // 初始化为空数组
       volHistoryData: []
       // socket: null  // 定义 socket 实例
+    }
+  },
+  computed: {
+    isAdministrator() {
+      const userRoles = this.$store.state.user.roles || []
+      return userRoles.includes('管理员')
     }
   },
   watch: {

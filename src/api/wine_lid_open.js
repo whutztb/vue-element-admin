@@ -18,6 +18,13 @@ export function dealWarning(data) {
   })
 }
 
+export function queryWarning() {
+  return request({
+    url: `${process.env.API_URL}/query_warning`,
+    method: 'get'
+  })
+}
+
 export function clearAllWarning(data) {
   return request({
     url: `${process.env.API_URL}/clear_all_warning`,

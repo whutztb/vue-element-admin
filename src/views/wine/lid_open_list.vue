@@ -3,7 +3,7 @@
     <div class="filter-container">
       <el-input v-model="listQuery.jar_id" placeholder="陶坛ID" style="width: 180px;" class="filter-item" />
       <el-input v-model="listQuery.jar_pos" placeholder="缸位置" style="width: 180px;" class="filter-item" />
-      <el-select v-model="listQuery.status" placeholder="选择状态" style="width: 180px;" class="filter-item">
+      <el-select v-model="listQuery.deal_status" placeholder="选择状态" style="width: 180px;" class="filter-item">
         <el-option label="全部" value="" />
         <el-option label="已处理" value="已处理" />
         <el-option label="未处理" value="未处理" />
@@ -51,7 +51,7 @@
           <span>{{ scope.row.jar_pos }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="120px" align="center" label="异动时间">
+      <el-table-column min-width="125px" align="center" label="异动时间">
         <template slot-scope="scope">
           <span>{{ scope.row.open_time }}</span>
         </template>
@@ -61,9 +61,24 @@
           <span>{{ scope.row.deal_status }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="" align="center" min-width="230" class-name="small-padding fixed-width">
+      <el-table-column min-width="125px" align="center" label="处理时间">
+        <template slot-scope="scope">
+          <span>{{ scope.row.deal_time }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column min-width="80px" align="center" label="处理用户">
+        <template slot-scope="scope">
+          <span>{{ scope.row.deal_person }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column min-width="90px" align="center" label="处理说明">
+        <template slot-scope="scope">
+          <span>{{ scope.row.deal_desc }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="" align="center" min-width="80" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
-          <el-button v-if="row.status!='deleted'&& row.deal_status === '未处理'" size="mini" type="primary" icon="el-icon-document" @click="handleWarning(row,$index)">
+          <el-button v-if="row.deal_status!='deleted'&& row.deal_status === '未处理'" size="mini" type="primary" icon="el-icon-document" @click="handleWarning(row,$index)">
             处理告警
           </el-button>
         </template>
@@ -76,40 +91,6 @@
     <!--<history_chart v-if="historyData.length" :historyData="historyData" />-->
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
-
-    <!--<el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="陶坛ID" prop="jar_id" label-width="150px">
-          <el-input v-model="temp.jar_id" :readonly="readOnly" />
-        </el-form-item>
-        <el-form-item label="缸型" prop="jar_type" label-width="150px">
-          <el-input v-model="temp.jar_type" />
-        </el-form-item>
-        <el-form-item label="缸位置" prop="jar_pos" label-width="150px">
-          <el-input v-model="temp.jar_pos" />
-        </el-form-item>
-        <el-form-item label="缸高(mm)" prop="jar_height" label-width="150px">
-          <el-input v-model="temp.jar_height" />
-        </el-form-item>
-        <el-form-item label="液位(mm)" prop="wine_level" label-width="150px">
-          <el-input v-model="temp.wine_level" />
-        </el-form-item>
-        <el-form-item label="品名" prop="wine_name" label-width="150px">
-          <el-input v-model="temp.wine_name" />
-        </el-form-item>
-        <el-form-item label="更新日期" prop="level_update_time" label-width="150px">
-          <el-date-picker v-model="temp.level_update_time" type="datetime" placeholder="请选择日期" />
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">
-          取消
-        </el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
-          确认
-        </el-button>
-      </div>
-    </el-dialog>-->
 
     <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
       <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
@@ -124,7 +105,7 @@
 </template>
 
 <script>
-import { fetchList, dealWarning, clearAllWarning, exportLidOpenList } from '@/api/wine_lid_open'
+import { fetchList, dealWarning, clearAllWarning, exportLidOpenList, queryWarning } from '@/api/wine_lid_open'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -155,14 +136,18 @@ export default {
         limit: 20,
         jar_id: '',
         jar_pos: '',
-        status: ''
+        deal_desc: '',
+        deal_status: ''
       },
 
       showReviewer: false,
       temp: {
         jar_id: undefined,
         jar_pos: '',
-        deal_status: ''
+        deal_status: '',
+        deal_time: '',
+        deal_desc: '',
+        deal_person: ''
       },
       readOnly: false,
       dialogFormVisible: false,
@@ -173,29 +158,6 @@ export default {
       },
       dialogPvVisible: false,
       pvData: [],
-      rules: {
-        jar_id: [
-          { required: true, message: '请输入陶坛ID', trigger: 'blur' }
-        ],
-        jar_type: [
-          { required: true, message: '请输入陶坛名称', trigger: 'blur' }
-        ],
-        jar_pos: [
-          { required: true, message: '请输入陶坛位置', trigger: 'blur' }
-        ],
-        jar_height: [
-          { required: true, message: '请输入陶坛高度', trigger: 'blur' }
-        ],
-        wine_level: [
-          { required: true, message: '请输入陶坛液位', trigger: 'blur' }
-        ],
-        wine_name: [
-          { required: true, message: '请输入品名', trigger: 'blur' }
-        ],
-        level_update_time: [
-          { required: true, message: '请输入液位陶坛更新时间', trigger: 'blur' }
-        ]
-      },
       downloadLoading: false,
       showDialog: false,
       showChart: false,
@@ -240,12 +202,12 @@ export default {
       this.listQuery.page = 1
       this.getList()
     },
-    handleModifyStatus(row, status) {
+    handleModifyStatus(row, deal_status) {
       this.$message({
         message: '操作成功',
         type: 'success'
       })
-      row.status = status
+      row.deal_status = deal_status
     },
     sortChange(data) {
       const { prop, order } = data
@@ -265,17 +227,42 @@ export default {
       this.temp = {
         jar_id: undefined,
         jar_pos: '',
-        deal_status: ''
-
+        deal_status: '',
+        deal_time: '',
+        deal_desc: '',
+        deal_person: ''
       }
     },
-    clearWarning() {
-      this.$confirm('确定清空告警, 是否继续?', '提示', {
+    async clearWarning() {
+      const response = await queryWarning() // 等待 Promise 解析完成
+      const warningCount = parseInt(response.warning_num, 10) // 提取 warning_num 属性的值，并转换为整数
+
+      // 如果告警数量为 0，提示用户无需清空
+      if (warningCount === 0) {
+        this.$message({
+          message: '当前没有告警，无需清空',
+          type: 'info'
+        })
+        return // 直接返回，不执行后面的代码
+      }
+
+      this.$prompt('请输入处理说明', '处理告警', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        clearAllWarning().then(response => {
+        inputPlaceholder: '请输入处理描述',
+        inputPattern: /.+/, // 确保用户必须输入内容
+        inputErrorMessage: '处理描述不能为空'
+      }).then(({ value }) => {
+        const now = new Date()
+        const year = now.getFullYear()
+        const month = String(now.getMonth() + 1).padStart(2, '0') // 月份从 0 开始，需要加 1
+        const day = String(now.getDate()).padStart(2, '0')
+        const hours = String(now.getHours()).padStart(2, '0')
+        const minutes = String(now.getMinutes()).padStart(2, '0')
+        const seconds = String(now.getSeconds()).padStart(2, '0')
+
+        const formattedTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+        clearAllWarning({ deal_time: formattedTime, deal_desc: value }).then(response => {
           this.$notify({
             title: '操作成功',
             message: '处理成功',
@@ -300,11 +287,24 @@ export default {
       })
     },
     handleWarning(row, index) {
-      this.$confirm('确定处理告警, 是否继续?', '提示', {
+      this.$prompt('请输入处理说明', '处理告警', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
+        inputPlaceholder: '请输入处理描述',
+        inputPattern: /.+/, // 确保用户必须输入内容
+        inputErrorMessage: '处理描述不能为空'
+      }).then(({ value }) => {
+        row.deal_desc = value
+        const now = new Date()
+        const year = now.getFullYear()
+        const month = String(now.getMonth() + 1).padStart(2, '0') // 月份从 0 开始，需要加 1
+        const day = String(now.getDate()).padStart(2, '0')
+        const hours = String(now.getHours()).padStart(2, '0')
+        const minutes = String(now.getMinutes()).padStart(2, '0')
+        const seconds = String(now.getSeconds()).padStart(2, '0')
+
+        const formattedTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+        row.deal_time = formattedTime
         dealWarning(row).then(response => {
           this.$notify({
             title: '操作成功',

@@ -36,7 +36,7 @@ const actions = {
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password: password })
         .then(async(response) => {
-          console.log('response', response)
+          // console.log('response', response)
           commit('SET_TOKEN', response.token)
           setToken(response.token)
           if (response.code === 0) {
@@ -101,6 +101,7 @@ const actions = {
           commit('SET_ROLES', [])
           removeToken()
           resetRouter()
+          StartSSE.closeSSE()
 
           // reset visited views and cached views
           // to fixed https://github.com/PanJiaChen/vue-element-admin/issues/2485

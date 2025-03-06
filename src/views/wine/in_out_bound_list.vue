@@ -98,7 +98,7 @@
           <span>{{ scope.row.cellar_pos }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="80px" label="陶坛位置" align="center">
+      <el-table-column min-width="85px" label="陶坛位置" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.jar_pos }}</span>
         </template>
@@ -137,7 +137,7 @@
           </span>
         </template>
       </el-table-column>
-      <el-table-column label="" align="center" min-width="100" class-name="small-padding fixed-width">
+      <el-table-column label="" align="center" min-width="90" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button v-if="row.status!='deleted'" size="mini" type="primary" icon="el-icon-document" @click="handleHistory(row,$index)">
             酒量变化

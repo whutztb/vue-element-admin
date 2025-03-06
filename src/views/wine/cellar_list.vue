@@ -109,7 +109,10 @@
           <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(row)">
             编辑
           </el-button>
-          <el-button v-if="row.status!='deleted'" size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(row,$index)">
+          <!--<el-button v-if="row.status!='deleted'" size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(row,$index)">
+            删除
+          </el-button>-->
+          <el-button v-if="row.status != 'deleted' && isAdministrator" size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(row, $index)">
             删除
           </el-button>
         </template>
@@ -274,6 +277,12 @@ export default {
       stockData: null // 初始化为空数组,库存数据
     }
   },
+  computed: {
+    isAdministrator() {
+      const userRoles = this.$store.state.user.roles || []
+      return userRoles.includes('管理员')
+    }
+  },
   watch: {
     showChart(newVal) {
       if (newVal) {
@@ -294,6 +303,7 @@ export default {
       this.chart = null
     }
   },
+
   methods: {
     // 获取陶坛类型
     fetchJarTypeOptions() {
