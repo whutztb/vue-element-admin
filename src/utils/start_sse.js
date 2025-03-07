@@ -31,12 +31,10 @@ class StartSSE {
       const mainObj = JSON.parse(event.data)
       // 提取 msg_type
       const msg_type = mainObj.msg_type
-      console.log(mainObj)
       if (msg_type === 'open_lid') {
         const jarId = mainObj.jar_id
         const openTime = mainObj.open_time
         const beepTime = parseFloat(mainObj.beepTime)
-        console.log(beepTime)
         MessageBox.alert(
           `陶坛ID: ${jarId}<br>开盖时间: ${openTime}`,
           '陶坛异常开缸提示',
@@ -67,15 +65,18 @@ class StartSSE {
         // 发送事件到 EventBus
         EventBus.$emit('updateJarListUI')
       } else if (msg_type === 'wine_leak') {
-        // MessageBox.alert(
-        //   `陶坛ID: ${mainObj.jar_id}<br>当前液位（mm）: ${mainObj.this_lv}<br>上次液位（mm）: ${mainObj.last_lv}<br>上次记录时间: ${mainObj.last_time}`,
-        //   '陶坛泄露风险提示',
-        //   {
-        //     confirmButtonText: '确定',
-        //     type: 'info',
-        //     dangerouslyUseHTMLString: true // 允许使用 HTML
-        //   }
-        // )
+        MessageBox.alert(
+          `陶坛ID: ${mainObj.jar_id}<br>当前液位（mm）: ${mainObj.this_lv}<br>上次液位（mm）: ${mainObj.last_lv}<br>上次记录时间: ${mainObj.last_time}`,
+          '陶坛泄露风险提示',
+          {
+            confirmButtonText: '确定',
+            type: 'info',
+            dangerouslyUseHTMLString: true // 允许使用 HTML
+          }
+        )
+        const beepTime = parseFloat(mainObj.beepTime)
+        // 发出声音报警
+        this.playAlarmSound(beepTime)
       }
     }
 

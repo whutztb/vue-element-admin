@@ -40,14 +40,14 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column min-width="100px" label="酒库位置" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.cellar_pos }}</span>
-        </template>
-      </el-table-column>
       <el-table-column align="center" label="酒库ID" min-width="90">
         <template slot-scope="scope">
           <span>{{ scope.row.cellar_id }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column min-width="100px" label="酒库位置" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.cellar_pos }}</span>
         </template>
       </el-table-column>
       <el-table-column min-width="120px" align="center" label="酒库名称">

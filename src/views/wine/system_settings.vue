@@ -21,12 +21,16 @@
         <el-input-number v-model="settings.inOutThreshold" :min="1" />
       </el-form-item>
 
+      <el-form-item label="渗漏告警阈值(mm)" prop="leakThreshold">
+        <el-input-number v-model="settings.leakThreshold" :min="1" />
+      </el-form-item>
+
       <el-form-item label="登录超时时间(s)" prop="timeout">
         <el-input-number v-model="settings.timeout" :min="1" />
       </el-form-item>
 
       <el-form-item label="报警蜂鸣时间(s)" prop="beepTime">
-        <el-input-number v-model="settings.beepTime" :min="1" />
+        <el-input-number v-model="settings.beepTime" :min="0" />
       </el-form-item>
 
       <el-form-item>
@@ -55,6 +59,7 @@ export default {
         calculateType: '',
         volConvert: '',
         inOutThreshold: '',
+        leakThreshold: '',
         beepTime: 0.5,
         timeout: 30
       },
@@ -62,6 +67,7 @@ export default {
         systemName: [{ required: true, message: '请输入系统名称', trigger: 'blur' }],
         volConvert: [{ required: true, message: '请输入折算酒度', trigger: 'blur' }],
         inOutThreshold: [{ required: true, message: '请输入出入库阈值', trigger: 'blur' }],
+        leakThreshold: [{ required: true, message: '请输入渗漏报警阈值', trigger: 'blur' }],
         beepTime: [{ required: true, message: '请输入蜂鸣报警时间', trigger: 'blur' }],
         timeout: [{ required: true, message: '请输入超时时间', trigger: 'blur' }]
       },
@@ -93,13 +99,13 @@ export default {
     },
     loadSettings() {
       getSystemSettings().then(response => {
-        console.log('response', response)
         this.settings.systemName = response.systemName
         this.settings.calculateType = response.calculateType
         this.settings.timeout = response.timeout
         this.settings.inOutThreshold = response.inOutThreshold
         this.settings.volConvert = response.volConvert
         this.settings.beepTime = response.beepTime
+        this.settings.leakThreshold = response.leakThreshold
       }).catch(error => {
         console.error('获取设置失败:', error)
         this.dialogMessage = '获取设置失败，请重试！'

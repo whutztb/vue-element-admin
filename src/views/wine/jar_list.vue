@@ -166,7 +166,7 @@
           <span>{{ scope.row.level_update_time }}</span>
         </template>
       </el-table-column>-->
-      <el-table-column label="" align="center" min-width="230" class-name="small-padding fixed-width">
+      <el-table-column label="" align="center" min-width="320" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="info" size="mini" icon="el-icon-more" @click="handleMoreDetail(row)">
             更多

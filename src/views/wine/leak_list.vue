@@ -51,12 +51,20 @@
           <span>{{ scope.row.jar_pos }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="125px" align="center" label="异动时间">
+      <el-table-column min-width="125px" align="center" label="渗漏时间">
         <template slot-scope="scope">
-          <span>{{ scope.row.open_time }}</span>
+          <span>{{ scope.row.leak_time }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="90px" align="center" label="状态">
+      <el-table-column min-width="60px" align="center">
+        <template slot="header">
+          <span>渗漏量<br>(mm)</span>
+        </template>
+        <template slot-scope="scope">
+          <span>{{ scope.row.leak_height }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column min-width="70px" align="center" label="状态">
         <template slot-scope="scope">
           <span>{{ scope.row.deal_status }}</span>
         </template>
@@ -105,7 +113,7 @@
 </template>
 
 <script>
-import { fetchList, dealWarning, clearAllWarning, exportLidOpenList, queryWarning } from '@/api/wine_lid_open'
+import { fetchList, dealWarning, clearAllWarning, exportLeakList, queryWarning } from '@/api/wine_leak'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -144,6 +152,8 @@ export default {
       temp: {
         jar_id: undefined,
         jar_pos: '',
+        leak_time: '',
+        leak_height: '',
         deal_status: '',
         deal_time: '',
         deal_desc: '',
@@ -227,6 +237,8 @@ export default {
       this.temp = {
         jar_id: undefined,
         jar_pos: '',
+        leak_time: '',
+        leak_height: '',
         deal_status: '',
         deal_time: '',
         deal_desc: '',
@@ -354,14 +366,14 @@ export default {
     },
     exportCurrentPage() {
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['陶坛ID', '陶坛位置', '异动时间', '状态']
-        const filterVal = ['jar_id', 'jar_pos', 'open_time', 'deal_status']
+        const tHeader = ['陶坛ID', '陶坛位置', '渗漏时间', '状态']
+        const filterVal = ['jar_id', 'jar_pos', 'leak_time', 'deal_status']
         const data = this.formatJson(filterVal)
 
         excel.export_json_to_excel({
           header: tHeader,
           data,
-          filename: 'current-page-lid-open-list'
+          filename: 'current-page-leak-list'
         })
         this.downloadLoading = false
       })
@@ -370,12 +382,12 @@ export default {
       this.downloadLoading = true // 开始下载时显示加载状态
 
       // 发起请求以获取 Excel 文件，传递查询参数
-      exportLidOpenList(this.listQuery)
+      exportLeakList(this.listQuery)
         .then(blob => { // 直接获取 Blob 对象
           const url = window.URL.createObjectURL(blob) // 创建 Blob URL
           const a = document.createElement('a') // 创建一个链接元素
           a.href = url
-          a.download = '缸盖异动列表.xlsx' // 设置下载的文件名
+          a.download = '渗漏列表.xlsx' // 设置下载的文件名
           document.body.appendChild(a) // 将链接添加到文档
           a.click() // 模拟点击
           a.remove() // 下载后移除链接

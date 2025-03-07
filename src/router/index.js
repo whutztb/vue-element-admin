@@ -204,7 +204,25 @@ export const asyncRoutes = [
       }
     ]
   },
-
+  {
+    path: '/views/wine/leak_list',
+    component: Layout,
+    // redirect: '/dashboard',
+    // alwaysShow: true, // will always show the root menu
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/wine/leak_list'),
+        name: '陶坛渗漏报警',
+        meta: {
+          title: '陶坛渗漏报警',
+          icon: 'message',
+          affix: true,
+          roles: ['管理员', '普通用户'] // or you can only set roles in sub nav
+        }
+      }
+    ]
+  },
   {
     path: '/views/wine/jar_type_list',
     component: Layout,
