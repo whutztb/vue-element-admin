@@ -364,8 +364,19 @@ export default {
             type: 'success',
             duration: 2000
           })
-          this.getList() // 调用 getList 方法以刷新数据
-          this.list.splice(index, 1)
+          const currentPage = this.listQuery.page
+          if (currentPage > 1) {
+            this.total -= 1
+            if (this.total > (currentPage - 1) * this.listQuery.limit) {
+              this.listQuery.page = currentPage
+              this.getList()
+            } else {
+              this.listQuery.page = currentPage - 1
+              this.getList()
+            }
+          } else {
+            this.getList()
+          }
         }).catch(error => {
           console.error('Error deleting user:', error)
           this.$notify({

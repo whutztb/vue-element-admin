@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-
+import { getToken } from '@/utils/auth' // get token from cookie
+import StartSSE from '@/utils/start_sse' // 导入 SSE 逻辑
 Vue.use(Router)
 
 /* Layout */
@@ -592,5 +593,16 @@ export function resetRouter() {
   const newRouter = createRouter()
   router.matcher = newRouter.matcher // reset router
 }
+
+router.beforeEach((to, from, next) => {
+  const token = getToken() // 获取本地存储的 token
+  if (token) {
+    // 如果用户已登录，确保 SSE 连接已建立
+    StartSSE.startSSE().catch(err => {
+      console.error('Failed to start SSE connection:', err)
+    })
+  }
+  next() // 继续导航
+})
 
 export default router

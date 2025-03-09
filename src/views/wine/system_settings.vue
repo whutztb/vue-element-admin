@@ -32,6 +32,12 @@
       <el-form-item label="报警蜂鸣时间(s)" prop="beepTime">
         <el-input-number v-model="settings.beepTime" :min="0" />
       </el-form-item>
+      <el-form-item label="是否弹窗报警" prop="popupAlarm">
+        <el-select v-model="settings.popupAlarm" placeholder="请选择是否弹窗告警">
+          <el-option label="否" value="0" />
+          <el-option label="是" value="1" />
+        </el-select>
+      </el-form-item>
 
       <el-form-item>
         <el-button type="primary" @click="saveSettings">保存设置</el-button>
@@ -57,6 +63,7 @@ export default {
       settings: {
         systemName: '',
         calculateType: '',
+        popupAlarm: '',
         volConvert: '',
         inOutThreshold: '',
         leakThreshold: '',
@@ -106,6 +113,7 @@ export default {
         this.settings.volConvert = response.volConvert
         this.settings.beepTime = response.beepTime
         this.settings.leakThreshold = response.leakThreshold
+        this.settings.popupAlarm = response.popupAlarm
       }).catch(error => {
         console.error('获取设置失败:', error)
         this.dialogMessage = '获取设置失败，请重试！'
