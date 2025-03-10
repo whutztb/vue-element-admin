@@ -18,11 +18,12 @@ class StartSSE {
   }
 
   initializeEventSource() {
+    // 检查是否已经存在 EventSource 且处于活跃状态
     if (this.eventSource) {
-      console.warn('SSE connection already exists. Reinitializing...')
-      this.eventSource.close()
-      this.eventSource = null
+      console.log('SSE connection already active. No need to reinitialize.')
+      return // 直接返回，不重新初始化
     }
+
     console.log('Initialize Event Source')
     this.eventSource = new EventSource(`${process.env.API_URL}/stream`)
 
@@ -131,6 +132,7 @@ class StartSSE {
   closeSSE() {
     if (this.eventSource) {
       this.eventSource.close()
+      this.eventSource = null // 释放引用
       console.log('SSE connection closed')
     }
   }

@@ -696,32 +696,9 @@ export default {
           const sortedHistoryData = this.historyData.sort((a, b) => new Date(a.rec_time) - new Date(b.rec_time))
           // 提取时间和对应的酒量
           const timestamps = sortedHistoryData.map(item => item.rec_time) // 提取时间
-          const recLevels = sortedHistoryData.map(item => item.rec_weight) // 提取 rec_weight
-          /*
-          const recVols = this.volHistoryData.map(item => item.rec_vol) // 提取 rec_vol
-          const openLidTimes = this.lidOpenData.map(item => item.open_time) // 提取 open_time
-          const openLidValue = this.lidOpenData.map(item => item.value) // 提取值（无实际意义）
+          const recWeights = sortedHistoryData.map(item => item.rec_weight) // 提取 rec_weight
+          const recLevels = sortedHistoryData.map(item => item.rec_lv) // 提取 rec_lv
 
-          // 创建一个时间点集合
-          const allTimestamps = Array.from(new Set([...timestamps, ...openLidTimes]))
-          // 对时间戳进行排序
-          allTimestamps.sort((a, b) => new Date(a) - new Date(b))
-
-          // 对齐数据
-          const alignedRecLevels = allTimestamps.map(time => {
-            const index = timestamps.indexOf(time)
-            return index !== -1 ? recLevels[index] : null // 如果没有对应的值，则填充 null
-          })
-          const alignedRecVols = allTimestamps.map(time => {
-            const index = timestamps.indexOf(time)
-            return index !== -1 ? recVols[index] : null // 如果没有对应的值，则填充 null
-          })
-
-          const alignedOpenLidValues = allTimestamps.map(time => {
-            const index = openLidTimes.indexOf(time)
-            return index !== -1 ? openLidValue[index] : null // 如果没有对应的值，则填充 null
-          })
-          */
           this.chart.setOption({
             // backgroundColor: '#394056',
             title: {
@@ -805,15 +782,15 @@ export default {
                     color: '#57617B'
                   }
                 }
-              }/*,
+              },
               {
                 type: 'value',
-                name: '酒度（°）',
+                name: '液位（mm）',
                 nameTextStyle: {
                   color: '#F1F1F3' // 设置液位 Y 轴名称的颜色为白色
                 },
-                min: 30,
-                max: 80,
+                min: 0,
+                max: 1500,
                 axisTick: {
                   show: false
                 },
@@ -836,7 +813,7 @@ export default {
                 },
                 position: 'right', // 将第二个Y轴放在右侧
                 offset: 0
-              }*/],
+              }],
             series: [{
               name: '现有酒量(t)',
               type: 'line',
@@ -857,10 +834,9 @@ export default {
                   borderWidth: 12
                 }
               },
-              data: recLevels
-
-            }/*, {
-              name: '酒度值',
+              data: recWeights
+            }, {
+              name: '液位值（mm）',
               type: 'line',
               yAxisIndex: 1, // 指定使用第二个Y轴
               connectNulls: true, // 连接 null 值
@@ -880,8 +856,8 @@ export default {
                   borderWidth: 12
                 }
               },
-              data: alignedRecVols
-            }, {
+              data: recLevels
+            }/*, {
               name: '开缸点',
               type: 'scatter',
               smooth: true,
