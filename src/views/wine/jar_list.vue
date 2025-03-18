@@ -696,11 +696,10 @@ export default {
           const sortedHistoryData = this.historyData.sort((a, b) => new Date(a.rec_time) - new Date(b.rec_time))
           // 提取时间和对应的酒量
           const timestamps = sortedHistoryData.map(item => item.rec_time) // 提取时间
-          const recWeights = sortedHistoryData.map(item => item.rec_weight) // 提取 rec_weight
+          // const recWeights = sortedHistoryData.map(item => item.rec_weight) // 提取 rec_weight
           const recLevels = sortedHistoryData.map(item => item.rec_lv) // 提取 rec_lv
-
+          const recTemps = sortedHistoryData.map(item => item.rec_temp) // 提取 rec_temp
           this.chart.setOption({
-            // backgroundColor: '#394056',
             title: {
               top: 20,
               textStyle: {
@@ -758,7 +757,9 @@ export default {
             yAxis: [
               {
                 type: 'value',
-                name: '酒量(t)',
+                name: '温度(℃)',
+                min: 0,
+                max: 50,
                 nameTextStyle: {
                   color: '#F1F1F3' // 设置液位 Y 轴名称的颜色为白色
                 },
@@ -815,7 +816,7 @@ export default {
                 offset: 0
               }],
             series: [{
-              name: '现有酒量(t)',
+              name: '温度(℃)',
               type: 'line',
               connectNulls: true, // 连接 null 值
               smooth: false,
@@ -834,7 +835,7 @@ export default {
                   borderWidth: 12
                 }
               },
-              data: recWeights
+              data: recTemps
             }, {
               name: '液位值（mm）',
               type: 'line',
@@ -857,40 +858,7 @@ export default {
                 }
               },
               data: recLevels
-            }/*, {
-              name: '开缸点',
-              type: 'scatter',
-              smooth: true,
-              symbol: 'circle',
-              symbolSize: 8,
-              showSymbol: false,
-              lineStyle: {
-                normal: {
-                  width: 1
-                }
-              },
-              areaStyle: {
-                normal: {
-                  color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-                    offset: 0,
-                    color: 'rgba(0, 136, 212, 0.3)'
-                  }, {
-                    offset: 0.8,
-                    color: 'rgba(0, 136, 212, 0)'
-                  }], false),
-                  shadowColor: 'rgba(0, 0, 0, 0.1)',
-                  shadowBlur: 10
-                }
-              },
-              itemStyle: {
-                normal: {
-                  color: 'rgb(0,136,212)',
-                  borderColor: 'rgba(0,136,212,0.2)',
-                  borderWidth: 12
-                }
-              },
-              data: alignedOpenLidValues
-            }*/]
+            }]
           })
           setTimeout(() => {
             this.chart.resize()

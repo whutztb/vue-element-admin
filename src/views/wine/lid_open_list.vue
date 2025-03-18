@@ -51,12 +51,17 @@
           <span>{{ scope.row.jar_pos }}</span>
         </template>
       </el-table-column>
+      <el-table-column min-width="70px" label="编号" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.jar_no }}</span>
+        </template>
+      </el-table-column>
       <el-table-column min-width="125px" align="center" label="异动时间">
         <template slot-scope="scope">
           <span>{{ scope.row.open_time }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="90px" align="center" label="状态">
+      <el-table-column min-width="60px" align="center" label="状态">
         <template slot-scope="scope">
           <span>{{ scope.row.deal_status }}</span>
         </template>
@@ -144,6 +149,7 @@ export default {
       temp: {
         jar_id: undefined,
         jar_pos: '',
+        jar_no: '',
         deal_status: '',
         deal_time: '',
         deal_desc: '',
@@ -227,6 +233,7 @@ export default {
       this.temp = {
         jar_id: undefined,
         jar_pos: '',
+        jar_no: '',
         deal_status: '',
         deal_time: '',
         deal_desc: '',

@@ -51,6 +51,11 @@
           <span>{{ scope.row.jar_pos }}</span>
         </template>
       </el-table-column>
+      <el-table-column min-width="70px" label="编号" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.jar_no }}</span>
+        </template>
+      </el-table-column>
       <el-table-column min-width="125px" align="center" label="渗漏时间">
         <template slot-scope="scope">
           <span>{{ scope.row.leak_time }}</span>
@@ -152,6 +157,7 @@ export default {
       temp: {
         jar_id: undefined,
         jar_pos: '',
+        jar_no: '',
         leak_time: '',
         leak_height: '',
         deal_status: '',
@@ -237,6 +243,7 @@ export default {
       this.temp = {
         jar_id: undefined,
         jar_pos: '',
+        jar_no: '',
         leak_time: '',
         leak_height: '',
         deal_status: '',
