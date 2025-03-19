@@ -1,11 +1,62 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
+      <div class="filter-item">
+        <el-select v-model="listQuery.condition" placeholder="日期选择" style="width: 120px;">
+          <el-option label="按照年度" value="year" />
+          <el-option label="按照季度" value="quarter" />
+          <el-option label="按照月份" value="month" />
+          <el-option label="指定区间" value="range" />
+        </el-select>
+      </div>
+      <div v-if="listQuery.condition === 'year'" class="filter-item">
+        <el-select v-model="listQuery.year" placeholder="选择年份" style="width: 120px;">
+          <el-option v-for="year in years" :key="year" :label="year" :value="year" />
+        </el-select>
+      </div>
+      <div v-if="listQuery.condition === 'quarter'" class="filter-item">
+        <el-select v-model="listQuery.quarter" placeholder="选择季度" style="width: 180px;">
+          <template v-for="year in years">
+            <el-option
+              v-for="quarter in quarters"
+              :key="`${year}-${quarter}`"
+              :label="`${year}年${quarter}`"
+              :value="`${year}-${quarter}`"
+            />
+          </template>
+        </el-select>
+      </div>
+      <div v-if="listQuery.condition === 'month'" class="filter-item">
+        <el-select v-model="listQuery.month" placeholder="选择月份" style="width: 120px;">
+          <template v-for="year in years">
+            <el-option
+              v-for="month in months"
+              :key="`${year}-${month}`"
+              :label="`${year}年${month}月`"
+              :value="`${year}-${month}`"
+            />
+          </template>
+        </el-select>
+      </div>
+      <div v-if="listQuery.condition === 'range'" class="filter-item">
+        <el-date-picker
+          v-model="listQuery.startDate"
+          type="datetime"
+          placeholder="选择起始时间"
+          style="width: 180px;"
+        />
+        <el-date-picker
+          v-model="listQuery.endDate"
+          type="datetime"
+          placeholder="选择结束时间"
+          style="width: 180px;"
+        />
+      </div>
       <el-input v-model="listQuery.jar_id" placeholder="陶坛ID" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.cellar_pos" placeholder="酒库位置" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.jar_pos" placeholder="陶坛位置" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <!--<el-input v-model="listQuery.jar_type" placeholder="缸型" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />-->
-      <el-input v-model="listQuery.wine_name" placeholder="品名" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <!--<el-input v-model="listQuery.wine_name" placeholder="品名" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />-->
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         查询
       </el-button>
@@ -317,8 +368,14 @@ export default {
         jar_id: '',
         jar_pos: '',
         cellar_pos: '',
-        wine_name: ''
+        wine_name: '',
+        startDate: '',
+        endDate: ''
       },
+      years: Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - i), // 倒序的年份
+      quarters: ['第4季度', '第3季度', '第2季度', '第1季度'], // 倒序的季度
+      months: Array.from({ length: 12 }, (_, i) => (12 - i).toString().padStart(2, '0')), // 倒序的月份
+      showSelectedOptions: false, // 控制是否显示已选择的选项
 
       showReviewer: false,
       temp: {
@@ -342,7 +399,9 @@ export default {
         factory: '',
         wine_type: '',
         wine_vol_convert: '',
-        level_update_time: ''
+        level_update_time: '',
+        startDate: '',
+        endDate: ''
       },
       cellarPosOptions: [],
       factoryPosOptions: [],
@@ -430,7 +489,7 @@ export default {
   created() {
     // 监听 EventBus 事件
     EventBus.$on('updateJarListUI', this.getList)
-    this.getList()
+    this.loadSavedQuery()
   },
   mounted() {
     this.initChart()
@@ -475,7 +534,61 @@ export default {
         this.listLoading = false
       })
     },
+    loadSavedQuery() {
+      const savedQuery = localStorage.getItem('timeRangeQuery_jar')
+      if (savedQuery) {
+        const query = JSON.parse(savedQuery)
+        // 确保日期字符串转换为 Date 对象
+        if (query.startDate) query.startDate = new Date(query.startDate)
+        if (query.endDate) query.endDate = new Date(query.endDate)
+        this.listQuery = query // 同步更新
+        this.getList() // 确保 listQuery 更新后调用 getList
+      } else {
+        this.getList()
+      }
+    },
+    saveQuery() {
+      localStorage.setItem('timeRangeQuery_jar', JSON.stringify(this.listQuery))
+    },
+    handleConditionChange() {
+      // Reset startDate and endDate
+      if (this.listQuery.condition !== 'range') {
+        this.listQuery.startDate = ''
+        this.listQuery.endDate = ''
+      }
+
+      const year = this.listQuery.year
+      const month = this.listQuery.month
+      const quarter = this.listQuery.quarter
+
+      if (this.listQuery.condition === 'year' && year) {
+        this.listQuery.startDate = new Date(year, 0, 1) // 1月1日
+        this.listQuery.endDate = new Date(year, 11, 31) // 12月31日
+      } else if (this.listQuery.condition === 'quarter' && quarter) {
+        const [qYear, q] = quarter.split('-')
+        if (q === '第1季度') {
+          this.listQuery.startDate = new Date(qYear, 0, 1) // 1月1日
+          this.listQuery.endDate = new Date(qYear, 2, 31) // 3月31日
+        } else if (q === '第2季度') {
+          this.listQuery.startDate = new Date(qYear, 3, 1) // 4月1日
+          this.listQuery.endDate = new Date(qYear, 5, 30) // 6月30日
+        } else if (q === '第3季度') {
+          this.listQuery.startDate = new Date(qYear, 6, 1) // 7月1日
+          this.listQuery.endDate = new Date(qYear, 8, 30) // 9月30日
+        } else if (q === '第4季度') {
+          this.listQuery.startDate = new Date(qYear, 9, 1) // 10月1日
+          this.listQuery.endDate = new Date(qYear, 11, 31) // 12月31日
+        }
+      } else if (this.listQuery.condition === 'month' && month) {
+        const [mYear, m] = month.split('-')
+        this.listQuery.startDate = new Date(mYear, m - 1, 1) // 每月1日
+        this.listQuery.endDate = new Date(mYear, m, 0) // 该月最后一天
+      }
+
+      this.saveQuery()
+    },
     handleFilter() {
+      this.handleConditionChange()
       this.listQuery.page = 1
       this.getList()
     },
@@ -522,7 +635,9 @@ export default {
         wine_type: '',
         wine_temp: '',
         wine_vol_convert: '',
-        level_update_time: ''
+        level_update_time: '',
+        startDate: '',
+        endDate: ''
       }
     },
     handleAddUp() {
@@ -674,6 +789,9 @@ export default {
       })
     },
     handleHistory(row, index) {
+      // 传入检索的时间范围
+      row.startDate = this.listQuery.startDate
+      row.endDate = this.listQuery.endDate
       getHistory(row).then(response => {
         const message = response.message
         // 如果 response.message 是字符串，尝试将其解析为数组

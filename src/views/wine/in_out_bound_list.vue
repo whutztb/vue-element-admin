@@ -103,9 +103,9 @@
           <span>{{ scope.row.jar_pos }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="60px" label="缸型" align="center">
+      <el-table-column min-width="60px" label="编号" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.jar_type }}</span>
+          <span>{{ scope.row.jar_no }}</span>
         </template>
       </el-table-column>
       <el-table-column min-width="60px" label="品名" align="center">
@@ -247,6 +247,7 @@ export default {
       temp: {
         jar_id: undefined,
         jar_type: '',
+        jar_no: '',
         jar_pos: '',
         cellar_pos: '',
         jar_height: '',
@@ -255,7 +256,9 @@ export default {
         wine_weight_convert: '',
         wine_name: '',
         in_out_bound: '',
-        wine_leak: ''
+        wine_leak: '',
+        startDate: '',
+        endDate: ''
       },
       readOnly: false,
       dialogFormVisible: false,
@@ -308,7 +311,7 @@ export default {
     }
   },
   created() {
-    this.getList()
+    this.loadSavedQuery()
   },
   mounted() {
     this.initChart()
@@ -321,13 +324,28 @@ export default {
   },
   methods: {
     getList() {
-      // console.log("jar listQuery",this.listQuery)
       this.listLoading = true
       fetchList(this.listQuery).then(response => {
         this.list = response.items
         this.total = response.total_count
         this.listLoading = false
       })
+    },
+    loadSavedQuery() {
+      const savedQuery = localStorage.getItem('timeRangeQuery')
+      if (savedQuery) {
+        const query = JSON.parse(savedQuery)
+        // 确保日期字符串转换为 Date 对象
+        if (query.startDate) query.startDate = new Date(query.startDate)
+        if (query.endDate) query.endDate = new Date(query.endDate)
+        this.listQuery = query // 同步更新
+        this.getList() // 确保 listQuery 更新后调用 getList
+      } else {
+        this.getList()
+      }
+    },
+    saveQuery() {
+      localStorage.setItem('timeRangeQuery', JSON.stringify(this.listQuery))
     },
     handleConditionChange() {
       // Reset startDate and endDate
@@ -363,11 +381,11 @@ export default {
         this.listQuery.startDate = new Date(mYear, m - 1, 1) // 每月1日
         this.listQuery.endDate = new Date(mYear, m, 0) // 该月最后一天
       }
+
+      this.saveQuery()
     },
     handleFilter() {
       this.handleConditionChange()
-      // console.log("startDate",this.listQuery.startDate)
-      // console.log("endDate",this.listQuery.endDate)
       this.listQuery.page = 1
       this.getList()
     },
@@ -396,6 +414,7 @@ export default {
       this.temp = {
         jar_id: undefined,
         jar_type: '',
+        jar_no: '',
         jar_pos: '',
         cellar_pos: '',
         jar_height: '',
@@ -404,7 +423,9 @@ export default {
         wine_weight_convert: '',
         wine_name: '',
         in_out_bound: '',
-        wine_leak: ''
+        wine_leak: '',
+        startDate: '',
+        endDate: ''
       }
     },
     handleAddUp() {
@@ -412,7 +433,7 @@ export default {
       // console.log("startDate1",this.listQuery.startDate)
       // console.log("endDate1",this.listQuery.endDate)
       getTotalInOutBound(this.listQuery).then(response => {
-        console.log(response)
+        // console.log(response)
         MessageBox.alert(
           `符合查询条件:<br>出入库酒量(吨): ${response.in_out_bound}<br>损耗酒量(吨):${response.wine_leak}`,
           '统计结果',
@@ -425,9 +446,12 @@ export default {
       })
     },
     handleHistory(row, index) {
+      // 传入检索的时间范围
+      row.startDate = this.listQuery.startDate
+      row.endDate = this.listQuery.endDate
       getHistory(row).then(response => {
         const message = response.message
-        console.log(message)
+        // console.log(message)
         // 如果 response.message 是字符串，尝试将其解析为数组
         if (typeof message === 'string') {
           console.log('888')
