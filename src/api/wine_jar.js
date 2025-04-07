@@ -47,6 +47,14 @@ export function deleteJar(data) {
   })
 }
 
+export function clearHistory(data) {
+  return request({
+    url: `${process.env.API_URL}/clear_history`,
+    method: 'post',
+    data
+  })
+}
+
 export function getHistory(data) {
   return request({
     url: `${process.env.API_URL}/get_jar_history`,

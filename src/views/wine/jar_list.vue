@@ -217,7 +217,7 @@
           <span>{{ scope.row.level_update_time }}</span>
         </template>
       </el-table-column>-->
-      <el-table-column label="" align="center" min-width="320" class-name="small-padding fixed-width">
+      <el-table-column label="" align="center" min-width="420" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="info" size="mini" icon="el-icon-more" @click="handleMoreDetail(row)">
             更多
@@ -231,6 +231,9 @@
           <!--<el-button v-if="row.status!='deleted'" size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(row,$index)">
             删除
           </el-button>-->
+          <el-button v-if="row.status != 'deleted' && isAdministrator" size="mini" type="warning" icon="el-icon-brush" @click="handleClearHistory(row, $index)">
+            清空历史
+          </el-button>
           <el-button v-if="row.status != 'deleted' && isAdministrator" size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(row, $index)">
             删除
           </el-button>
@@ -333,7 +336,7 @@
 </template>
 
 <script>
-import { fetchList, deleteJar, createJar, updateJar, exportJarList, getHistory, getTotalMass, getJarTypeOptions, getCellarPosOptions, getFactoryPosOptions, importJarCsv } from '@/api/wine_jar'
+import { fetchList, deleteJar, createJar, updateJar, exportJarList, getHistory, getTotalMass, getJarTypeOptions, getCellarPosOptions, getFactoryPosOptions, importJarCsv, clearHistory } from '@/api/wine_jar'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -784,7 +787,36 @@ export default {
       }).catch(() => {
         this.$message({
           type: 'info',
-          message: '删除异常'
+          message: '取消删除'
+        })
+      })
+    },
+    handleClearHistory(row, index) {
+      this.$confirm('确定删除该陶坛历史数据, 删除后将无法恢复，是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        clearHistory(row).then(response => {
+          this.$notify({
+            title: '操作成功',
+            message: '清除历史成功',
+            type: 'success',
+            duration: 2000
+          })
+        }).catch(error => {
+          console.error('清除历史失败:', error)
+          this.$notify({
+            title: '错误',
+            message: '清除历史失败',
+            type: 'error',
+            duration: 2000
+          })
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '取消清除历史'
         })
       })
     },
