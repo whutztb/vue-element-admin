@@ -129,14 +129,19 @@
           <span>{{ scope.row.jar_no }}</span>
         </template>
       </el-table-column>
+      <el-table-column min-width="65px" label="品名" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.wine_name }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column min-width="120px" label="生产年月" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.wine_date }}</span>
+        </template>
+      </el-table-column>
       <!--<el-table-column min-width="90px" align="center" label="缸型">
         <template slot-scope="scope">
           <span>{{ scope.row.jar_type }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column min-width="90px" label="品名" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.wine_name }}</span>
         </template>
       </el-table-column>
       <el-table-column min-width="60px" align="center">

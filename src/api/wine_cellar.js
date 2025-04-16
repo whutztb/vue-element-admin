@@ -46,14 +46,6 @@ export function deleteCellar(data) {
   })
 }
 
-export function getHistory(data) {
-  return request({
-    url: `${process.env.API_URL}/get_cellar_history`,
-    method: 'post',
-    data
-  })
-}
-
 export function getStock() {
   return request({
     url: `${process.env.API_URL}/get_cellar_stock`,
