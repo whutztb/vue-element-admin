@@ -99,26 +99,10 @@
     >
       <el-table-column align="center" min-width="100">
         <template slot="header">
-          <span>陶坛<br>ID</span>
+          <span>设备<br>ID</span>
         </template>
         <template slot-scope="scope">
           <span>{{ scope.row.jar_id }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column min-width="65px" align="center">
-        <template slot="header">
-          <span>酒库<br>位置</span>
-        </template>
-        <template slot-scope="scope">
-          <span>{{ scope.row.cellar_pos }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column min-width="65px" align="center">
-        <template slot="header">
-          <span>陶坛<br>位置</span>
-        </template>
-        <template slot-scope="scope">
-          <span>{{ scope.row.jar_pos }}</span>
         </template>
       </el-table-column>
       <el-table-column min-width="65px" align="center">
@@ -129,6 +113,23 @@
           <span>{{ scope.row.jar_no }}</span>
         </template>
       </el-table-column>
+      <!--<el-table-column min-width="65px" align="center">
+        <template slot="header">
+          <span>酒库<br>位置</span>
+        </template>
+        <template slot-scope="scope">
+          <span>{{ scope.row.cellar_pos }}</span>
+        </template>
+      </el-table-column>-->
+      <el-table-column min-width="65px" align="center">
+        <template slot="header">
+          <span>陶坛<br>位置</span>
+        </template>
+        <template slot-scope="scope">
+          <span>{{ scope.row.jar_pos }}</span>
+        </template>
+      </el-table-column>
+
       <el-table-column min-width="65px" label="品名" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.wine_name }}</span>
