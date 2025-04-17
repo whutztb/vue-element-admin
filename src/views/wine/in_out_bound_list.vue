@@ -52,7 +52,6 @@
           style="width: 180px;"
         />
       </div>
-      <el-input v-model="listQuery.cellar_pos" placeholder="酒库位置" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.jar_pos" placeholder="陶坛位置" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.wine_name" placeholder="品名" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
@@ -88,16 +87,16 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column align="center" label="陶坛ID" min-width="120">
+      <el-table-column align="center" label="设备ID" min-width="120">
         <template slot-scope="scope">
           <span>{{ scope.row.jar_id }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="70px" label="酒库位置" align="center">
+      <!--<el-table-column min-width="70px" label="酒库位置" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.cellar_pos }}</span>
         </template>
-      </el-table-column>
+      </el-table-column>-->
       <el-table-column min-width="85px" label="陶坛位置" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.jar_pos }}</span>
@@ -161,7 +160,7 @@
 
     <!--<el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="陶坛ID" prop="jar_id" label-width="150px">
+        <el-form-item label="设备ID" prop="jar_id" label-width="150px">
           <el-input v-model="temp.jar_id" :readonly="readOnly" />
         </el-form-item>
         <el-form-item label="缸型" prop="jar_type" label-width="150px">
@@ -277,7 +276,7 @@ export default {
       pvData: [],
       rules: {
         jar_id: [
-          { required: true, message: '请输入陶坛ID', trigger: 'blur' }
+          { required: true, message: '请输入设备ID', trigger: 'blur' }
         ],
         jar_type: [
           { required: true, message: '请输入陶坛名称', trigger: 'blur' }
@@ -704,7 +703,7 @@ export default {
     },
     exportCurrentPage() {
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['陶坛ID', '陶坛位置', '缸型', '品名', '当前液位(mm)', '现有酒量(t)', '出入库酒量(t)', '损耗酒量(t)']
+        const tHeader = ['设备ID', '陶坛位置', '缸型', '品名', '当前液位(mm)', '现有酒量(t)', '出入库酒量(t)', '损耗酒量(t)']
         const filterVal = ['jar_id', 'jar_pos', 'jar_type', 'wine_name', 'wine_level', 'wine_weight_convert', 'in_out_bound', 'wine_leak']
         const data = this.formatJson(filterVal)
 

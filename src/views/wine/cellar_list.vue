@@ -1,7 +1,6 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.cellar_pos" placeholder="酒库位置" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.cellar_id" placeholder="酒库ID" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.cellar_name" placeholder="酒库名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
@@ -45,11 +44,11 @@
           <span>{{ scope.row.cellar_id }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="100px" label="酒库位置" align="center">
+      <!--<el-table-column min-width="100px" label="酒库位置" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.cellar_pos }}</span>
         </template>
-      </el-table-column>
+      </el-table-column>-->
       <el-table-column min-width="120px" align="center" label="酒库名称">
         <template slot-scope="scope">
           <span>{{ scope.row.cellar_name }}</span>
@@ -134,9 +133,9 @@
         <el-form-item label="酒库名称" prop="cellar_name" label-width="100px">
           <el-input v-model="temp.cellar_name" />
         </el-form-item>
-        <el-form-item label="酒库位置" prop="cellar_pos" label-width="100px">
+        <!--<el-form-item label="酒库位置" prop="cellar_pos" label-width="100px">
           <el-input v-model="temp.cellar_pos" />
-        </el-form-item>
+        </el-form-item>-->
         <el-form-item label="缸型" prop="jar_type" label-width="100px">
           <el-select v-model="temp.jar_type" class="filter-item" placeholder="请选择">
             <el-option v-for="item in jarTypeOptions" :key="item" :label="item" :value="item" />
@@ -246,9 +245,6 @@ export default {
         ],
         cellar_name: [
           { required: true, message: '请输入酒库名称', trigger: 'blur' }
-        ],
-        cellar_pos: [
-          { required: true, message: '请输入酒库位置', trigger: 'blur' }
         ],
         jar_type: [
           { required: true, message: '请输入缸型', trigger: 'blur' }

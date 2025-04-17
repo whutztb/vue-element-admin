@@ -39,7 +39,7 @@ class StartSSE {
         const popupAlarm = parseInt(mainObj.popupAlarm)
         if (popupAlarm === 1) {
           MessageBox.alert(
-            `陶坛ID: ${jarId}<br>开盖时间: ${openTime}`,
+            `设备ID: ${jarId}<br>开盖时间: ${openTime}`,
             '陶坛异常开缸提示',
             {
               confirmButtonText: '确定',
@@ -73,7 +73,7 @@ class StartSSE {
         const popupAlarm = parseInt(mainObj.popupAlarm)
         if (popupAlarm === 1) {
           MessageBox.alert(
-            `陶坛ID: ${mainObj.jar_id}<br>当前液位（mm）: ${mainObj.this_lv}<br>上次液位（mm）: ${mainObj.last_lv}<br>上次记录时间: ${mainObj.last_time}`,
+            `设备ID: ${mainObj.jar_id}<br>当前液位（mm）: ${mainObj.this_lv}<br>上次液位（mm）: ${mainObj.last_lv}<br>上次记录时间: ${mainObj.last_time}`,
             '陶坛泄露风险提示',
             {
               confirmButtonText: '确定',

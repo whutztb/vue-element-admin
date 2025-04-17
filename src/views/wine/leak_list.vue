@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.jar_id" placeholder="陶坛ID" style="width: 180px;" class="filter-item" />
+      <el-input v-model="listQuery.jar_id" placeholder="设备ID" style="width: 180px;" class="filter-item" />
       <el-input v-model="listQuery.jar_pos" placeholder="陶坛位置" style="width: 180px;" class="filter-item" />
       <el-select v-model="listQuery.deal_status" placeholder="选择状态" style="width: 180px;" class="filter-item">
         <el-option label="全部" value="" />
@@ -41,7 +41,7 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column align="center" label="陶坛ID" min-width="135">
+      <el-table-column align="center" label="设备ID" min-width="135">
         <template slot-scope="scope">
           <span>{{ scope.row.jar_id }}</span>
         </template>
@@ -373,7 +373,7 @@ export default {
     },
     exportCurrentPage() {
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['陶坛ID', '陶坛位置', '渗漏时间', '状态']
+        const tHeader = ['设备ID', '陶坛位置', '渗漏时间', '状态']
         const filterVal = ['jar_id', 'jar_pos', 'leak_time', 'deal_status']
         const data = this.formatJson(filterVal)
 
