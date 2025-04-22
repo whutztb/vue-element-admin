@@ -148,6 +148,12 @@
 
     <el-dialog :visible.sync="showChart" :title="chartTitle" width="650px" :styles="{ height: '300px' }" class="custom-dialog">
       <div ref="chartContainer" class="chart-container" :style="{ height: '300px', width: '100%' }" />
+      <!-- 表格容器 -->
+      <el-table :data="historyData" class="custom-table" style="width: 100%;background-color: #394056;">
+        <el-table-column prop="rec_time" label="时间" width="230" align="center" />
+        <el-table-column prop="rec_lv" label="液位（mm）" width="210" align="center" />
+        <el-table-column prop="rec_weight" label="重量（t）" width="210" align="center" />
+      </el-table>
     </el-dialog>
     <!--<history_chart v-if="historyData.length" :historyData="historyData" />-->
 
@@ -474,7 +480,10 @@ export default {
           const timestamps = sortedHistoryData.map(item => item.rec_time) // 提取时间
           const recWeights = sortedHistoryData.map(item => item.rec_weight) // 提取 rec_weight
           const recLevels = sortedHistoryData.map(item => item.rec_lv) // 提取 rec_lv
-
+          const minRecLevel = Math.min(...recLevels)
+          const maxRecLevel = Math.max(...recLevels)
+          const minWeight = Math.min(...recWeights)
+          const maxWeight = Math.max(...recWeights)
           this.chart.setOption({
             // backgroundColor: '#394056',
             title: {
@@ -535,6 +544,8 @@ export default {
               {
                 type: 'value',
                 name: '酒量(t)',
+                min: 0.8 * minWeight,
+                max: 1.2 * maxWeight,
                 nameTextStyle: {
                   color: '#F1F1F3' // 设置液位 Y 轴名称的颜色为白色
                 },
@@ -565,8 +576,8 @@ export default {
                 nameTextStyle: {
                   color: '#F1F1F3' // 设置液位 Y 轴名称的颜色为白色
                 },
-                min: 0,
-                max: 1500,
+                min: 0.8 * minRecLevel,
+                max: 1.2 * maxRecLevel,
                 axisTick: {
                   show: false
                 },
@@ -764,5 +775,21 @@ export default {
   height: 100%; /* 高度填满 */
   width: 100%; /* 宽度填满 */
   background-color: #394056; /* 设置图表的背景颜色 */
+}
+
+.custom-table {
+  background-color: #394056; /* 设置表格背景色 */
+  color: #fff; /* 设置表格文本颜色 */
+}
+.custom-table .el-table__body tr:hover {
+  background-color: #394056;
+}
+.custom-table .el-table__cell {
+  background-color: #394056; /* 设置单元格背景色 */
+  color: #fff; /* 设置单元格文本颜色 */
+}
+
+.custom-table .el-table__body td {
+  background-color: #394056;
 }
 </style>

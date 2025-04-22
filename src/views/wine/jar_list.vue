@@ -248,6 +248,12 @@
 
     <el-dialog :visible.sync="showChart" :title="chartTitle" width="650px" :styles="{ height: '300px' }" class="custom-dialog">
       <div ref="chartContainer" class="chart-container" :style="{ height: '300px', width: '100%' }" />
+      <!-- 表格容器 -->
+      <el-table :data="historyData" class="custom-table" style="width: 100%;background-color: #394056;">
+        <el-table-column prop="rec_time" label="时间" width="230" align="center" />
+        <el-table-column prop="rec_lv" label="液位（mm）" width="210" align="center" />
+        <el-table-column prop="rec_temp" label="温度（℃）" width="210" align="center" />
+      </el-table>
     </el-dialog>
     <!--<history_chart v-if="historyData.length" :historyData="historyData" />-->
 
@@ -854,6 +860,10 @@ export default {
           // const recWeights = sortedHistoryData.map(item => item.rec_weight) // 提取 rec_weight
           const recLevels = sortedHistoryData.map(item => item.rec_lv) // 提取 rec_lv
           const recTemps = sortedHistoryData.map(item => item.rec_temp) // 提取 rec_temp
+          const minRecLevel = Math.min(...recLevels)
+          const maxRecLevel = Math.max(...recLevels)
+          const minTemp = Math.min(...recTemps)
+          const maxTemp = Math.max(...recTemps)
           this.chart.setOption({
             title: {
               top: 20,
@@ -913,8 +923,8 @@ export default {
               {
                 type: 'value',
                 name: '温度(℃)',
-                min: 0,
-                max: 50,
+                min: minTemp - 5,
+                max: maxTemp + 5,
                 nameTextStyle: {
                   color: '#F1F1F3' // 设置液位 Y 轴名称的颜色为白色
                 },
@@ -945,8 +955,8 @@ export default {
                 nameTextStyle: {
                   color: '#F1F1F3' // 设置液位 Y 轴名称的颜色为白色
                 },
-                min: 0,
-                max: 1500,
+                min: 0.8 * minRecLevel,
+                max: 1.2 * maxRecLevel,
                 axisTick: {
                   show: false
                 },
@@ -974,7 +984,7 @@ export default {
               name: '温度(℃)',
               type: 'line',
               connectNulls: true, // 连接 null 值
-              smooth: false,
+              smooth: true,
               symbol: 'circle',
               symbolSize: 5,
               showSymbol: false,
@@ -1149,4 +1159,20 @@ export default {
   overflow: hidden; /* 超出部分隐藏 */
   text-overflow: ellipsis; /* 超出部分显示省略号 */
 }
+.custom-table {
+  background-color: #394056; /* 设置表格背景色 */
+  color: #fff; /* 设置表格文本颜色 */
+}
+.custom-table .el-table__body tr:hover {
+  background-color: #394056;
+}
+.custom-table .el-table__cell {
+  background-color: #394056; /* 设置单元格背景色 */
+  color: #fff; /* 设置单元格文本颜色 */
+}
+
+.custom-table .el-table__body td {
+  background-color: #394056;
+}
+
 </style>
