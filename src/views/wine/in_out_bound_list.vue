@@ -544,8 +544,8 @@ export default {
               {
                 type: 'value',
                 name: '酒量(t)',
-                min: 0.8 * minWeight,
-                max: 1.2 * maxWeight,
+                min: Math.round(0.8 * minWeight),
+                max: Math.round(1.2 * maxWeight),
                 nameTextStyle: {
                   color: '#F1F1F3' // 设置液位 Y 轴名称的颜色为白色
                 },
@@ -576,8 +576,8 @@ export default {
                 nameTextStyle: {
                   color: '#F1F1F3' // 设置液位 Y 轴名称的颜色为白色
                 },
-                min: 0.8 * minRecLevel,
-                max: 1.2 * maxRecLevel,
+                min: Math.round(0.8 * minRecLevel),
+                max: Math.round(1.2 * maxRecLevel),
                 axisTick: {
                   show: false
                 },

@@ -222,7 +222,7 @@
           <span>{{ scope.row.level_update_time }}</span>
         </template>
       </el-table-column>-->
-      <el-table-column label="" align="center" min-width="420" class-name="small-padding fixed-width">
+      <el-table-column label="" align="center" min-width="460" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="info" size="mini" icon="el-icon-more" @click="handleMoreDetail(row)">
             更多
@@ -233,11 +233,14 @@
           <el-button v-if="row.status!='deleted'" size="mini" type="info" icon="el-icon-document" @click="handleHistory(row,$index)">
             历史
           </el-button>
+          <el-button type="primary" size="mini" icon="el-icon-download" @click="exportHistory(row, $index)">
+            导出
+          </el-button>
           <!--<el-button v-if="row.status!='deleted'" size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(row,$index)">
             删除
           </el-button>-->
           <el-button v-if="row.status != 'deleted' && isAdministrator" size="mini" type="warning" icon="el-icon-brush" @click="handleClearHistory(row, $index)">
-            清空历史
+            清空
           </el-button>
           <el-button v-if="row.status != 'deleted' && isAdministrator" size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(row, $index)">
             删除
@@ -347,7 +350,7 @@
 </template>
 
 <script>
-import { fetchList, deleteJar, createJar, updateJar, exportJarList, getHistory, getTotalMass, getJarTypeOptions, getCellarPosOptions, getFactoryPosOptions, importJarCsv, clearHistory } from '@/api/wine_jar'
+import { fetchList, deleteJar, createJar, updateJar, exportJarList, getHistory, getTotalMass, getJarTypeOptions, getCellarPosOptions, getFactoryPosOptions, importJarCsv, clearHistory, exportJarHistory } from '@/api/wine_jar'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -384,7 +387,8 @@ export default {
         cellar_pos: '',
         wine_name: '',
         startDate: '',
-        endDate: ''
+        endDate: '',
+        export_jar_id: ''
       },
       years: Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - i), // 倒序的年份
       quarters: ['第4季度', '第3季度', '第2季度', '第1季度'], // 倒序的季度
@@ -923,8 +927,8 @@ export default {
               {
                 type: 'value',
                 name: '温度(℃)',
-                min: minTemp - 5,
-                max: maxTemp + 5,
+                min: Math.round(minTemp - 5),
+                max: Math.round(maxTemp + 5),
                 nameTextStyle: {
                   color: '#F1F1F3' // 设置液位 Y 轴名称的颜色为白色
                 },
@@ -955,8 +959,8 @@ export default {
                 nameTextStyle: {
                   color: '#F1F1F3' // 设置液位 Y 轴名称的颜色为白色
                 },
-                min: 0.8 * minRecLevel,
-                max: 1.2 * maxRecLevel,
+                min: Math.round(0.8 * minRecLevel),
+                max: Math.round(1.2 * maxRecLevel),
                 axisTick: {
                   show: false
                 },
@@ -1122,6 +1126,28 @@ export default {
           return v[j]
         }
       }))
+    },
+    exportHistory(row, index) {
+      this.downloadLoading = true // 开始下载时显示加载状态
+      this.listQuery.export_jar_id = row.jar_id
+      // 发起请求以获取 Excel 文件，传递查询参数
+      exportJarHistory(this.listQuery)
+        .then(blob => { // 直接获取 Blob 对象
+          const url = window.URL.createObjectURL(blob) // 创建 Blob URL
+          const a = document.createElement('a') // 创建一个链接元素
+          a.href = url
+          a.download = `历史数据_${row.jar_no}.xlsx` // 设置下载的文件名
+          document.body.appendChild(a) // 将链接添加到文档
+          a.click() // 模拟点击
+          a.remove() // 下载后移除链接
+          window.URL.revokeObjectURL(url) // 释放 Blob URL
+        })
+        .catch(error => {
+          console.error('导出数据时出错:', error)
+        })
+        .finally(() => {
+          this.downloadLoading = false // 确保下载完成后隐藏加载状态
+        })
     },
     getSortClass: function(key) {
       const sort = this.listQuery.sort

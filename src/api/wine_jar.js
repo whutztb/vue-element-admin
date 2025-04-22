@@ -99,3 +99,16 @@ export function importJarCsv(data) {
     data
   })
 }
+
+export function exportJarHistory(query) {
+  return request({
+    url: `${process.env.API_URL}/export_jar_history`,
+    method: 'get',
+    headers: {
+      'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    },
+    params: query,
+    responseType: 'blob', // 设置响应类型为 blob
+    timeout: 30000 // 设置超时时间为 30 秒
+  })
+}
