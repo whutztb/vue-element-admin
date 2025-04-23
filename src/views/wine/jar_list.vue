@@ -66,10 +66,10 @@
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-circle-plus" @click="handleCreate">
         新增
       </el-button>
-      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="exportAllPages">
+      <el-button class="filter-item" type="primary" icon="el-icon-download" @click="exportAllPages">
         导出
       </el-button>
-      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-upload" @click="triggerFileInput">
+      <el-button class="filter-item" type="primary" icon="el-icon-upload" @click="triggerFileInput">
         导入
       </el-button>
       <input ref="csvFileInput" type="file" accept=".csv" style="display: none;" @change="importJarList">
@@ -1187,7 +1187,7 @@ export default {
 }
 .custom-table {
   background-color: #394056; /* 设置表格背景色 */
-  color: #fff; /* 设置表格文本颜色 */
+  color: rgb(61, 152, 51); /* 设置表格文本颜色 */
 }
 .custom-table .el-table__body tr:hover {
   background-color: #394056;
