@@ -135,17 +135,12 @@
           <span>{{ scope.row.wine_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="120px" label="生产年月" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.wine_date }}</span>
-        </template>
-      </el-table-column>
-      <!--<el-table-column min-width="90px" align="center" label="缸型">
+      <el-table-column min-width="90px" align="center" label="缸型">
         <template slot-scope="scope">
           <span>{{ scope.row.jar_type }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="60px" align="center">
+      <!--<el-table-column min-width="60px" align="center">
         <template slot="header">
           <span>缸高<br>(mm)</span>
         </template>
@@ -159,14 +154,6 @@
         </template>
         <template slot-scope="scope">
           <span>{{ scope.row.wine_level }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column min-width="60" align="center">
-        <template slot="header">
-          <span>体积<br>(m³)</span>
-        </template>
-        <template slot-scope="scope">
-          <span>{{ scope.row.wine_volume }}</span>
         </template>
       </el-table-column>
       <el-table-column min-width="65" align="center">
@@ -185,7 +172,19 @@
           <span>{{ scope.row.wine_temp }}</span>
         </template>
       </el-table-column>
-
+      <!--<el-table-column min-width="120px" label="生产年月" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.wine_date }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column min-width="60" align="center">
+        <template slot="header">
+          <span>体积<br>(m³)</span>
+        </template>
+        <template slot-scope="scope">
+          <span>{{ scope.row.wine_volume }}</span>
+        </template>
+      </el-table-column>
       <el-table-column min-width="80" align="center">
         <template slot="header">
           <span>折算酒度<br>(%vol)</span>
@@ -209,7 +208,7 @@
         <template slot-scope="scope">
           <span>{{ scope.row.wine_weight }}</span>
         </template>
-      </el-table-column>
+      </el-table-column>-->
       <el-table-column min-width="80" align="center">
         <template slot="header">
           <span>折算重量<br>(t)</span>
@@ -218,11 +217,11 @@
           <span>{{ scope.row.wine_weight_convert }}</span>
         </template>
       </el-table-column>
-      <!--<el-table-column min-width="155px" align="center" label="测量数据更新日期">
+      <el-table-column min-width="155px" align="center" label="数据更新日期">
         <template slot-scope="scope">
           <span>{{ scope.row.level_update_time }}</span>
         </template>
-      </el-table-column>-->
+      </el-table-column>
       <el-table-column label="" align="center" min-width="460" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="info" size="mini" icon="el-icon-more" @click="handleMoreDetail(row)">
