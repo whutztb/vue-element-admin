@@ -269,7 +269,7 @@ export default {
         const seconds = String(now.getSeconds()).padStart(2, '0')
 
         const formattedTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
-        clearAllWarning({ deal_time: formattedTime, deal_desc: value }).then(response => {
+        clearAllWarning({ deal_time: formattedTime, deal_desc: value, jar_pos: this.listQuery.jar_pos }).then(response => {
           this.$notify({
             title: '操作成功',
             message: '处理成功',

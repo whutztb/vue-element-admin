@@ -38,6 +38,12 @@
           <el-option label="是" value="1" />
         </el-select>
       </el-form-item>
+      <el-form-item label="缸盖异动报警" prop="popupAlarm">
+        <el-select v-model="settings.lidWarnMode" placeholder="请选择异动告警开关">
+          <el-option label="开" value="0" />
+          <el-option label="关" value="1" />
+        </el-select>
+      </el-form-item>
 
       <el-form-item>
         <el-button type="primary" @click="saveSettings">保存设置</el-button>
@@ -68,6 +74,7 @@ export default {
         inOutThreshold: '',
         leakThreshold: '',
         beepTime: 0.5,
+        lidWarnMode: 0,
         timeout: 30
       },
       rules: {
@@ -114,6 +121,7 @@ export default {
         this.settings.beepTime = response.beepTime
         this.settings.leakThreshold = response.leakThreshold
         this.settings.popupAlarm = response.popupAlarm
+        this.settings.lidWarnMode = response.lidWarnMode
       }).catch(error => {
         console.error('获取设置失败:', error)
         this.dialogMessage = '获取设置失败，请重试！'
