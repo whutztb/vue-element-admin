@@ -241,13 +241,13 @@ export default {
       }
     },
     async clearWarning() {
-      const response = await queryWarning() // 等待 Promise 解析完成
+      const response = await queryWarning(this.listQuery) // 等待 Promise 解析完成
       const warningCount = parseInt(response.warning_num, 10) // 提取 warning_num 属性的值，并转换为整数
 
       // 如果告警数量为 0，提示用户无需清空
       if (warningCount === 0) {
         this.$message({
-          message: '当前没有告警，无需清空',
+          message: '当前查询条件没有告警，无需清空',
           type: 'info'
         })
         return // 直接返回，不执行后面的代码
@@ -269,7 +269,7 @@ export default {
         const seconds = String(now.getSeconds()).padStart(2, '0')
 
         const formattedTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
-        clearAllWarning({ deal_time: formattedTime, deal_desc: value, jar_pos: this.listQuery.jar_pos }).then(response => {
+        clearAllWarning({ deal_time: formattedTime, deal_desc: value, jar_pos: this.listQuery.jar_pos, jar_id: this.listQuery.jar_id }).then(response => {
           this.$notify({
             title: '操作成功',
             message: '处理成功',
@@ -289,7 +289,7 @@ export default {
       }).catch(() => {
         this.$message({
           type: 'info',
-          message: '处理异常'
+          message: '取消处理/处理异常'
         })
       })
     },

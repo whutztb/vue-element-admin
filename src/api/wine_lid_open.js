@@ -18,10 +18,11 @@ export function dealWarning(data) {
   })
 }
 
-export function queryWarning() {
+export function queryWarning(query) {
   return request({
     url: `${process.env.API_URL}/query_warning`,
-    method: 'get'
+    method: 'get',
+    params: query
   })
 }
 
