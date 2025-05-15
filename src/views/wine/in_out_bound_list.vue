@@ -576,8 +576,8 @@ export default {
                 nameTextStyle: {
                   color: '#F1F1F3' // 设置液位 Y 轴名称的颜色为白色
                 },
-                min: Math.round(0.8 * minRecLevel),
-                max: Math.round(1.2 * maxRecLevel),
+                min: Math.round(minRecLevel - 50),
+                max: Math.round(maxRecLevel + 50),
                 axisTick: {
                   show: false
                 },
