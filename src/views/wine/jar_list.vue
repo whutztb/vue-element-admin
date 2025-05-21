@@ -1103,11 +1103,19 @@ export default {
       formData.append('file', file)
 
       this.downloadLoading = true // 设置加载状态
+      // 显示“正在导入”提示
+      const importMessage = this.$message({
+        message: '正在导入...',
+        type: 'info',
+        duration: 0 // 设置为0，表示提示框持续显示，直到手动关闭
+      })
 
       importJarCsv(formData)
         .then(response => {
-          this.$message.success('导入成功!')
-          console.log('成功:', response)
+          const message = `导入成功，更新陶坛数量：${response.updated_count}，新建陶坛数量：${response.created_count},新增记录数量：${response.insert_count}`
+          this.$message.success(message)
+          this.getList()
+          // console.log('成功:', response)
         })
         .catch(error => {
           this.$message.error('导入失败: ' + error.message)
@@ -1116,6 +1124,7 @@ export default {
         .finally(() => {
           this.downloadLoading = false // 结束加载状态
           fileInput.value = '' // 重置文件输入
+          importMessage.close()
         })
     },
     formatJson(filterVal) {

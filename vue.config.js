@@ -59,9 +59,10 @@ module.exports = {
     plugins: [
         new webpack.DefinePlugin({
           //'process.env.API_URL': JSON.stringify('http://sdyg.w1.luyouxia.net')
-          'process.env.API_URL': JSON.stringify('http://124.222.57.90:6789')
+          // 'process.env.API_URL': JSON.stringify('https://124.222.57.90:6789')
           // 'process.env.API_URL': JSON.stringify('http://127.0.0.1:5000')
           // 'process.env.API_URL': JSON.stringify('http://124.222.57.90:5000')
+          'process.env.API_URL': JSON.stringify('')
           
         })
     ]

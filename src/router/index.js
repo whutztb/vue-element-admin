@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import { getToken } from '@/utils/auth' // get token from cookie
-import StartSSE from '@/utils/start_sse' // 导入 SSE 逻辑
+// import { getToken } from '@/utils/auth' // get token from cookie
+// import StartSSE from '@/utils/start_sse' // 导入 SSE 逻辑
 Vue.use(Router)
 
 /* Layout */
@@ -167,6 +167,7 @@ export const asyncRoutes = [
       }
     ]
   },
+
   {
     path: '/views/wine/in_out_bound_list',
     component: Layout,
@@ -186,6 +187,7 @@ export const asyncRoutes = [
       }
     ]
   },
+  /*
   {
     path: '/views/wine/lid_open_list',
     component: Layout,
@@ -224,6 +226,7 @@ export const asyncRoutes = [
       }
     ]
   },
+  */
   {
     path: '/views/wine/jar_type_list',
     component: Layout,
@@ -243,6 +246,7 @@ export const asyncRoutes = [
       }
     ]
   },
+  /*
   {
     path: '/views/wine/plan_list',
     component: Layout,
@@ -281,7 +285,7 @@ export const asyncRoutes = [
       }
     ]
   },
-
+  */
   {
     path: '/views/wine/user_list',
     component: Layout,
@@ -301,6 +305,7 @@ export const asyncRoutes = [
       }
     ]
   },
+  /*
   {
     path: '/views/wine/system_settings',
     component: Layout,
@@ -320,6 +325,7 @@ export const asyncRoutes = [
       }
     ]
   },
+  */
   /* {
     path: '/permission',
     component: Layout,
@@ -593,7 +599,7 @@ export function resetRouter() {
   const newRouter = createRouter()
   router.matcher = newRouter.matcher // reset router
 }
-
+/*
 router.beforeEach((to, from, next) => {
   const token = getToken() // 获取本地存储的 token
   if (token) {
@@ -604,5 +610,5 @@ router.beforeEach((to, from, next) => {
   }
   next() // 继续导航
 })
-
+*/
 export default router
