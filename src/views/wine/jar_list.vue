@@ -129,21 +129,21 @@
           <span>{{ scope.row.jar_no }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="65px" label="品名" align="center">
+      <el-table-column min-width="50px" label="品名" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.wine_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="120px" label="生产年月" align="center">
+      <!--<el-table-column min-width="120px" label="生产年月" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.wine_date }}</span>
         </template>
       </el-table-column>
-      <!--<el-table-column min-width="90px" align="center" label="缸型">
+      <el-table-column min-width="90px" align="center" label="缸型">
         <template slot-scope="scope">
           <span>{{ scope.row.jar_type }}</span>
         </template>
-      </el-table-column>
+      </el-table-column>-->
       <el-table-column min-width="60px" align="center">
         <template slot="header">
           <span>缸高<br>(mm)</span>
@@ -151,7 +151,15 @@
         <template slot-scope="scope">
           <span>{{ scope.row.jar_height }}</span>
         </template>
-      </el-table-column>-->
+      </el-table-column>
+      <el-table-column min-width="60px" align="center">
+        <template slot="header">
+          <span>净空<br>(mm)</span>
+        </template>
+        <template slot-scope="scope">
+          <span>{{ scope.row.air_height }}</span>
+        </template>
+      </el-table-column>
       <el-table-column min-width="60px" align="center">
         <template slot="header">
           <span>液位<br>(mm)</span>
@@ -404,6 +412,7 @@ export default {
         jar_no: '',
         jar_height: '',
         wine_level: '',
+        air_height: '',
         wine_vol: '',
         wine_rou: '',
         wine_rou_input: '',
@@ -639,6 +648,7 @@ export default {
         cellar_pos: '',
         jar_no: '',
         jar_height: '',
+        air_height: '',
         wine_level: '',
         wine_vol: '',
         wine_volume: '',

@@ -243,6 +243,7 @@ export const asyncRoutes = [
       }
     ]
   },
+  /*
   {
     path: '/views/wine/plan_list',
     component: Layout,
@@ -281,7 +282,7 @@ export const asyncRoutes = [
       }
     ]
   },
-
+*/
   {
     path: '/views/wine/user_list',
     component: Layout,

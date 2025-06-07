@@ -545,7 +545,7 @@ export default {
                 type: 'value',
                 name: '酒量(t)',
                 min: Math.round(0.8 * minWeight),
-                max: Math.round(1.2 * maxWeight),
+                max: Math.round(1.1 * maxWeight),
                 nameTextStyle: {
                   color: '#F1F1F3' // 设置液位 Y 轴名称的颜色为白色
                 },
@@ -576,7 +576,7 @@ export default {
                 nameTextStyle: {
                   color: '#F1F1F3' // 设置液位 Y 轴名称的颜色为白色
                 },
-                min: Math.round(minRecLevel - 50),
+                min: Math.round(minRecLevel - 30),
                 max: Math.round(maxRecLevel + 50),
                 axisTick: {
                   show: false
@@ -603,7 +603,7 @@ export default {
               }],
             series: [{
               name: '现有酒量(t)',
-              type: 'scatter',
+              type: 'line',
               connectNulls: true, // 连接 null 值
               smooth: false,
               symbol: 'circle',
@@ -625,7 +625,7 @@ export default {
 
             }, {
               name: '液位值（mm）',
-              type: 'scatter',
+              type: 'line',
               yAxisIndex: 1, // 指定使用第二个Y轴
               connectNulls: true, // 连接 null 值
               smooth: true,
