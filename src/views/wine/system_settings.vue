@@ -38,7 +38,7 @@
           <el-option label="是" value="1" />
         </el-select>
       </el-form-item>
-      <el-form-item label="缸盖异动报警" prop="popupAlarm">
+      <el-form-item label="缸盖异动报警" prop="lidWarnMode">
         <el-select v-model="settings.lidWarnMode" placeholder="请选择异动告警开关">
           <el-option label="开" value="0" />
           <el-option label="关" value="1" />
