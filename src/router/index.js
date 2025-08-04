@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import { getToken } from '@/utils/auth' // get token from cookie
-import StartSSE from '@/utils/start_sse' // 导入 SSE 逻辑
+// import { getToken } from '@/utils/auth' // get token from cookie
+// import StartSSE from '@/utils/start_sse' // 导入 SSE 逻辑
 Vue.use(Router)
 
 /* Layout */
@@ -157,9 +157,9 @@ export const asyncRoutes = [
       {
         path: '',
         component: () => import('@/views/wine/jar_list'),
-        name: '陶坛管理',
+        name: '陶坛/酒池/大罐管理',
         meta: {
-          title: '陶坛管理',
+          title: '陶坛/酒池/大罐管理',
           icon: 'documentation',
           affix: true,
           roles: ['管理员', '普通用户'] // or you can only set roles in sub nav
@@ -167,6 +167,7 @@ export const asyncRoutes = [
       }
     ]
   },
+  /*
   {
     path: '/views/wine/in_out_bound_list',
     component: Layout,
@@ -243,7 +244,7 @@ export const asyncRoutes = [
       }
     ]
   },
-  /*
+
   {
     path: '/views/wine/plan_list',
     component: Layout,
@@ -595,15 +596,15 @@ export function resetRouter() {
   router.matcher = newRouter.matcher // reset router
 }
 
-router.beforeEach((to, from, next) => {
-  const token = getToken() // 获取本地存储的 token
-  if (token) {
-    // 如果用户已登录，确保 SSE 连接已建立
-    StartSSE.startSSE().catch(err => {
-      console.error('Failed to start SSE connection:', err)
-    })
-  }
-  next() // 继续导航
-})
+// router.beforeEach((to, from, next) => {
+//   const token = getToken() // 获取本地存储的 token
+//   if (token) {
+//     // 如果用户已登录，确保 SSE 连接已建立
+//     StartSSE.startSSE().catch(err => {
+//       console.error('Failed to start SSE connection:', err)
+//     })
+//   }
+//   next() // 继续导航
+// })
 
 export default router

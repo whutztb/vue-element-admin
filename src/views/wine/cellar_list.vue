@@ -7,9 +7,9 @@
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         查询
       </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-s-data" @click="handleStock">
+      <!--<el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-s-data" @click="handleStock">
         统计
-      </el-button>
+      </el-button>-->
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-circle-plus" @click="handleCreate">
         新增
       </el-button>
@@ -55,27 +55,27 @@
           <span>{{ scope.row.cellar_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="80px" label="缸型" align="center">
+      <el-table-column min-width="80px" label="类型" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.jar_type }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="50px" label="缸数" align="center">
+      <el-table-column min-width="70px" label="总缸/池/罐数" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.all_jar_num }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="50px" label="空缸" align="center">
+      <el-table-column min-width="70px" label="空缸/池/罐数" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.empty_jar_num }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="50px" label="漏缸" align="center">
+      <el-table-column min-width="70px" label="漏缸/池/罐数" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.bad_jar_num }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="80px" align="center">
+      <!--<el-table-column min-width="80px" align="center">
         <template slot="header">
           <span>现有酒量<br>(m³)</span>
         </template>
@@ -99,7 +99,7 @@
           <span>{{ scope.row.all_wine_mass }}</span>
         </template>
       </el-table-column>
-      <!--<el-table-column min-width="70px" label="利用率" align="center">
+      <el-table-column min-width="70px" label="利用率" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.cellar_usage_rate }}</span>
         </template>
@@ -137,26 +137,26 @@
         <el-form-item label="酒库位置" prop="cellar_pos" label-width="100px">
           <el-input v-model="temp.cellar_pos" />
         </el-form-item>
-        <el-form-item label="缸型" prop="jar_type" label-width="100px">
+        <el-form-item label="类型" prop="jar_type" label-width="100px">
           <el-select v-model="temp.jar_type" class="filter-item" placeholder="请选择">
             <el-option v-for="item in jarTypeOptions" :key="item" :label="item" :value="item" />
           </el-select>
         </el-form-item>
-        <el-form-item label="缸数" prop="all_jar_num" label-width="100px">
+        <el-form-item label="总缸/池/罐数" prop="all_jar_num" label-width="100px">
           <el-input v-model="temp.all_jar_num" />
         </el-form-item>
-        <el-form-item label="空缸" prop="empty_jar_num" label-width="100px">
+        <el-form-item label="空缸/池/罐数" prop="empty_jar_num" label-width="100px">
           <el-input v-model="temp.empty_jar_num" />
         </el-form-item>
-        <el-form-item label="漏缸" prop="bad_jar_num" label-width="100px">
+        <el-form-item label="漏缸/池/罐数" prop="bad_jar_num" label-width="100px">
           <el-input v-model="temp.bad_jar_num" />
         </el-form-item>
-        <el-form-item label="现有酒量(m³)" prop="all_wine_volume" label-width="110px">
+        <!--<el-form-item label="现有酒量(m³)" prop="all_wine_volume" label-width="110px">
           <el-input v-model="temp.all_wine_volume" />
         </el-form-item>
         <el-form-item label="库容(m³)" prop="all_jar_volume" label-width="100px">
           <el-input v-model="temp.all_jar_volume" />
-        </el-form-item>
+        </el-form-item>-->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
@@ -251,23 +251,23 @@ export default {
           { required: true, message: '请输入酒库位置', trigger: 'blur' }
         ],
         jar_type: [
-          { required: true, message: '请输入缸型', trigger: 'blur' }
+          { required: true, message: '请输入缸/池/罐型', trigger: 'blur' }
         ],
         all_jar_num: [
-          { required: true, message: '请输入总缸数', trigger: 'blur' }
+          { required: true, message: '请输入总缸/池/罐数', trigger: 'blur' }
         ],
         empty_jar_num: [
-          { required: true, message: '请输入空缸数', trigger: 'blur' }
+          { required: true, message: '请输入空缸/池/罐数', trigger: 'blur' }
         ],
         bad_jar_num: [
-          { required: true, message: '请输入漏缸数', trigger: 'blur' }
-        ],
+          { required: true, message: '请输入漏缸/池/罐数', trigger: 'blur' }
+        ]/*,
         all_wine_volume: [
           { required: true, message: '请输入酒容积', trigger: 'blur' }
         ],
         all_jar_volume: [
           { required: true, message: '请输入总容积', trigger: 'blur' }
-        ]
+        ]*/
       },
       downloadLoading: false,
       showDialog: false,

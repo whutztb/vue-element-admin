@@ -52,17 +52,17 @@
           style="width: 180px;"
         />
       </div>
-      <el-input v-model="listQuery.jar_id" placeholder="陶坛ID" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.jar_id" placeholder="容器ID" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.cellar_pos" placeholder="酒库位置" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.jar_pos" placeholder="陶坛位置" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.jar_pos" placeholder="酒库名称" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <!--<el-input v-model="listQuery.jar_type" placeholder="缸型" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />-->
       <!--<el-input v-model="listQuery.wine_name" placeholder="品名" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />-->
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         查询
       </el-button>
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-s-data" @click="handleAddUp">
+      <!--<el-button v-waves class="filter-item" type="primary" icon="el-icon-s-data" @click="handleAddUp">
         统计
-      </el-button>
+      </el-button>-->
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-circle-plus" @click="handleCreate">
         新增
       </el-button>
@@ -97,9 +97,9 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column align="center" min-width="100">
+      <el-table-column align="center" min-width="120">
         <template slot="header">
-          <span>陶坛<br>ID</span>
+          <span>容器ID</span>
         </template>
         <template slot-scope="scope">
           <span>{{ scope.row.jar_id }}</span>
@@ -115,7 +115,7 @@
       </el-table-column>
       <el-table-column min-width="65px" align="center">
         <template slot="header">
-          <span>陶坛<br>位置</span>
+          <span>酒库<br>名称</span>
         </template>
         <template slot-scope="scope">
           <span>{{ scope.row.jar_pos }}</span>
@@ -123,30 +123,30 @@
       </el-table-column>
       <el-table-column min-width="65px" align="center">
         <template slot="header">
-          <span>陶坛<br>编号</span>
+          <span>编号</span>
         </template>
         <template slot-scope="scope">
           <span>{{ scope.row.jar_no }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="50px" label="品名" align="center">
+      <el-table-column min-width="50px" label="品级" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.wine_name }}</span>
         </template>
       </el-table-column>
-      <!--<el-table-column min-width="120px" label="生产年月" align="center">
+      <el-table-column min-width="100px" label="生产年月" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.wine_date }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="90px" align="center" label="缸型">
+      <el-table-column min-width="90px" align="center" label="类型">
         <template slot-scope="scope">
           <span>{{ scope.row.jar_type }}</span>
         </template>
-      </el-table-column>-->
+      </el-table-column>
       <el-table-column min-width="60px" align="center">
         <template slot="header">
-          <span>缸高<br>(mm)</span>
+          <span>总高<br>(mm)</span>
         </template>
         <template slot-scope="scope">
           <span>{{ scope.row.jar_height }}</span>
@@ -168,14 +168,14 @@
           <span>{{ scope.row.wine_level }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="60" align="center">
+      <!--<el-table-column min-width="60" align="center">
         <template slot="header">
           <span>体积<br>(m³)</span>
         </template>
         <template slot-scope="scope">
           <span>{{ scope.row.wine_volume }}</span>
         </template>
-      </el-table-column>
+      </el-table-column>-->
       <el-table-column min-width="65" align="center">
         <template slot="header">
           <span>酒度<br>(%vol)</span>
@@ -209,7 +209,7 @@
           <span>{{ scope.row.wine_rou }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="80" align="center">
+      <!--<el-table-column min-width="80" align="center">
         <template slot="header">
           <span>原度重量<br>(t)</span>
         </template>
@@ -225,12 +225,12 @@
           <span>{{ scope.row.wine_weight_convert }}</span>
         </template>
       </el-table-column>
-      <!--<el-table-column min-width="155px" align="center" label="测量数据更新日期">
+      <el-table-column min-width="155px" align="center" label="测量数据更新日期">
         <template slot-scope="scope">
           <span>{{ scope.row.level_update_time }}</span>
         </template>
       </el-table-column>-->
-      <el-table-column label="" align="center" min-width="460" class-name="small-padding fixed-width">
+      <el-table-column label="" align="center" min-width="230" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="info" size="mini" icon="el-icon-more" @click="handleMoreDetail(row)">
             更多
@@ -238,18 +238,18 @@
           <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(row)">
             编辑
           </el-button>
-          <el-button v-if="row.status!='deleted'" size="mini" type="info" icon="el-icon-document" @click="handleHistory(row,$index)">
+          <!--<el-button v-if="row.status!='deleted'" size="mini" type="info" icon="el-icon-document" @click="handleHistory(row,$index)">
             历史
           </el-button>
           <el-button type="primary" size="mini" icon="el-icon-download" @click="exportHistory(row, $index)">
             导出
           </el-button>
-          <!--<el-button v-if="row.status!='deleted'" size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(row,$index)">
+          <el-button v-if="row.status!='deleted'" size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(row,$index)">
             删除
-          </el-button>-->
+          </el-button>
           <el-button v-if="row.status != 'deleted' && isAdministrator" size="mini" type="warning" icon="el-icon-brush" @click="handleClearHistory(row, $index)">
             清空
-          </el-button>
+          </el-button>-->
           <el-button v-if="row.status != 'deleted' && isAdministrator" size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(row, $index)">
             删除
           </el-button>
@@ -272,10 +272,10 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="陶坛ID" prop="jar_id" label-width="150px">
+        <el-form-item label="容器ID" prop="jar_id" label-width="150px">
           <el-input v-model="temp.jar_id" :readonly="readOnly" />
         </el-form-item>
-        <el-form-item label="缸型" prop="jar_type" label-width="150px">
+        <el-form-item label="类别" prop="jar_type" label-width="150px">
           <el-select v-model="temp.jar_type" class="filter-item" placeholder="请选择">
             <el-option v-for="item in jarTypeOptions" :key="item" :label="item" :value="item" />
           </el-select>
@@ -285,15 +285,15 @@
             <el-option v-for="item in factoryPosOptions" :key="item" :label="item" :value="item" />
           </el-select>
         </el-form-item>
-        <el-form-item label="陶坛位置" prop="jar_pos" label-width="150px">
+        <el-form-item label="酒库名称" prop="jar_pos" label-width="150px">
           <el-select v-model="temp.jar_pos" class="filter-item" placeholder="请选择">
             <el-option v-for="item in cellarPosOptions" :key="item" :label="item" :value="item" />
           </el-select>
         </el-form-item>
-        <el-form-item label="陶坛编号" prop="jar_no" label-width="150px">
+        <el-form-item label="编号" prop="jar_no" label-width="150px">
           <el-input v-model="temp.jar_no" />
         </el-form-item>
-        <el-form-item label="陶坛高(mm)" prop="jar_height" label-width="150px">
+        <el-form-item label="总高(mm)" prop="jar_height" label-width="150px">
           <el-input v-model="temp.jar_height" />
         </el-form-item>
         <el-form-item label="液位(mm)" prop="wine_level" label-width="150px">
@@ -305,7 +305,7 @@
         <el-form-item label="温度(℃)" prop="wine_temp" label-width="150px">
           <el-input v-model="temp.wine_temp" />
         </el-form-item>
-        <el-form-item label="品名" prop="wine_name" label-width="150px">
+        <el-form-item label="品级" prop="wine_name" label-width="150px">
           <el-input v-model="temp.wine_name" />
         </el-form-item>
         <el-form-item label="香型" prop="wine_type" label-width="150px">

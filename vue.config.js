@@ -49,7 +49,7 @@ module.exports = {
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
     // it can be accessed in index.html to inject the correct title.
-    name: '数智化陶坛监测系统',
+    name: '数智化酒库管理系统',
     resolve: {
       alias: {
         '@': resolve('src')

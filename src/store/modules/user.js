@@ -1,7 +1,7 @@
 import { login, logout, getInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
-import StartSSE from '@/utils/start_sse' // 导入 SSE 逻辑
+// import StartSSE from '@/utils/start_sse' // 导入 SSE 逻辑
 
 const state = {
   token: getToken(),
@@ -44,7 +44,7 @@ const actions = {
             router.push({ path: '/' })
             resolve()
             // 启动SSE与后端通讯
-            await StartSSE.startSSE() // 调用 startSSE 方法
+            // await StartSSE.startSSE() // 调用 startSSE 方法
           } else {
             console.log(response.message)
           }
@@ -101,7 +101,7 @@ const actions = {
           commit('SET_ROLES', [])
           removeToken()
           resetRouter()
-          StartSSE.closeSSE()
+          // StartSSE.closeSSE()
 
           // reset visited views and cached views
           // to fixed https://github.com/PanJiaChen/vue-element-admin/issues/2485
