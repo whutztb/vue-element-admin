@@ -25,7 +25,7 @@ class StartSSE {
     }
 
     console.log('Initialize Event Source')
-    this.eventSource = new EventSource(`${process.env.API_URL}/stream`)
+    this.eventSource = new EventSource(`${process.env.API_URL}/stream_moutai`)
 
     this.eventSource.onmessage = (event) => {
       // 解析外层 JSON
