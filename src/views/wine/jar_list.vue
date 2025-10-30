@@ -317,6 +317,9 @@
         <el-form-item label="入库时间" prop="wine_date" label-width="150px">
           <el-date-picker v-model="temp.wine_date" type="date" placeholder="请选择日期" />
         </el-form-item>
+        <el-form-item label="补偿值（mm）" prop="compensation_value" label-width="150px">
+          <el-input v-model="temp.compensation_value" />
+        </el-form-item>
         <el-form-item label="更新时间" prop="level_update_time" label-width="150px">
           <el-date-picker v-model="temp.level_update_time" type="datetime" placeholder="请选择日期" />
         </el-form-item>
@@ -427,6 +430,7 @@ export default {
         wine_type: '',
         wine_vol_convert: '',
         level_update_time: '',
+        compensation_value: '',
         startDate: '',
         endDate: ''
       },
@@ -484,6 +488,9 @@ export default {
         ],
         factory: [
           { required: true, message: '请输入生产厂区', trigger: 'blur' }
+        ],
+        compensation_value: [
+          { required: true, message: '请输入补偿值', trigger: 'blur' }
         ],
         level_update_time: [
           { required: true, message: '请输入液位陶坛更新时间', trigger: 'blur' }
@@ -664,6 +671,7 @@ export default {
         wine_temp: '',
         wine_vol_convert: '',
         level_update_time: '',
+        compensation_value: '',
         startDate: '',
         endDate: ''
       }

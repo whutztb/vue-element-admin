@@ -36,28 +36,48 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column align="center" label="设备ID" min-width="200">
+      <el-table-column align="center" label="设备ID" min-width="140">
         <template slot-scope="scope">
           <span>{{ scope.row.device_id }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column min-width="200px" align="center" label="设备名称">
+      <el-table-column min-width="70px" align="center" label="设备名称">
         <template slot-scope="scope">
           <span>{{ scope.row.device_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="150px" label="物联卡号" align="center">
+      <el-table-column min-width="140px" label="物联卡号" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.card_num }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="180px" align="center" label="到期时间">
+      <el-table-column min-width="100px" label="信号质量" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.signal_quality }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column min-width="120px" label="起始距离（mm）" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.distance_start }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column min-width="120px" label="终止距离（mm）" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.distance_end }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column min-width="100px" label="测量模式" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.peak_sorting === 0 ? '距离优先' : scope.row.peak_sorting === 1 ? '强度优先' : scope.row.peak_sorting }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column min-width="150px" align="center" label="到期时间">
         <template slot-scope="scope">
           <span>{{ scope.row.expiration_time }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="" align="center" min-width="230" class-name="small-padding fixed-width">
+      <el-table-column label="" align="center" min-width="150" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(row)">
             编辑
@@ -73,16 +93,49 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="设备ID" prop="device_id" label-width="100px">
+        <el-form-item label="设备ID" prop="device_id" label-width="150px">
           <el-input v-model="temp.device_id" :readonly="readOnly" />
         </el-form-item>
-        <el-form-item label="设备名称" prop="device_name" label-width="100px">
+        <el-form-item label="设备名称" prop="device_name" label-width="150px">
           <el-input v-model="temp.device_name" />
         </el-form-item>
-        <el-form-item label="卡号" prop="jar_pos" label-width="100px">
+        <el-form-item label="卡号" prop="card_num" label-width="150px">
           <el-input v-model="temp.card_num" />
         </el-form-item>
-        <el-form-item label="到期时间" prop="expiration_time" label-width="100px">
+        <el-form-item label="信号质量" prop="signal_quality" label-width="150px">
+          <el-input
+            v-model.number="temp.signal_quality"
+            type="number"
+            :min="-10"
+            :max="35"
+            oninput="if(value<-10)value=-10;if(value>35)value=35;if(value.indexOf('.')>=0)value=value.slice(0,value.indexOf('.'))"
+          />
+        </el-form-item>
+        <el-form-item label="起始距离（mm）" prop="distance_start" label-width="150px">
+          <el-input
+            v-model.number="temp.distance_start"
+            type="number"
+            :min="50"
+            :max="22500"
+            oninput="if(value<50)value=50;if(value>22500)value=22500;if(value.indexOf('.')>=0)value=value.slice(0,value.indexOf('.'))"
+          />
+        </el-form-item>
+        <el-form-item label="终止距离（mm）" prop="distance_end" label-width="150px">
+          <el-input
+            v-model.number="temp.distance_end"
+            type="number"
+            :min="50"
+            :max="22500"
+            oninput="if(value<50)value=50;if(value>22500)value=22500;if(value.indexOf('.')>=0)value=value.slice(0,value.indexOf('.'))"
+          />
+        </el-form-item>
+        <el-form-item label="测量模式" prop="peak_sorting" label-width="150px">
+          <el-select v-model.number="temp.peak_sorting" placeholder="请选择测量模式">
+            <el-option label="距离优先" :value="0" />
+            <el-option label="强度优先" :value="1" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="到期时间" prop="expiration_time" label-width="150px">
           <el-date-picker v-model="temp.expiration_time" type="datetime" placeholder="请选择日期" />
         </el-form-item>
       </el-form>
@@ -146,6 +199,10 @@ export default {
         device_id: undefined,
         device_name: '',
         card_num: '',
+        signal_quality: '',
+        distance_start: '',
+        distance_end: '',
+        peak_sorting: '',
         expiration_time: ''
       },
       readOnly: false,
@@ -166,6 +223,21 @@ export default {
         ],
         card_num: [
           { required: true, message: '请输卡号', trigger: 'blur' }
+        ],
+        signal_quality: [
+          { required: true, message: '请输入信号质量', trigger: 'blur' },
+          { type: 'number', message: '信号质量必须为数字值' },
+          { type: 'number', min: -10, max: 35, message: '信号质量范围-10-35' }
+        ],
+        distance_start: [
+          { required: true, message: '请输入起始距离', trigger: 'blur' },
+          { type: 'number', message: '起始距离必须为数字值' },
+          { type: 'number', min: 50, max: 22500, message: '起始距离范围50-22500' }
+        ],
+        distance_end: [
+          { required: true, message: '请输入终止距离', trigger: 'blur' },
+          { type: 'number', message: '终止距离必须为数字值' },
+          { type: 'number', min: 50, max: 22500, message: '终止距离范围50-22500' }
         ],
         expiration_time: [
           { required: true, message: '请输入到期时间', trigger: 'blur' }
@@ -217,6 +289,10 @@ export default {
         device_id: undefined,
         device_name: '',
         card_num: '',
+        signal_quality: '',
+        distance_start: '',
+        distance_end: '',
+        peak_sorting: '',
         expiration_time: ''
       }
     },
