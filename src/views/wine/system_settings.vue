@@ -25,6 +25,10 @@
         <el-input-number v-model="settings.leakThreshold" :min="1" />
       </el-form-item>
 
+      <el-form-item label="溢出告警阈值(mm)" prop="overflowThreshold">
+        <el-input-number v-model="settings.overflowThreshold" :min="1" />
+      </el-form-item>
+
       <el-form-item label="登录超时时间(s)" prop="timeout">
         <el-input-number v-model="settings.timeout" :min="1" />
       </el-form-item>
@@ -73,6 +77,7 @@ export default {
         volConvert: '',
         inOutThreshold: '',
         leakThreshold: '',
+        overflowThreshold: '',
         beepTime: 0.5,
         lidWarnMode: 0,
         timeout: 30
@@ -82,6 +87,7 @@ export default {
         volConvert: [{ required: true, message: '请输入折算酒度', trigger: 'blur' }],
         inOutThreshold: [{ required: true, message: '请输入出入库阈值', trigger: 'blur' }],
         leakThreshold: [{ required: true, message: '请输入渗漏报警阈值', trigger: 'blur' }],
+        overflowThreshold: [{ required: true, message: '请输入溢出报警阈值', trigger: 'blur' }],
         beepTime: [{ required: true, message: '请输入蜂鸣报警时间', trigger: 'blur' }],
         timeout: [{ required: true, message: '请输入超时时间', trigger: 'blur' }]
       },
@@ -120,6 +126,7 @@ export default {
         this.settings.volConvert = response.volConvert
         this.settings.beepTime = response.beepTime
         this.settings.leakThreshold = response.leakThreshold
+        this.settings.overflowThreshold = response.overflowThreshold
         this.settings.popupAlarm = response.popupAlarm
         this.settings.lidWarnMode = response.lidWarnMode
       }).catch(error => {

@@ -69,12 +69,29 @@ class StartSSE {
 
         // 发送事件到 EventBus
         EventBus.$emit('updateJarListUI')
-      } else if (msg_type === 'wine_leak') {
+      } else if (msg_type === 'leak_wine') {
         const popupAlarm = parseInt(mainObj.popupAlarm)
         if (popupAlarm === 1) {
           MessageBox.alert(
-            `陶坛ID: ${mainObj.jar_id}<br>当前液位（mm）: ${mainObj.this_lv}<br>上次液位（mm）: ${mainObj.last_lv}<br>上次记录时间: ${mainObj.last_time}`,
+            `陶坛ID: ${mainObj.jar_id}<br>渗漏液位（mm）: ${mainObj.leak_height}<br>上次记录时间: ${mainObj.last_time}`,
             '陶坛泄露风险提示',
+            {
+              confirmButtonText: '确定',
+              type: 'info',
+              dangerouslyUseHTMLString: true // 允许使用 HTML
+            }
+          )
+        }
+
+        const beepTime = parseFloat(mainObj.beepTime)
+        // 发出声音报警
+        this.playAlarmSound(beepTime)
+      } else if (msg_type === 'overflow_wine') {
+        const popupAlarm = parseInt(mainObj.popupAlarm)
+        if (popupAlarm === 1) {
+          MessageBox.alert(
+            `ID: ${mainObj.jar_id}<br>当前净空（mm）: ${mainObj.air_height}<br>溢出阈值（mm）: ${mainObj.overflowThreshold}`,
+            '溢出风险提示',
             {
               confirmButtonText: '确定',
               type: 'info',
