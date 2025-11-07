@@ -45,6 +45,13 @@ Object.keys(filters).forEach(key => {
 
 Vue.config.productionTip = false
 
+import messagePoller from '@/utils/message_poller'
+// 将messagePoller轮训挂载到Vue原型上
+Vue.prototype.$messagePoller = messagePoller
+
+// 创建 EventBus 并挂载到全局，但不导出
+window.EventBus = new Vue()
+
 new Vue({
   el: '#app',
   router,

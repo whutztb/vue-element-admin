@@ -190,7 +190,12 @@ export default {
   },
   created() {
     // 监听 EventBus 事件
-    EventBus.$on('updateLidOpenListUI', this.getList)
+    if (window.EventBus) {
+      window.EventBus.$on('updateLeakListUI', this.getList)
+    } else {
+      console.error('全局 EventBus 未找到，使用局部 EventBus')
+      EventBus.$on('updateLeakListUI', this.getList)
+    }
     this.getList()
   },
   mounted() {
@@ -198,7 +203,12 @@ export default {
   },
   beforeDestroy() {
     // 清除事件监听
-    EventBus.$off('updateLidOpenListUI', this.getList)
+    if (window.EventBus) {
+      window.EventBus.$on('updateLeakListUI', this.getList)
+    } else {
+      console.error('全局 EventBus 未找到，使用局部 EventBus')
+      EventBus.$on('updateLeakListUI', this.getList)
+    }
     if (this.chart) {
       this.chart.dispose()
       this.chart = null

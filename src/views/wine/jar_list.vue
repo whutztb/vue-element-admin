@@ -521,8 +521,12 @@ export default {
     }
   },
   created() {
-    // 监听 EventBus 事件
-    EventBus.$on('updateJarListUI', this.getList)
+    if (window.EventBus) {
+      window.EventBus.$on('updateJarListUI', this.getList)
+    } else {
+      console.error('全局 EventBus 未找到，使用局部 EventBus')
+      EventBus.$on('updateJarListUI', this.getList)
+    }
     this.loadSavedQuery()
   },
   mounted() {
@@ -533,7 +537,11 @@ export default {
   },
   beforeDestroy() {
     // 清除事件监听
-    EventBus.$off('updateJarListUI', this.getList)
+    if (window.EventBus) {
+      window.EventBus.$off('updateJarListUI', this.getList)
+    } else {
+      EventBus.$off('updateJarListUI', this.getList)
+    }
     if (this.chart) {
       this.chart.dispose()
       this.chart = null
