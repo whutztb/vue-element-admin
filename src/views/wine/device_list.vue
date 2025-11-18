@@ -117,7 +117,8 @@
             type="number"
             :min="50"
             :max="22500"
-            oninput="if(value<50)value=50;if(value>22500)value=22500;if(value.indexOf('.')>=0)value=value.slice(0,value.indexOf('.'))"
+            placeholder="请输入50-22500的整数"
+            @blur="handleDistanceEndBlur"
           />
         </el-form-item>
         <el-form-item label="终止距离（mm）" prop="distance_end" label-width="150px">
@@ -126,7 +127,8 @@
             type="number"
             :min="50"
             :max="22500"
-            oninput="if(value<50)value=50;if(value>22500)value=22500;if(value.indexOf('.')>=0)value=value.slice(0,value.indexOf('.'))"
+            placeholder="请输入50-22500的整数"
+            @blur="handleDistanceEndBlur"
           />
         </el-form-item>
         <el-form-item label="测量模式" prop="peak_sorting" label-width="150px">
@@ -251,6 +253,30 @@ export default {
     this.getList()
   },
   methods: {
+    handleDistanceEndBlur(event) {
+      let value = event.target.value
+
+      if (value === '' || value === null || value === undefined) {
+        // 允许为空，或者设置为默认值
+        this.temp.distance_end = 50 // 或者保持为空 this.temp.distance_end = null
+        return
+      }
+
+      // 转换为数字
+      value = Number(value)
+
+      // 处理小数
+      if (String(value).indexOf('.') >= 0) {
+        value = Math.floor(value)
+      }
+
+      // 范围限制
+      if (value < 50) value = 50
+      if (value > 22500) value = 22500
+
+      this.temp.distance_end = value
+    },
+
     getList() {
       this.listLoading = true
       fetchList(this.listQuery).then(response => {

@@ -48,6 +48,26 @@
           <el-option label="关" value="1" />
         </el-select>
       </el-form-item>
+      <el-form-item label="测量时间" prop="detectTime">
+        <el-select v-model="settings.detectTime" placeholder="请选择测量时间">
+          <el-option
+            v-for="hour in 24"
+            :key="hour - 1"
+            :label="`${(hour - 1).toString().padStart(2, '0')}:00`"
+            :value="hour - 1"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="测量间隔(小时)" prop="detectInterval">
+        <el-select v-model="settings.detectInterval" placeholder="请选择测量间隔">
+          <el-option
+            v-for="interval in 12"
+            :key="interval"
+            :label="`${interval}小时`"
+            :value="interval"
+          />
+        </el-select>
+      </el-form-item>
 
       <el-form-item>
         <el-button type="primary" @click="saveSettings">保存设置</el-button>
@@ -80,6 +100,8 @@ export default {
         overflowThreshold: '',
         beepTime: 0.5,
         lidWarnMode: 0,
+        detectTime: 8,
+        detectInterval: 12,
         timeout: 30
       },
       rules: {
@@ -89,7 +111,9 @@ export default {
         leakThreshold: [{ required: true, message: '请输入渗漏报警阈值', trigger: 'blur' }],
         overflowThreshold: [{ required: true, message: '请输入溢出报警阈值', trigger: 'blur' }],
         beepTime: [{ required: true, message: '请输入蜂鸣报警时间', trigger: 'blur' }],
-        timeout: [{ required: true, message: '请输入超时时间', trigger: 'blur' }]
+        timeout: [{ required: true, message: '请输入超时时间', trigger: 'blur' }],
+        detectTime: [{ required: true, message: '请输入测量时间', trigger: 'blur' }],
+        detectInterval: [{ required: true, message: '请输入测量间隔', trigger: 'blur' }]
       },
       dialogVisible: false,
       dialogMessage: ''
@@ -129,6 +153,8 @@ export default {
         this.settings.overflowThreshold = response.overflowThreshold
         this.settings.popupAlarm = response.popupAlarm
         this.settings.lidWarnMode = response.lidWarnMode
+        this.settings.detectTime = response.detectTime
+        this.settings.detectInterval = response.detectInterval
       }).catch(error => {
         console.error('获取设置失败:', error)
         this.dialogMessage = '获取设置失败，请重试！'

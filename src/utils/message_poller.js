@@ -1,4 +1,4 @@
-import { Message, MessageBox } from 'element-ui'
+import { MessageBox } from 'element-ui'
 import request from '@/utils/request' // 使用项目自带的request
 
 class MessagePoller {
@@ -80,11 +80,11 @@ class MessagePoller {
         console.error('达到最大重试次数，停止轮询')
         this.stop()
 
-        Message({
-          message: '实时连接异常，请刷新页面',
-          type: 'error',
-          duration: 5000
-        })
+        // Message({
+        //   message: '实时连接异常，请刷新页面',
+        //   type: 'error',
+        //   duration: 5000
+        // })
       }
     }
   }
