@@ -168,6 +168,43 @@ export default {
     }
   },
   data() {
+    // 密码验证函数
+    const validatePassword = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('请输入密码：至少12位含大写小写数字及特殊字符'))
+      } else if (value.length < 12) {
+        callback(new Error('密码至少为12位'))
+      } else if (!/[a-z]/.test(value)) {
+        callback(new Error('密码必须包含小写字母'))
+      } else if (!/[A-Z]/.test(value)) {
+        callback(new Error('密码必须包含大写字母'))
+      } else if (!/[0-9]/.test(value)) {
+        callback(new Error('密码必须包含数字'))
+      } else if (!/[^a-zA-Z0-9]/.test(value)) {
+        callback(new Error('密码必须包含特殊符号'))
+      } else {
+        callback()
+      }
+    }
+
+    const validateNewPassword = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('请输入新密码'))
+      } else if (value.length < 12) {
+        callback(new Error('新密码至少为12位'))
+      } else if (!/[a-z]/.test(value)) {
+        callback(new Error('新密码必须包含小写字母'))
+      } else if (!/[A-Z]/.test(value)) {
+        callback(new Error('新密码必须包含大写字母'))
+      } else if (!/[0-9]/.test(value)) {
+        callback(new Error('新密码必须包含数字'))
+      } else if (!/[^a-zA-Z0-9]/.test(value)) {
+        callback(new Error('新密码必须包含特殊符号'))
+      } else {
+        callback()
+      }
+    }
+
     return {
       tableKey: 0,
       list: null,
@@ -223,13 +260,15 @@ export default {
           { required: false, message: '请选择性别', trigger: 'blur' }
         ],
         user_pwd: [
-          { required: true, message: '请输入密码', trigger: 'blur' }
+          { required: true, message: '请输入密码：至少12位含大写小写数字及特殊字符', trigger: 'blur' },
+          { validator: validatePassword, trigger: 'blur' }
         ],
         user_old_pwd: [
           { required: true, message: '请输入旧密码', trigger: 'blur' }
         ],
         user_new_pwd: [
-          { required: true, message: '请输入新密码', trigger: 'blur' }
+          { required: true, message: '请输入新密码：至少12位含大写小写数字及特殊字符', trigger: 'blur' },
+          { validator: validateNewPassword, trigger: 'blur' }
         ]
       },
       downloadLoading: false,

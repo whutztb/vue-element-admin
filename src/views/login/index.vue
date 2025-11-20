@@ -89,8 +89,16 @@ export default {
       }
     }
     const validatePassword = (rule, value, callback) => {
-      if (value.length < 1) {
-        callback(new Error('密码不能为空'))
+      if (value.length < 12) {
+        callback(new Error('密码至少为12位'))
+      } else if (!/[a-z]/.test(value)) {
+        callback(new Error('密码必须包含小写字母'))
+      } else if (!/[A-Z]/.test(value)) {
+        callback(new Error('密码必须包含大写字母'))
+      } else if (!/[0-9]/.test(value)) {
+        callback(new Error('密码必须包含数字'))
+      } else if (!/[^a-zA-Z0-9]/.test(value)) {
+        callback(new Error('密码必须包含特殊符号'))
       } else {
         callback()
       }

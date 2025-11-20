@@ -9,9 +9,9 @@
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         新增
       </el-button>
-      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="exportAllPages">
+      <!--<el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="exportAllPages">
         导出
-      </el-button>
+      </el-button>-->
       <el-dialog
         title="导出选项"
         :visible.sync="showDialog"
@@ -47,22 +47,28 @@
           <span>{{ scope.row.device_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="140px" label="物联卡号" align="center">
+      <!--<el-table-column min-width="140px" label="物联卡号" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.card_num }}</span>
         </template>
-      </el-table-column>
-      <el-table-column min-width="100px" label="信号质量" align="center">
+      </el-table-column>-->
+      <el-table-column min-width="90px" label="信号质量" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.signal_quality }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="120px" label="起始距离（mm）" align="center">
+      <el-table-column min-width="90px" align="center">
+        <template slot="header">
+          <span>起始距离<br>(mm))</span>
+        </template>
         <template slot-scope="scope">
           <span>{{ scope.row.distance_start }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="120px" label="终止距离（mm）" align="center">
+      <el-table-column min-width="90px" align="center">
+        <template slot="header">
+          <span>终止距离<br>(mm))</span>
+        </template>
         <template slot-scope="scope">
           <span>{{ scope.row.distance_end }}</span>
         </template>
@@ -72,11 +78,11 @@
           <span>{{ scope.row.peak_sorting === 0 ? '距离优先' : scope.row.peak_sorting === 1 ? '强度优先' : scope.row.peak_sorting }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="150px" align="center" label="到期时间">
+      <!--<el-table-column min-width="150px" align="center" label="到期时间">
         <template slot-scope="scope">
           <span>{{ scope.row.expiration_time }}</span>
         </template>
-      </el-table-column>
+      </el-table-column>-->
       <el-table-column label="" align="center" min-width="150" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(row)">

@@ -125,8 +125,14 @@
       </el-table-column>
       <el-table-column min-width="85px" align="center" label="出入库酒量(t)">
         <template slot-scope="scope">
-          <span :style="{ color: scope.row.in_out_bound > 0 ? 'red' : 'blue' }">
-            {{ scope.row.in_out_bound }}
+          <span v-if="scope.row.in_out_bound > 0" style="color: red;">
+            {{ scope.row.in_out_bound }}（入）
+          </span>
+          <span v-else-if="scope.row.in_out_bound < 0" style="color: blue;">
+            {{ scope.row.in_out_bound }}（出）
+          </span>
+          <span v-else style="color: gray;">
+            0
           </span>
         </template>
       </el-table-column>
@@ -149,13 +155,13 @@
     <el-dialog :visible.sync="showChart" :title="chartTitle" width="650px" :styles="{ height: '300px' }" class="custom-dialog">
       <div ref="chartContainer" class="chart-container" :style="{ height: '300px', width: '100%' }" />
       <!-- 表格容器 -->
-      <el-table :data="historyData" class="custom-table" style="width: 100%;background-color: #394056;">
+      <el-table :data="historyDataTable" class="custom-table" style="width: 100%;background-color: #394056;">
         <el-table-column prop="rec_time" label="时间" width="230" align="center" />
         <el-table-column prop="rec_lv" label="液位（mm）" width="210" align="center" />
         <el-table-column prop="rec_weight" label="重量（t）" width="210" align="center" />
       </el-table>
     </el-dialog>
-    <!--<history_chart v-if="historyData.length" :historyData="historyData" />-->
+    <!--<history_chart v-if="historyDataTable.length" :historyDataTable="historyDataTable" />-->
 
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
 
@@ -304,6 +310,7 @@ export default {
       chartTitle: '',
       className: 'chart',
       historyData: [], // 初始化为空数组
+      historyDataTable: [], // 初始化为空数组
       lidOpenData: [], // 初始化为空数组
       volHistoryData: []
       // socket: null  // 定义 socket 实例
@@ -463,6 +470,9 @@ export default {
           console.log('888')
         } else {
           this.historyData = response.message.level_msg // 直接赋值
+          this.historyDataTable = [...this.historyData].sort((a, b) =>
+            new Date(b.rec_time) - new Date(a.rec_time)
+          )
           this.lidOpenData = response.message.lid_msg // 直接赋值
           this.volHistoryData = response.message.vol_msg // 直接赋值
         }
