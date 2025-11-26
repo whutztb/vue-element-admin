@@ -74,6 +74,7 @@ export const constantRoutes = [
   {
     path: '/',
     component: Layout,
+    redirect: '/views/wine/jar_list', // 修改这里
     children: [
       {
         path: '/dashboard',

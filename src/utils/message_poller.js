@@ -137,13 +137,9 @@ class MessagePoller {
         }
       } else if (msg_type === 'new_record') {
         if (window.EventBus) {
-          // console.log('EventBus 存在，触发事件')
           window.EventBus.$emit('updateJarListUI')
-        } else {
-          // console.error('EventBus 不存在')
         }
       } else if (msg_type === 'leak_wine') {
-        // console.log('收到渗漏消息');
         const popupAlarm = parseInt(parsedData.popupAlarm)
         if (popupAlarm === 1) {
           MessageBox.alert(
@@ -162,6 +158,8 @@ class MessagePoller {
         // 发送事件到 EventBus
         if (window.EventBus) {
           window.EventBus.$emit('updateLeakListUI')
+          // 渗漏时同时更新数据
+          window.EventBus.$emit('updateJarListUI')
         }
       } else if (msg_type === 'overflow_wine') {
         // console.log('收到溢出消息');

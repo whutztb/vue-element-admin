@@ -8,8 +8,6 @@
       <el-form-item label="容积计算方式" prop="calculate">
         <el-select v-model="settings.calculateType" placeholder="请选择计算方式">
           <el-option label="经验公式" value="0" />
-          <el-option label="等效圆柱折算（平均半径）" value="1" />
-          <el-option label="等效圆台折算" value="2" />
         </el-select>
       </el-form-item>
 
@@ -29,9 +27,9 @@
         <el-input-number v-model="settings.overflowThreshold" :min="1" />
       </el-form-item>
 
-      <el-form-item label="登录超时时间(s)" prop="timeout">
+      <!--<el-form-item label="登录超时时间(s)" prop="timeout">
         <el-input-number v-model="settings.timeout" :min="1" />
-      </el-form-item>
+      </el-form-item>-->
 
       <el-form-item label="报警蜂鸣时间(s)" prop="beepTime">
         <el-input-number v-model="settings.beepTime" :min="0" />
@@ -102,7 +100,7 @@ export default {
         lidWarnMode: 0,
         detectTime: 8,
         detectInterval: 12,
-        timeout: 30
+        timeout: 3600
       },
       rules: {
         systemName: [{ required: true, message: '请输入系统名称', trigger: 'blur' }],
