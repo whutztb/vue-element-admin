@@ -52,6 +52,7 @@
           style="width: 180px;"
         />
       </div>
+      <el-input v-model="listQuery.jar_id" placeholder="陶坛ID" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.cellar_pos" placeholder="酒库位置" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.jar_pos" placeholder="陶坛位置" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.wine_name" placeholder="品名" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
@@ -351,7 +352,12 @@ export default {
         // 确保日期字符串转换为 Date 对象
         if (query.startDate) query.startDate = new Date(query.startDate)
         if (query.endDate) query.endDate = new Date(query.endDate)
-        this.listQuery = query // 同步更新
+        this.listQuery = {
+          ...this.listQuery, // 保持当前的分页设置
+          ...query, // 应用保存的搜索条件
+          page: 1, // 但强制重置为第一页
+          limit: this.listQuery.limit // 保持当前的每页数量
+        }
         this.getList() // 确保 listQuery 更新后调用 getList
       } else {
         this.getList()

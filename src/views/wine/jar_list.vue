@@ -584,7 +584,12 @@ export default {
         // 确保日期字符串转换为 Date 对象
         if (query.startDate) query.startDate = new Date(query.startDate)
         if (query.endDate) query.endDate = new Date(query.endDate)
-        this.listQuery = query // 同步更新
+        this.listQuery = {
+          ...this.listQuery, // 保持当前的分页设置
+          ...query, // 应用保存的搜索条件
+          page: 1, // 但强制重置为第一页
+          limit: this.listQuery.limit // 保持当前的每页数量
+        }
         this.getList() // 确保 listQuery 更新后调用 getList
       } else {
         this.getList()
