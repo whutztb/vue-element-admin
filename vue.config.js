@@ -25,7 +25,7 @@ module.exports = {
    * In most cases please use '/' !!!
    * Detail: https://cli.vuejs.org/config/#publicpath
    */
-  publicPath: '/',
+  publicPath: '/gujing/',
   outputDir: 'dist',
   assetsDir: 'static',
   lintOnSave: process.env.NODE_ENV === 'development',
@@ -59,10 +59,10 @@ module.exports = {
     plugins: [
         new webpack.DefinePlugin({
           //'process.env.API_URL': JSON.stringify('http://sdyg.w1.luyouxia.net')
-          'process.env.API_URL': JSON.stringify('http://124.222.57.90:5000')
+          // 'process.env.API_URL': JSON.stringify('http://124.222.57.90:5000')
           // 'process.env.API_URL': JSON.stringify('http://127.0.0.1:5000')
           // 'process.env.API_URL': JSON.stringify('http://124.222.57.90:5000')
-          
+          'process.env.API_URL': JSON.stringify('')
         })
     ]
   },
