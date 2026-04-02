@@ -158,9 +158,9 @@ export const asyncRoutes = [
       {
         path: '',
         component: () => import('@/views/wine/jar_list'),
-        name: '陶坛管理',
+        name: '大罐管理',
         meta: {
-          title: '陶坛管理',
+          title: '大罐管理',
           icon: 'documentation',
           affix: true,
           roles: ['管理员', '普通用户'] // or you can only set roles in sub nav
@@ -196,9 +196,9 @@ export const asyncRoutes = [
       {
         path: '',
         component: () => import('@/views/wine/lid_open_list'),
-        name: '缸盖异动报警',
+        name: '罐盖异动报警',
         meta: {
-          title: '缸盖异动报警',
+          title: '罐盖异动报警',
           icon: 'message',
           affix: true,
           roles: ['管理员', '普通用户'] // or you can only set roles in sub nav
@@ -215,9 +215,9 @@ export const asyncRoutes = [
       {
         path: '',
         component: () => import('@/views/wine/leak_list'),
-        name: '陶坛渗漏报警',
+        name: '大罐渗漏报警',
         meta: {
-          title: '陶坛渗漏报警',
+          title: '大罐渗漏报警',
           icon: 'message',
           affix: true,
           roles: ['管理员', '普通用户'] // or you can only set roles in sub nav
@@ -225,7 +225,26 @@ export const asyncRoutes = [
       }
     ]
   },
-  /*
+  {
+    path: '/views/wine/overflow_list',
+    component: Layout,
+    // redirect: '/dashboard',
+    // alwaysShow: true, // will always show the root menu
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/wine/overflow_list'),
+        name: '大罐溢出报警',
+        meta: {
+          title: '大罐溢出报警',
+          icon: 'message',
+          affix: true,
+          roles: ['管理员', '普通用户'] // or you can only set roles in sub nav
+        }
+      }
+    ]
+  },
+
   {
     path: '/views/wine/jar_type_list',
     component: Layout,
@@ -235,9 +254,9 @@ export const asyncRoutes = [
       {
         path: '',
         component: () => import('@/views/wine/jar_type_list'),
-        name: '陶坛属性管理',
+        name: '大罐属性管理',
         meta: {
-          title: '陶坛属性管理',
+          title: '大罐属性管理',
           icon: 'example',
           affix: true,
           roles: ['管理员'] // or you can only set roles in sub nav
@@ -245,7 +264,7 @@ export const asyncRoutes = [
       }
     ]
   },
-
+  /*
   {
     path: '/views/wine/plan_list',
     component: Layout,

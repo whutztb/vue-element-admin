@@ -39,8 +39,8 @@ class StartSSE {
         const popupAlarm = parseInt(mainObj.popupAlarm)
         if (popupAlarm === 1) {
           MessageBox.alert(
-            `陶坛ID: ${jarId}<br>开盖时间: ${openTime}`,
-            '陶坛异常开缸提示',
+            `大罐ID: ${jarId}<br>开盖时间: ${openTime}`,
+            '大罐异常开罐提示',
             {
               confirmButtonText: '确定',
               type: 'warning',
@@ -58,8 +58,8 @@ class StartSSE {
         // const jarId = mainObj.jar_id
         // const rec_lv = mainObj.rec_lv
         // MessageBox.alert(
-        //   `陶坛ID: ${jarId}<br>当前液位（mm）: ${rec_lv}`,
-        //   '陶坛信息采集提示',
+        //   `大罐ID: ${jarId}<br>当前液位（mm）: ${rec_lv}`,
+        //   '大罐信息采集提示',
         //   {
         //     confirmButtonText: '确定',
         //     type: 'info',
@@ -73,8 +73,8 @@ class StartSSE {
         const popupAlarm = parseInt(mainObj.popupAlarm)
         if (popupAlarm === 1) {
           MessageBox.alert(
-            `陶坛ID: ${mainObj.jar_id}<br>渗漏液位（mm）: ${mainObj.leak_height}<br>上次记录时间: ${mainObj.last_time}`,
-            '陶坛泄露风险提示',
+            `大罐ID: ${mainObj.jar_id}<br>渗漏液位（mm）: ${mainObj.leak_height}<br>上次记录时间: ${mainObj.last_time}`,
+            '大罐泄露风险提示',
             {
               confirmButtonText: '确定',
               type: 'info',

@@ -24,7 +24,7 @@ export default {
   },
   data() {
     return {
-      title: '数智化陶坛监测系统',
+      title: '数智化大罐监测系统',
       logo: require('@/assets/images/aizhishang.png')
     }
   }

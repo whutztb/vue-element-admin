@@ -56,12 +56,20 @@
           <span>{{ scope.row.jar_no }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="125px" align="center" label="异动时间">
+      <el-table-column min-width="125px" align="center" label="溢出时间">
         <template slot-scope="scope">
-          <span>{{ scope.row.open_time }}</span>
+          <span>{{ scope.row.overflow_time }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="60px" align="center" label="状态">
+      <el-table-column min-width="60px" align="center">
+        <template slot="header">
+          <span>当前净空<br>(mm)</span>
+        </template>
+        <template slot-scope="scope">
+          <span>{{ scope.row.overflow_air_height }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column min-width="70px" align="center" label="状态">
         <template slot-scope="scope">
           <span>{{ scope.row.deal_status }}</span>
         </template>
@@ -110,7 +118,7 @@
 </template>
 
 <script>
-import { fetchList, dealWarning, clearAllWarning, exportLidOpenList, queryWarning } from '@/api/wine_lid_open'
+import { fetchList, dealWarning, clearAllWarning, exportOverflowList, queryWarning } from '@/api/wine_overflow'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -150,6 +158,8 @@ export default {
         jar_id: undefined,
         jar_pos: '',
         jar_no: '',
+        overflow_time: '',
+        overflow_air_height: '',
         deal_status: '',
         deal_time: '',
         deal_desc: '',
@@ -181,10 +191,10 @@ export default {
   created() {
     // 监听 EventBus 事件
     if (window.EventBus) {
-      window.EventBus.$on('updateLidOpenListUI', this.getList)
+      window.EventBus.$on('updateOverflowListUI', this.getList)
     } else {
       console.error('全局 EventBus 未找到，使用局部 EventBus')
-      EventBus.$on('updateLidOpenListUI', this.getList)
+      EventBus.$on('updateOverflowListUI', this.getList)
     }
     this.getList()
   },
@@ -192,11 +202,12 @@ export default {
 
   },
   beforeDestroy() {
+    // 清除事件监听
     if (window.EventBus) {
-      window.EventBus.$off('updateLidOpenListUI', this.getList)
+      window.EventBus.$on('updateOverflowListUI', this.getList)
     } else {
       console.error('全局 EventBus 未找到，使用局部 EventBus')
-      EventBus.$off('updateLidOpenListUI', this.getList)
+      EventBus.$on('updateOverflowListUI', this.getList)
     }
     if (this.chart) {
       this.chart.dispose()
@@ -243,6 +254,8 @@ export default {
         jar_id: undefined,
         jar_pos: '',
         jar_no: '',
+        overflow_time: '',
+        overflow_air_height: '',
         deal_status: '',
         deal_time: '',
         deal_desc: '',
@@ -370,14 +383,14 @@ export default {
     },
     exportCurrentPage() {
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['大罐ID', '大罐位置', '异动时间', '状态']
-        const filterVal = ['jar_id', 'jar_pos', 'open_time', 'deal_status']
+        const tHeader = ['大罐ID', '大罐位置', '溢出时间', '状态']
+        const filterVal = ['jar_id', 'jar_pos', 'overflow_time', 'deal_status']
         const data = this.formatJson(filterVal)
 
         excel.export_json_to_excel({
           header: tHeader,
           data,
-          filename: 'current-page-lid-open-list'
+          filename: 'current-page-overflow-list'
         })
         this.downloadLoading = false
       })
@@ -386,12 +399,12 @@ export default {
       this.downloadLoading = true // 开始下载时显示加载状态
 
       // 发起请求以获取 Excel 文件，传递查询参数
-      exportLidOpenList(this.listQuery)
+      exportOverflowList(this.listQuery)
         .then(blob => { // 直接获取 Blob 对象
           const url = window.URL.createObjectURL(blob) // 创建 Blob URL
           const a = document.createElement('a') // 创建一个链接元素
           a.href = url
-          a.download = '罐盖异动列表.xlsx' // 设置下载的文件名
+          a.download = '溢出列表.xlsx' // 设置下载的文件名
           document.body.appendChild(a) // 将链接添加到文档
           a.click() // 模拟点击
           a.remove() // 下载后移除链接

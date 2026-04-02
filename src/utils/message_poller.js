@@ -112,8 +112,8 @@ class MessagePoller {
         if (popupAlarm === 1) {
           // console.log('触发弹窗');
           MessageBox.alert(
-            `陶坛ID: ${jarId}<br>开盖时间: ${openTime}`,
-            '陶坛异常开缸提示',
+            `大罐ID: ${jarId}<br>开盖时间: ${openTime}`,
+            '大罐异常开罐提示',
             {
               confirmButtonText: '确定',
               type: 'warning',
@@ -143,8 +143,8 @@ class MessagePoller {
         const popupAlarm = parseInt(parsedData.popupAlarm)
         if (popupAlarm === 1) {
           MessageBox.alert(
-            `陶坛ID: ${parsedData.jar_id}<br>渗漏液位（mm）: ${parsedData.leak_height}<br>上次记录时间: ${parsedData.last_time}`,
-            '陶坛泄露风险提示',
+            `大罐ID: ${parsedData.jar_id}<br>渗漏液位（mm）: ${parsedData.leak_height}<br>上次记录时间: ${parsedData.last_time}`,
+            '大罐泄露风险提示',
             {
               confirmButtonText: '确定',
               type: 'info',
@@ -162,12 +162,11 @@ class MessagePoller {
           window.EventBus.$emit('updateJarListUI')
         }
       } else if (msg_type === 'overflow_wine') {
-        // console.log('收到溢出消息');
         const popupAlarm = parseInt(parsedData.popupAlarm)
         if (popupAlarm === 1) {
           MessageBox.alert(
-            `ID: ${parsedData.jar_id}<br>当前净空（mm）: ${parsedData.air_height}<br>溢出阈值（mm）: ${parsedData.overflowThreshold}`,
-            '溢出风险提示',
+            `大罐ID: ${parsedData.jar_id}<br>当前净空（mm）: ${parsedData.overflow_air_height}<br>溢出阈值（mm）: ${parsedData.overflowThreshold}`,
+            '大罐溢出风险提示',
             {
               confirmButtonText: '确定',
               type: 'info',
@@ -178,6 +177,12 @@ class MessagePoller {
 
         const beepTime = parseFloat(parsedData.beepTime)
         this.playAlarmSound(beepTime)
+        // 发送事件到 EventBus
+        if (window.EventBus) {
+          window.EventBus.$emit('updateOverflowListUI')
+          // 渗漏时同时更新数据
+          window.EventBus.$emit('updateJarListUI')
+        }
       } else {
         console.log('未知消息类型:', msg_type)
       }

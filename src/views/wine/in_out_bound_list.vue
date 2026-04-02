@@ -52,9 +52,9 @@
           style="width: 180px;"
         />
       </div>
-      <el-input v-model="listQuery.jar_id" placeholder="陶坛ID" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.jar_id" placeholder="大罐ID" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.cellar_pos" placeholder="酒库位置" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.jar_pos" placeholder="陶坛位置" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.jar_pos" placeholder="大罐位置" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.wine_name" placeholder="品名" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         查询
@@ -89,7 +89,7 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column align="center" label="陶坛ID" min-width="120">
+      <el-table-column align="center" label="大罐ID" min-width="120">
         <template slot-scope="scope">
           <span>{{ scope.row.jar_id }}</span>
         </template>
@@ -99,7 +99,7 @@
           <span>{{ scope.row.cellar_pos }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="85px" label="陶坛位置" align="center">
+      <el-table-column min-width="85px" label="大罐位置" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.jar_pos }}</span>
         </template>
@@ -168,16 +168,16 @@
 
     <!--<el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="陶坛ID" prop="jar_id" label-width="150px">
+        <el-form-item label="大罐ID" prop="jar_id" label-width="150px">
           <el-input v-model="temp.jar_id" :readonly="readOnly" />
         </el-form-item>
-        <el-form-item label="缸型" prop="jar_type" label-width="150px">
+        <el-form-item label="罐型" prop="jar_type" label-width="150px">
           <el-input v-model="temp.jar_type" />
         </el-form-item>
-        <el-form-item label="缸位置" prop="jar_pos" label-width="150px">
+        <el-form-item label="罐位置" prop="jar_pos" label-width="150px">
           <el-input v-model="temp.jar_pos" />
         </el-form-item>
-        <el-form-item label="缸高(mm)" prop="jar_height" label-width="150px">
+        <el-form-item label="罐高(mm)" prop="jar_height" label-width="150px">
           <el-input v-model="temp.jar_height" />
         </el-form-item>
         <el-form-item label="液位(mm)" prop="wine_level" label-width="150px">
@@ -284,25 +284,25 @@ export default {
       pvData: [],
       rules: {
         jar_id: [
-          { required: true, message: '请输入陶坛ID', trigger: 'blur' }
+          { required: true, message: '请输入大罐ID', trigger: 'blur' }
         ],
         jar_type: [
-          { required: true, message: '请输入陶坛名称', trigger: 'blur' }
+          { required: true, message: '请输入大罐名称', trigger: 'blur' }
         ],
         jar_pos: [
-          { required: true, message: '请输入陶坛位置', trigger: 'blur' }
+          { required: true, message: '请输入大罐位置', trigger: 'blur' }
         ],
         jar_height: [
-          { required: true, message: '请输入陶坛高度', trigger: 'blur' }
+          { required: true, message: '请输入大罐高度', trigger: 'blur' }
         ],
         wine_level: [
-          { required: true, message: '请输入陶坛液位', trigger: 'blur' }
+          { required: true, message: '请输入大罐液位', trigger: 'blur' }
         ],
         wine_name: [
           { required: true, message: '请输入品名', trigger: 'blur' }
         ],
         level_update_time: [
-          { required: true, message: '请输入液位陶坛更新时间', trigger: 'blur' }
+          { required: true, message: '请输入液位大罐更新时间', trigger: 'blur' }
         ]
       },
       downloadLoading: false,
@@ -662,7 +662,7 @@ export default {
               },
               data: recLevels
             }/*, {
-              name: '开缸点',
+              name: '开罐点',
               type: 'scatter',
               smooth: true,
               symbol: 'circle',
@@ -720,7 +720,7 @@ export default {
     },
     exportCurrentPage() {
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['陶坛ID', '陶坛位置', '缸型', '品名', '当前液位(mm)', '现有酒量(t)', '出入库酒量(t)', '损耗酒量(t)']
+        const tHeader = ['大罐ID', '大罐位置', '罐型', '品名', '当前液位(mm)', '现有酒量(t)', '出入库酒量(t)', '损耗酒量(t)']
         const filterVal = ['jar_id', 'jar_pos', 'jar_type', 'wine_name', 'wine_level', 'wine_weight_convert', 'in_out_bound', 'wine_leak']
         const data = this.formatJson(filterVal)
 

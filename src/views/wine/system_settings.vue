@@ -40,7 +40,7 @@
           <el-option label="是" value="1" />
         </el-select>
       </el-form-item>
-      <el-form-item label="缸盖异动报警" prop="lidWarnMode">
+      <el-form-item label="罐盖异动报警" prop="lidWarnMode">
         <el-select v-model="settings.lidWarnMode" placeholder="请选择异动告警开关">
           <el-option label="开" value="0" />
           <el-option label="关" value="1" />
@@ -143,16 +143,16 @@ export default {
       getSystemSettings().then(response => {
         this.settings.systemName = response.systemName
         this.settings.calculateType = response.calculateType
-        this.settings.timeout = response.timeout
-        this.settings.inOutThreshold = response.inOutThreshold
-        this.settings.volConvert = response.volConvert
-        this.settings.beepTime = response.beepTime
-        this.settings.leakThreshold = response.leakThreshold
-        this.settings.overflowThreshold = response.overflowThreshold
+        this.settings.timeout = Number(response.timeout) || 3600
+        this.settings.inOutThreshold = Number(response.inOutThreshold) || 50
+        this.settings.volConvert = Number(response.volConvert) || 60
+        this.settings.beepTime = Number(response.beepTime) || 1
+        this.settings.leakThreshold = Number(response.leakThreshold) || 1
+        this.settings.overflowThreshold = Number(response.overflowThreshold) || 50
         this.settings.popupAlarm = response.popupAlarm
         this.settings.lidWarnMode = response.lidWarnMode
-        this.settings.detectTime = response.detectTime
-        this.settings.detectInterval = response.detectInterval
+        this.settings.detectTime = Number(response.detectTime) || 8
+        this.settings.detectInterval = Number(response.detectInterval) || 12
       }).catch(error => {
         console.error('获取设置失败:', error)
         this.dialogMessage = '获取设置失败，请重试！'

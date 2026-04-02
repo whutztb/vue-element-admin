@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.jar_type_name" placeholder="陶坛类型名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.jar_type_name" placeholder="大罐类型名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         查询
       </el-button>
@@ -48,13 +48,13 @@
       </el-table-column>
       <el-table-column min-width="100px" align="center">
         <template slot="header">
-          <span>标准高度<br>(mm)</span>
+          <span>标准高度<br>(m)</span>
         </template>
         <template slot-scope="scope">
           <span>{{ scope.row.jar_std_height }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="80px" align="center">
+      <!--<el-table-column min-width="80px" align="center">
         <template slot="header">
           <span>标准容量<br>(L)</span>
         </template>
@@ -94,14 +94,6 @@
           <span>{{ scope.row.shoulder_cir }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="80px" align="center">
-        <template slot="header">
-          <span>底周长<br>(mm)</span>
-        </template>
-        <template slot-scope="scope">
-          <span>{{ scope.row.bottom_cir }}</span>
-        </template>
-      </el-table-column>
       <el-table-column min-width="60px" align="center">
         <template slot="header">
           <span>底厚<br>(mm)</span>
@@ -116,6 +108,14 @@
         </template>
         <template slot-scope="scope">
           <span>{{ scope.row.thickness }}</span>
+        </template>
+      </el-table-column>-->
+      <el-table-column min-width="80px" align="center">
+        <template slot="header">
+          <span>底半径<br>(m)</span>
+        </template>
+        <template slot-scope="scope">
+          <span>{{ scope.row.bottom_cir }}</span>
         </template>
       </el-table-column>
       <el-table-column label="" align="center" min-width="180" class-name="small-padding fixed-width">
@@ -139,16 +139,16 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="陶坛类型ID" prop="jar_type_id" label-width="120px">
+        <el-form-item label="大罐类型ID" prop="jar_type_id" label-width="120px">
           <el-input v-model="temp.jar_type_id" :readonly="readOnly" />
         </el-form-item>
-        <el-form-item label="陶坛类型名称" prop="jar_type_name" label-width="120px">
+        <el-form-item label="大罐类型名称" prop="jar_type_name" label-width="120px">
           <el-input v-model="temp.jar_type_name" />
         </el-form-item>
-        <el-form-item label="标准高度(mm)" prop="jar_std_height" label-width="120px">
+        <el-form-item label="标准高度(m)" prop="jar_std_height" label-width="120px">
           <el-input v-model="temp.jar_std_height" />
         </el-form-item>
-        <el-form-item label="标准容量(L)" prop="jar_std_volume" label-width="120px">
+        <!--<el-form-item label="标准容量(t)" prop="jar_std_volume" label-width="120px">
           <el-input v-model="temp.jar_std_volume" />
         </el-form-item>
         <el-form-item label="颈高(mm)" prop="neck_height" label-width="120px">
@@ -163,14 +163,14 @@
         <el-form-item label="肩周长(mm)" prop="shoulder_cir" label-width="120px">
           <el-input v-model="temp.shoulder_cir" />
         </el-form-item>
-        <el-form-item label="底周长(mm)" prop="bottom_cir" label-width="120px">
-          <el-input v-model="temp.bottom_cir" />
-        </el-form-item>
         <el-form-item label="底高(mm)" prop="bottom_height" label-width="120px">
           <el-input v-model="temp.bottom_height" />
         </el-form-item>
         <el-form-item label="壁厚(mm)" prop="thickness" label-width="120px">
           <el-input v-model="temp.thickness" />
+        </el-form-item>-->
+        <el-form-item label="半径(m)" prop="bottom_cir" label-width="120px">
+          <el-input v-model="temp.bottom_cir" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -252,11 +252,12 @@ export default {
       pvData: [],
       rules: {
         jar_type_id: [
-          { required: true, message: '请输入陶坛类型ID', trigger: 'blur' }
+          { required: true, message: '请输入大罐类型ID', trigger: 'blur' }
         ],
         jar_type_name: [
-          { required: true, message: '请输入陶坛类型名称', trigger: 'blur' }
+          { required: true, message: '请输入大罐类型名称', trigger: 'blur' }
         ],
+        /*
         jar_std_height: [
           { required: true, message: '请输入标准高度', trigger: 'blur' }
         ],
@@ -275,14 +276,14 @@ export default {
         shoulder_cir: [
           { required: true, message: '请输入肩周长', trigger: 'blur' }
         ],
-        bottom_cir: [
-          { required: true, message: '请输入底周长', trigger: 'blur' }
-        ],
         bottom_height: [
           { required: true, message: '请输入底高', trigger: 'blur' }
         ],
         thickness: [
           { required: true, message: '请输入壁厚', trigger: 'blur' }
+        ],*/
+        bottom_cir: [
+          { required: true, message: '请输入半径', trigger: 'blur' }
         ]
       },
       downloadLoading: false,
@@ -409,7 +410,7 @@ export default {
       })
     },
     handleDelete(row, index) {
-      this.$confirm('确定删除该陶坛, 是否继续?', '提示', {
+      this.$confirm('确定删除该大罐, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -471,8 +472,8 @@ export default {
 
     exportCurrentPage() {
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['陶坛类型ID', '陶坛类型名称', '标准高度', '标准容量', '颈高', '肩高', '颈周长', '肩周长', '底周长', '底厚', '壁厚']
-        const filterVal = ['jar_type_id', 'jar_type_name', 'jar_std_height', 'jar_std_volume', 'neck_height', 'shoulder_height', 'neck_cir', 'shoulder_cir', 'bottom_cir', 'bottom_height', 'thickness']
+        const tHeader = ['大罐类型ID', '大罐类型名称', '标准高度', '半径']
+        const filterVal = ['jar_type_id', 'jar_type_name', 'jar_std_height', 'bottom_cir']
         const data = this.formatJson(filterVal)
         excel.export_json_to_excel({
           header: tHeader,
@@ -491,7 +492,7 @@ export default {
           const url = window.URL.createObjectURL(blob) // 创建 Blob URL
           const a = document.createElement('a') // 创建一个链接元素
           a.href = url
-          a.download = '陶坛类型列表.xlsx' // 设置下载的文件名
+          a.download = '大罐类型列表.xlsx' // 设置下载的文件名
           document.body.appendChild(a) // 将链接添加到文档
           a.click() // 模拟点击
           a.remove() // 下载后移除链接
