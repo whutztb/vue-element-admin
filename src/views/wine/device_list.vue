@@ -47,11 +47,11 @@
           <span>{{ scope.row.device_name }}</span>
         </template>
       </el-table-column>
-      <!--<el-table-column min-width="140px" label="物联卡号" align="center">
+      <el-table-column min-width="140px" label="CCID" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.card_num }}</span>
         </template>
-      </el-table-column>-->
+      </el-table-column>
       <el-table-column min-width="90px" label="信号质量" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.signal_quality }}</span>
@@ -78,11 +78,11 @@
           <span>{{ scope.row.peak_sorting === 0 ? '距离优先' : scope.row.peak_sorting === 1 ? '强度优先' : scope.row.peak_sorting }}</span>
         </template>
       </el-table-column>
-      <!--<el-table-column min-width="150px" align="center" label="到期时间">
+      <el-table-column min-width="150px" align="center" label="到期时间">
         <template slot-scope="scope">
           <span>{{ scope.row.expiration_time }}</span>
         </template>
-      </el-table-column>-->
+      </el-table-column>
       <el-table-column label="" align="center" min-width="150" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(row)">
@@ -230,7 +230,7 @@ export default {
           { required: true, message: '请输入设备名称', trigger: 'blur' }
         ],
         card_num: [
-          { required: true, message: '请输卡号', trigger: 'blur' }
+          { required: true, message: '请输CCID', trigger: 'blur' }
         ],
         signal_quality: [
           { required: true, message: '请输入信号质量', trigger: 'blur' },
@@ -451,7 +451,7 @@ export default {
     },
     exportCurrentPage() {
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['设备ID', '设备名称', '物联卡号', '到期时间']
+        const tHeader = ['设备ID', '设备名称', 'CCID', '到期时间']
         const filterVal = ['device_id', 'device_name', 'card_num', 'expiration_time']
         const data = this.formatJson(filterVal)
 

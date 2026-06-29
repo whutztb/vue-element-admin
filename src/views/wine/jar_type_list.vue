@@ -118,13 +118,46 @@
           <span>{{ scope.row.thickness }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="" align="center" min-width="180" class-name="small-padding fixed-width">
+      <el-table-column min-width="80px" align="center">
+        <template slot="header">
+          <span>液位<br>数据量</span>
+        </template>
+        <template slot-scope="scope">
+          <span>{{ scope.row.lv_count || 0 }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column min-width="80px" align="center">
+        <template slot="header">
+          <span>最大液位<br>(mm)</span>
+        </template>
+        <template slot-scope="scope">
+          <span>{{ scope.row.lv_max_level != null ? scope.row.lv_max_level : '-' }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column min-width="80px" align="center">
+        <template slot="header">
+          <span>最大容积<br>(m³)</span>
+        </template>
+        <template slot-scope="scope">
+          <span>{{ scope.row.lv_max_volume != null ? scope.row.lv_max_volume.toFixed(3) : '-' }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="" align="center" min-width="280" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(row)">
             编辑
           </el-button>
           <el-button v-if="row.status!='deleted'" size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(row,$index)">
             删除
+          </el-button>
+          <el-button size="mini" type="success" icon="el-icon-upload2" @click="handleImport(row)">
+            导入
+          </el-button>
+          <el-button v-if="row.lv_count" size="mini" type="warning" icon="el-icon-download" @click="handleExportLv(row)">
+            导出
+          </el-button>
+          <el-button v-if="row.lv_count" size="mini" type="info" icon="el-icon-data-line" @click="handleShowCurve(row)">
+            曲线
           </el-button>
         </template>
       </el-table-column>
@@ -192,11 +225,53 @@
         <el-button type="primary" @click="dialogPvVisible = false">确认</el-button>
       </span>
     </el-dialog>
+
+    <!-- 导入液位容积对话框 -->
+    <el-dialog :visible.sync="importDialogVisible" :title="'导入液位容积 - ' + importJarTypeName" width="650px" @opened="onImportDialogOpened">
+      <el-alert v-if="importExistingCount > 0" title="该缸型已有液位容积数据，导入将覆盖旧数据" type="warning" :closable="false" show-icon style="margin-bottom:12px" />
+      <el-alert v-if="importDuplicateCount > 0" :title="'CSV中存在 ' + importDuplicateCount + ' 个重复液位值，将保留最后出现的值'" type="warning" :closable="false" show-icon style="margin-bottom:12px" />
+      <div v-if="!importData.length">
+        <input ref="csvInput" type="file" accept=".csv,.xlsx,.xls" style="display:none" @change="handleFileSelect">
+        <el-button type="primary" icon="el-icon-folder-opened" @click="triggerFileSelect">
+          选择文件
+        </el-button>
+        <span style="margin-left:10px;color:#999">支持 CSV / Excel，前两列为液位(mm)、容积(m³)</span>
+      </div>
+      <div v-else>
+        <div v-if="isExcelFile" style="color:#409EFF;margin-bottom:10px">
+          <i class="el-icon-document" /> Excel 文件：{{ importFile.name }}，确认后将上传到服务器解析
+        </div>
+        <div v-else>
+          <div style="margin-bottom:10px">
+            <span>数据行数：<b>{{ importData.length }}</b></span>
+            <span style="margin-left:20px">液位范围：<b>{{ importLevelMin }} ~ {{ importLevelMax }} mm</b></span>
+            <span style="margin-left:20px">容积范围：<b>{{ importVolumeMin.toFixed(3) }} ~ {{ importVolumeMax.toFixed(3) }} m³</b></span>
+          </div>
+          <el-table :data="importPreviewData" border size="small" max-height="300">
+            <el-table-column prop="level" label="液位(mm)" width="120" />
+            <el-table-column prop="volume" label="容积(m³)" width="150" />
+          </el-table>
+          <div v-if="importData.length > 10" style="margin-top:5px;color:#999;text-align:center">
+            ... 仅显示前10条，共 {{ importData.length }} 条
+          </div>
+        </div>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="importDialogVisible = false; importData = []; importFile = null; importExistingCount = 0; importDuplicateCount = 0">取消</el-button>
+        <el-button v-if="importData.length" type="primary" :loading="importLoading" @click="confirmImport">确认导入</el-button>
+      </span>
+    </el-dialog>
+
+    <!-- 液位容积曲线对话框 -->
+    <el-dialog :visible.sync="curveDialogVisible" :title="'液位-容积曲线 - ' + curveJarTypeName" width="800px" @opened="renderCurveChart">
+      <div ref="curveChart" style="width:100%;height:400px" />
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { fetchList, deleteJarType, createJarType, updateJarType, exportJarTypeList } from '@/api/wine_jar_type'
+import { fetchList, deleteJarType, createJarType, updateJarType, exportJarTypeList, importLevelVolume, exportLevelVolume, getLevelVolumeCurve } from '@/api/wine_jar_type'
+import echarts from 'echarts'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -290,7 +365,43 @@ export default {
       showChart: false,
       chartTitle: '',
       className: 'chart',
-      stockData: null // 初始化为空数组,库存数据
+      stockData: null, // 初始化为空数组,库存数据
+      importDialogVisible: false,
+      importJarTypeName: '',
+      importData: [],
+      importFile: null,
+      importLoading: false,
+      importExistingCount: 0,
+      importDuplicateCount: 0,
+      curveDialogVisible: false,
+      curveJarTypeName: '',
+      curveData: []
+    }
+  },
+  computed: {
+    isExcelFile() {
+      if (!this.importFile) return false
+      const ext = this.importFile.name.split('.').pop().toLowerCase()
+      return ext === 'xlsx' || ext === 'xls'
+    },
+    importPreviewData() {
+      return this.importData.slice(0, 10)
+    },
+    importLevelMin() {
+      if (!this.importData.length || this.isExcelFile) return 0
+      return this.importData[0].level
+    },
+    importLevelMax() {
+      if (!this.importData.length || this.isExcelFile) return 0
+      return this.importData[this.importData.length - 1].level
+    },
+    importVolumeMin() {
+      if (!this.importData.length || this.isExcelFile) return 0
+      return Math.min(...this.importData.map(d => d.volume))
+    },
+    importVolumeMax() {
+      if (!this.importData.length || this.isExcelFile) return 0
+      return Math.max(...this.importData.map(d => d.volume))
     }
   },
   created() {
@@ -452,6 +563,150 @@ export default {
     },
     handleMonitor(row, index) {
 
+    },
+    handleImport(row) {
+      this.importJarTypeName = row.jar_type_name
+      this.importExistingCount = row.lv_count || 0
+      this.importData = []
+      this.importFile = null
+      this.importDuplicateCount = 0
+      this.importDialogVisible = true
+    },
+    onImportDialogOpened() {
+      this.$nextTick(() => {
+        if (this.$refs.csvInput) {
+          this.$refs.csvInput.value = ''
+        }
+      })
+    },
+    triggerFileSelect() {
+      if (this.$refs.csvInput) {
+        this.$refs.csvInput.click()
+      }
+    },
+    handleFileSelect(e) {
+      const file = e.target.files[0]
+      if (!file) return
+      this.importFile = file
+      const ext = file.name.split('.').pop().toLowerCase()
+      if (ext === 'xlsx' || ext === 'xls') {
+        this.importData = [{ level: '--', volume: '--' }]
+        this.importDuplicateCount = 0
+        return
+      }
+      const reader = new FileReader()
+      reader.onload = (ev) => {
+        let text = ev.target.result
+        if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1)
+        const lines = text.split(/\r?\n/).filter(l => l.trim())
+        const levelMap = {}
+        const data = []
+        let duplicate = 0
+        for (const line of lines) {
+          const parts = line.split(',')
+          if (parts.length < 2) continue
+          const level = parseInt(parts[0])
+          const volume = parseFloat(parts[1])
+          if (!isNaN(level) && !isNaN(volume) && level >= 0 && volume >= 0) {
+            if (level in levelMap) {
+              duplicate++
+            }
+            levelMap[level] = volume
+          }
+        }
+        for (const [level, volume] of Object.entries(levelMap)) {
+          data.push({ level: Number(level), volume })
+        }
+        data.sort((a, b) => a.level - b.level)
+        this.importDuplicateCount = duplicate
+        this.importData = data
+      }
+      reader.readAsText(file, 'UTF-8')
+    },
+    confirmImport() {
+      if (!this.importFile || !this.importData.length) {
+        this.$message.warning('请先选择CSV文件')
+        return
+      }
+      this.importLoading = true
+      const formData = new FormData()
+      formData.append('jar_type_name', this.importJarTypeName)
+      formData.append('file', this.importFile)
+      importLevelVolume(formData).then(res => {
+        const msg = (res && res.message) || `导入成功，共 ${this.importData.length} 条数据`
+        this.$notify({
+          title: '操作成功',
+          message: msg,
+          type: 'success',
+          duration: 2000
+        })
+        this.importDialogVisible = false
+        this.importData = []
+        this.importFile = null
+        this.importLoading = false
+        this.importExistingCount = 0
+        this.importDuplicateCount = 0
+        this.getList()
+      }).catch(() => {
+        this.importLoading = false
+        this.$notify({
+          title: '错误',
+          message: '导入失败',
+          type: 'error',
+          duration: 2000
+        })
+      })
+    },
+    handleExportLv(row) {
+      exportLevelVolume(row.jar_type_name).then(blob => {
+        const url = window.URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `level_volume_${row.jar_type_name}.csv`
+        document.body.appendChild(a)
+        a.click()
+        a.remove()
+        window.URL.revokeObjectURL(url)
+      }).catch(() => {
+        this.$notify({
+          title: '错误',
+          message: '导出失败',
+          type: 'error',
+          duration: 2000
+        })
+      })
+    },
+    handleShowCurve(row) {
+      this.curveJarTypeName = row.jar_type_name
+      this.curveData = []
+      this.curveDialogVisible = true
+      getLevelVolumeCurve({ jar_type_name: row.jar_type_name, sample_count: 200 }).then(res => {
+        this.curveData = res.items
+        this.$nextTick(() => {
+          this.renderCurveChart()
+        })
+      })
+    },
+    renderCurveChart() {
+      if (!this.curveData.length) return
+      const dom = this.$refs.curveChart
+      if (!dom) return
+      let chart = echarts.getInstanceByDom(dom)
+      if (chart) chart.dispose()
+      chart = echarts.init(dom)
+      chart.setOption({
+        title: { text: this.curveJarTypeName, left: 'center' },
+        tooltip: { trigger: 'axis', formatter: '液位: {b} mm<br/>容积: {c} m³' },
+        xAxis: { name: '液位(mm)', type: 'value', nameLocation: 'center', nameGap: 30 },
+        yAxis: { name: '容积(m³)', type: 'value', nameLocation: 'center', nameGap: 40 },
+        series: [{
+          type: 'line',
+          data: this.curveData.map(d => [d.level, d.volume]),
+          smooth: true,
+          showSymbol: false,
+          lineStyle: { color: '#409EFF', width: 2 }
+        }]
+      })
     },
     handleDownload(type) {
       this.showDialog = false // 关闭弹窗

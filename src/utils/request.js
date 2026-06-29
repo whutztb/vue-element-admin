@@ -78,9 +78,11 @@ service.interceptors.response.use(
         return res
       }
     } else if (contentType.includes('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')) {
-      // 处理 Blob 响应
-      const blob = response.data // 直接使用 response.data（Blob 对象）L
-      return blob // 返回 Blob
+      // 处理 Excel Blob 响应
+      return response.data
+    } else if (contentType.includes('text/csv')) {
+      // 处理 CSV Blob 响应
+      return response.data
     }
   },
   error => {

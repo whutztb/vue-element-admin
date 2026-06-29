@@ -46,3 +46,40 @@ export function deleteJarType(data) {
   })
 }
 
+export function importLevelVolume(formData) {
+  return request({
+    url: `${process.env.API_URL}/import_level_volume`,
+    method: 'post',
+    data: formData,
+    headers: { 'Content-Type': 'multipart/form-data' },
+    timeout: 60000
+  })
+}
+
+export function exportLevelVolume(jar_type_name) {
+  return request({
+    url: `${process.env.API_URL}/export_level_volume`,
+    method: 'get',
+    params: { jar_type_name },
+    responseType: 'blob',
+    timeout: 30000
+  })
+}
+
+export function getLevelVolumeCurve(query) {
+  return request({
+    url: `${process.env.API_URL}/get_level_volume_curve`,
+    method: 'get',
+    params: query,
+    timeout: 5000
+  })
+}
+
+export function deleteLevelVolume(data) {
+  return request({
+    url: `${process.env.API_URL}/delete_level_volume`,
+    method: 'post',
+    data
+  })
+}
+

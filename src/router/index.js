@@ -225,7 +225,7 @@ export const asyncRoutes = [
       }
     ]
   },
-  /*
+
   {
     path: '/views/wine/jar_type_list',
     component: Layout,
@@ -245,7 +245,7 @@ export const asyncRoutes = [
       }
     ]
   },
-
+  /*
   {
     path: '/views/wine/plan_list',
     component: Layout,
