@@ -5,12 +5,6 @@
         <el-input v-model="settings.systemName" placeholder="请输入系统名称" />
       </el-form-item>-->
 
-      <el-form-item label="容积计算方式" prop="calculate">
-        <el-select v-model="settings.calculateType" placeholder="请选择计算方式">
-          <el-option label="经验公式" value="0" />
-        </el-select>
-      </el-form-item>
-
       <el-form-item label="折算酒度(%vol)" prop="volConvert">
         <el-input-number v-model="settings.volConvert" :min="1" />
       </el-form-item>
@@ -90,7 +84,6 @@ export default {
     return {
       settings: {
         systemName: '',
-        calculateType: '',
         popupAlarm: '',
         volConvert: '',
         inOutThreshold: '',
@@ -142,7 +135,6 @@ export default {
     loadSettings() {
       getSystemSettings().then(response => {
         this.settings.systemName = response.systemName
-        this.settings.calculateType = response.calculateType
         this.settings.timeout = response.timeout
         this.settings.inOutThreshold = response.inOutThreshold
         this.settings.volConvert = response.volConvert

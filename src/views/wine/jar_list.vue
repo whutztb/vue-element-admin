@@ -69,10 +69,9 @@
       <el-button class="filter-item" type="primary" icon="el-icon-download" @click="exportAllPages">
         导出
       </el-button>
-      <el-button class="filter-item" type="primary" icon="el-icon-upload" @click="triggerFileInput">
+      <el-button class="filter-item" type="primary" icon="el-icon-upload" @click="handleImportCsv">
         导入
       </el-button>
-      <input ref="csvFileInput" type="file" accept=".csv" style="display: none;" @change="importJarList">
       <el-dialog
         title="导出选项"
         :visible.sync="showDialog"
@@ -357,6 +356,58 @@
         <el-button type="primary" @click="dialogPvVisible = false">确认</el-button>
       </span>
     </el-dialog>
+
+    <!-- 导入陶坛列表对话框 -->
+    <el-dialog :visible.sync="importDialogVisible" title="导入陶坛列表" width="750px" @opened="onImportDialogOpened">
+      <el-alert v-if="importSkipCount > 0" :title="'CSV中存在 ' + importSkipCount + ' 行空行或不完整数据，将自动跳过'" type="warning" :closable="false" show-icon style="margin-bottom:12px" />
+      <div v-if="!importData.length">
+        <input ref="csvFileInput" type="file" accept=".csv" style="display:none" @change="handleFileSelect">
+        <div style="text-align:center;padding:30px">
+          <el-button type="primary" icon="el-icon-folder-opened" size="large" @click="triggerCsvInput">
+            选择 CSV 文件
+          </el-button>
+          <div style="margin-top:15px;color:#999;font-size:13px;line-height:1.8">
+            CSV 需包含以下列：Address1（地址标识1）, Address2（地址标识2）, Address3（地址标识3）, Address4（地址标识4）, Jar No.（坛号）, Distance:mm（测量值）, Date（测量日期）, Test Time（测量时间）<br>
+            可选列：factory（陶坛类型）, alcohol（酒度）, temperature（温度）<br>
+            陶坛ID拼接规则：地址标识1 + 地址标识2 + 地址标识3 + 地址标识4 + 坛号
+          </div>
+        </div>
+      </div>
+      <div v-else>
+        <div style="margin-bottom:12px">
+          <span>文件：<b>{{ importFileName }}</b></span>
+          <span style="margin-left:20px">有效数据行数：<b>{{ importData.length }}</b></span>
+          <span style="margin-left:20px">新增：<b style="color:#67C23A">{{ importNewCount }}</b></span>
+          <span style="margin-left:20px">更新：<b style="color:#409EFF">{{ importUpdateCount }}</b></span>
+        </div>
+        <el-table :data="importPreviewData" border size="small" max-height="300" style="width:100%">
+          <el-table-column prop="addr1" label="地址标识1" width="80" />
+          <el-table-column prop="addr2" label="地址标识2" width="80" />
+          <el-table-column prop="addr3" label="地址标识3" width="80" />
+          <el-table-column prop="addr4" label="地址标识4" width="80" />
+          <el-table-column prop="jar_no" label="坛号" width="80" />
+          <el-table-column prop="jar_id" label="陶坛ID(拼接)" width="140" />
+          <el-table-column prop="level" label="净空(mm)" width="80" />
+          <el-table-column prop="date" label="日期" width="90" />
+          <el-table-column prop="time" label="时间" width="80" />
+          <el-table-column prop="factory" label="缸型" width="70" />
+          <el-table-column prop="alcohol" label="酒度" width="60" />
+          <el-table-column prop="temperature" label="温度" width="60" />
+        </el-table>
+        <div v-if="importData.length > 10" style="margin-top:5px;color:#999;text-align:center">
+          ... 仅显示前10条，共 {{ importData.length }} 条
+        </div>
+        <div style="margin-top:10px">
+          <el-button size="small" @click="resetImport">重新选择文件</el-button>
+        </div>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="importDialogVisible = false; resetImport()">取消</el-button>
+        <el-button v-if="importData.length" type="primary" :loading="importLoading" @click="confirmImport">
+          确认导入（{{ importData.length }} 条）
+        </el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -430,7 +481,7 @@ export default {
         wine_type: '',
         wine_vol_convert: '',
         level_update_time: '',
-        compensation_value: '',
+        compensation_value: 0,
         startDate: '',
         endDate: ''
       },
@@ -490,7 +541,7 @@ export default {
           { required: true, message: '请输入生产厂区', trigger: 'blur' }
         ],
         compensation_value: [
-          { required: true, message: '请输入补偿值', trigger: 'blur' }
+          { required: false, message: '请输入补偿值', trigger: 'blur' }
         ],
         level_update_time: [
           { required: true, message: '请输入液位陶坛更新时间', trigger: 'blur' }
@@ -498,6 +549,13 @@ export default {
       },
       downloadLoading: false,
       showDialog: false,
+      importDialogVisible: false,
+      importData: [],
+      importFileName: '',
+      importLoading: false,
+      importSkipCount: 0,
+      importNewCount: 0,
+      importUpdateCount: 0,
       showChart: false,
       chartTitle: '',
       className: 'chart',
@@ -512,6 +570,9 @@ export default {
     isAdministrator() {
       const userRoles = this.$store.state.user.roles || []
       return userRoles.includes('管理员')
+    },
+    importPreviewData() {
+      return this.importData.slice(0, 10)
     }
   },
   watch: {
@@ -685,7 +746,7 @@ export default {
         wine_temp: '',
         wine_vol_convert: '',
         level_update_time: '',
-        compensation_value: '',
+        compensation_value: 0,
         startDate: '',
         endDate: ''
       }
@@ -715,6 +776,9 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
+          if (!this.temp.compensation_value && this.temp.compensation_value !== 0) {
+            this.temp.compensation_value = 0
+          }
           const date = new Date(this.temp.level_update_time)
           const formattedDateTime = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`
           this.temp.level_update_time = formattedDateTime
@@ -760,6 +824,9 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
+          if (!this.temp.compensation_value && this.temp.compensation_value !== 0) {
+            this.temp.compensation_value = 0
+          }
           // 格式化日期（将Wed May 01 2024 16:15:23 GMT+0800 (中国标准时间)格式化为2024-05-01 16:15:23）
           const date = new Date(this.temp.level_update_time)
           const formattedDateTime = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`
@@ -1120,36 +1187,146 @@ export default {
           this.downloadLoading = false // 确保下载完成后隐藏加载状态
         })
     },
-    triggerFileInput() {
-      this.$refs.csvFileInput.click() // 触发文件输入框
+    // ========== CSV 导入相关方法 ==========
+    handleImportCsv() {
+      this.resetImport()
+      this.importDialogVisible = true
     },
-    importJarList(event) {
-      const fileInput = event.target
-      const file = fileInput.files[0]
+    onImportDialogOpened() {
+      this.$nextTick(() => {
+        if (this.$refs.csvFileInput) {
+          this.$refs.csvFileInput.value = ''
+        }
+      })
+    },
+    resetImport() {
+      this.importData = []
+      this.importFileName = ''
+      this.importSkipCount = 0
+      this.importNewCount = 0
+      this.importUpdateCount = 0
+      if (this.$refs.csvFileInput) {
+        this.$refs.csvFileInput.value = ''
+      }
+    },
+    triggerCsvInput() {
+      if (this.$refs.csvFileInput) {
+        this.$refs.csvFileInput.click()
+      }
+    },
+    handleFileSelect(e) {
+      const file = e.target.files[0]
+      if (!file) return
+      this.importFile = file
+      this.importFileName = file.name
+      const reader = new FileReader()
+      reader.onload = (ev) => {
+        const buf = ev.target.result
+        let text = ''
+        const decoders = ['gbk', 'utf-8']
+        for (const enc of decoders) {
+          const decoded = new TextDecoder(enc).decode(new Uint8Array(buf))
+          if ((decoded.match(/�/g) || []).length < decoded.length * 0.01) {
+            text = decoded
+            break
+          }
+        }
+        if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1)
+        const lines = text.split(/\r?\n/)
+        if (lines.length < 2) {
+          this.$message.error('CSV文件格式不正确或无数据')
+          return
+        }
+        const headers = lines[0].replace(/\s+$/, '').replace(/,$/, '').split(',')
+        const jarNoIdx = headers.indexOf('Jar No.')
+        const addr1Idx = headers.indexOf('Address1')
+        const addr2Idx = headers.indexOf('Address2')
+        const addr3Idx = headers.indexOf('Address3')
+        const addr4Idx = headers.indexOf('Address4')
+        const levelIdx = headers.indexOf('Distance:mm')
+        const dateIdx = headers.indexOf('Date')
+        const timeIdx = headers.indexOf('Test Time')
+        const factoryIdx = headers.indexOf('factory')
+        const alcoholIdx = headers.indexOf('alcohol')
+        const tempIdx = headers.indexOf('temperature')
 
-      if (!file) {
-        this.$message.error('请选择一个 CSV 文件')
+        if (jarNoIdx === -1 || levelIdx === -1 || dateIdx === -1 || timeIdx === -1) {
+          this.$message.error('CSV缺少必要列：Jar No., Distance:mm, Date, Test Time')
+          return
+        }
+
+        const data = []
+        let skipCount = 0
+        for (let i = 1; i < lines.length; i++) {
+          const line = lines[i]
+          if (!line || !line.trim()) { skipCount++; continue }
+          const parts = line.split(',')
+          const addr1 = addr1Idx >= 0 ? (parts[addr1Idx] || '').trim() : ''
+          const addr2 = addr2Idx >= 0 ? (parts[addr2Idx] || '').trim() : ''
+          const addr3 = addr3Idx >= 0 ? (parts[addr3Idx] || '').trim() : ''
+          const addr4 = addr4Idx >= 0 ? (parts[addr4Idx] || '').trim() : ''
+          const jar_no = (parts[jarNoIdx] || '').trim()
+          const jar_id = addr1 + addr2 + addr3 + addr4 + jar_no
+          const level = (parts[levelIdx] || '').trim()
+          if (!jar_no || !level) { skipCount++; continue }
+          data.push({
+            addr1: addr1,
+            addr2: addr2,
+            addr3: addr3,
+            addr4: addr4,
+            jar_no: jar_no,
+            jar_id: jar_id,
+            level: level,
+            date: dateIdx >= 0 ? parts[dateIdx] || '' : '',
+            time: timeIdx >= 0 ? parts[timeIdx] || '' : '',
+            factory: factoryIdx >= 0 ? (parts[factoryIdx] || '').trim() : '',
+            alcohol: alcoholIdx >= 0 ? (parts[alcoholIdx] || '').trim() : '',
+            temperature: tempIdx >= 0 ? (parts[tempIdx] || '').trim() : ''
+          })
+        }
+        this.importData = data
+        this.importSkipCount = skipCount
+        this.importNewCount = data.length
+        this.importUpdateCount = 0
+      }
+      reader.readAsArrayBuffer(file)
+    },
+    confirmImport() {
+      if (!this.importData.length) {
+        this.$message.warning('没有可导入的数据')
         return
       }
-
+      if (!this.importFile) {
+        this.$message.error('请重新选择文件')
+        return
+      }
+      this.importLoading = true
       const formData = new FormData()
-      formData.append('file', file)
+      formData.append('file', this.importFile)
 
-      this.downloadLoading = true // 设置加载状态
-
-      importJarCsv(formData)
-        .then(response => {
-          this.$message.success('导入成功!')
-          console.log('成功:', response)
+      importJarCsv(formData).then(res => {
+        const msg = res.message || '导入完成'
+        const updated = res.updated_count || 0
+        const created = res.created_count || 0
+        this.$notify({
+          title: '导入成功',
+          message: `${msg}（更新 ${updated} 条，新增 ${created} 条）`,
+          type: 'success',
+          duration: 3000
         })
-        .catch(error => {
-          this.$message.error('导入失败: ' + error.message)
-          console.error('错误:', error)
+        this.importDialogVisible = false
+        this.resetImport()
+        this.importLoading = false
+        this.getList()
+      }).catch(() => {
+        this.importLoading = false
+        this.$notify({
+          title: '导入失败',
+          message: '处理 CSV 文件时出错，请检查文件格式和数据',
+          type: 'error',
+          duration: 3000
         })
-        .finally(() => {
-          this.downloadLoading = false // 结束加载状态
-          fileInput.value = '' // 重置文件输入
-        })
+      })
     },
     formatJson(filterVal) {
       return this.list.map(v => filterVal.map(j => {
