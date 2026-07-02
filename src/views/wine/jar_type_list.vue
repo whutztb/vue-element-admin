@@ -64,7 +64,7 @@
       </el-table-column>
       <el-table-column min-width="80px" align="center">
         <template slot="header">
-          <span>液位<br>数据量</span>
+          <span>液位高度表格<br>数据量</span>
         </template>
         <template slot-scope="scope">
           <span>{{ scope.row.lv_count || 0 }}</span>

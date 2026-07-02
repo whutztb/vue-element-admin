@@ -275,7 +275,7 @@
           <el-input v-model="temp.jar_id" :readonly="readOnly" />
         </el-form-item>
         <el-form-item label="缸型" prop="jar_type" label-width="150px">
-          <el-select v-model="temp.jar_type" class="filter-item" placeholder="请选择">
+          <el-select v-model="temp.jar_type" class="filter-item" placeholder="请选择" @change="onJarTypeChange">
             <el-option v-for="item in jarTypeOptions" :key="item" :label="item" :value="item" />
           </el-select>
         </el-form-item>
@@ -293,7 +293,7 @@
           <el-input v-model="temp.jar_no" />
         </el-form-item>
         <el-form-item label="陶坛高(mm)" prop="jar_height" label-width="150px">
-          <el-input v-model="temp.jar_height" />
+          <el-input v-model="temp.jar_height" :readonly="true" />
         </el-form-item>
         <el-form-item label="液位(mm)" prop="wine_level" label-width="150px">
           <el-input v-model="temp.wine_level" />
@@ -488,6 +488,7 @@ export default {
       cellarPosOptions: [],
       factoryPosOptions: [],
       jarTypeOptions: [],
+      jarTypeHeightMap: {},
       readOnly: false,
       dialogFormVisible: false,
       dialogStatus: '',
@@ -626,9 +627,18 @@ export default {
     fetchJarTypeOptions() {
       getJarTypeOptions().then(response => {
         this.jarTypeOptions = response.items.map(item => item.jar_type_name)
+        this.jarTypeHeightMap = {}
+        response.items.forEach(item => {
+          this.jarTypeHeightMap[item.jar_type_name] = item.jar_std_height
+        })
       })
     },
 
+    onJarTypeChange(val) {
+      if (val && this.jarTypeHeightMap[val] != null) {
+        this.temp.jar_height = this.jarTypeHeightMap[val]
+      }
+    },
     getList() {
       // console.log('jar listQuery', this.listQuery)
       this.listLoading = true
