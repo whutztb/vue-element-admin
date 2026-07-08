@@ -53,8 +53,8 @@
         />
       </div>
       <el-input v-model="listQuery.jar_id" placeholder="陶坛ID" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.cellar_pos" placeholder="酒库位置" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.jar_pos" placeholder="陶坛位置" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.cellar_pos" placeholder="酒库编号" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.jar_pos" placeholder="房间编号" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <!--<el-input v-model="listQuery.jar_type" placeholder="缸型" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />-->
       <!--<el-input v-model="listQuery.wine_name" placeholder="品名" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />-->
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
@@ -106,7 +106,7 @@
       </el-table-column>
       <el-table-column min-width="65px" align="center">
         <template slot="header">
-          <span>酒库<br>位置</span>
+          <span>酒库<br>编号</span>
         </template>
         <template slot-scope="scope">
           <span>{{ scope.row.cellar_pos }}</span>
@@ -114,7 +114,7 @@
       </el-table-column>
       <el-table-column min-width="65px" align="center">
         <template slot="header">
-          <span>陶坛<br>位置</span>
+          <span>房间<br>编号</span>
         </template>
         <template slot-scope="scope">
           <span>{{ scope.row.jar_pos }}</span>
@@ -122,7 +122,7 @@
       </el-table-column>
       <el-table-column min-width="65px" align="center">
         <template slot="header">
-          <span>陶坛<br>编号</span>
+          <span>坛号</span>
         </template>
         <template slot-scope="scope">
           <span>{{ scope.row.jar_no }}</span>
@@ -279,12 +279,12 @@
             <el-option v-for="item in jarTypeOptions" :key="item" :label="item" :value="item" />
           </el-select>
         </el-form-item>
-        <el-form-item label="酒库位置" prop="cellar_pos" label-width="150px">
+        <el-form-item label="酒库编号" prop="cellar_pos" label-width="150px">
           <el-select v-model="temp.cellar_pos" class="filter-item" placeholder="请选择">
             <el-option v-for="item in factoryPosOptions" :key="item" :label="item" :value="item" />
           </el-select>
         </el-form-item>
-        <el-form-item label="陶坛位置" prop="jar_pos" label-width="150px">
+        <el-form-item label="房间编号" prop="jar_pos" label-width="150px">
           <el-select v-model="temp.jar_pos" class="filter-item" placeholder="请选择">
             <el-option v-for="item in cellarPosOptions" :key="item" :label="item" :value="item" />
           </el-select>
@@ -369,7 +369,7 @@
           <div style="margin-top:15px;color:#999;font-size:13px;line-height:1.8">
             CSV 需包含以下列：Address1（地址标识1）, Address2（地址标识2）, Address3（地址标识3）, Address4（地址标识4）, Jar No.（坛号）, Distance:mm（测量值）, Date（测量日期）, Test Time（测量时间）<br>
             可选列：factory（陶坛类型）, alcohol（酒度）, temperature（温度）<br>
-            陶坛ID拼接规则：地址标识1 + 地址标识2 + 地址标识3 + 地址标识4 + 坛号
+            陶坛ID拼接规则：提取地址标识1~4中的字母数字 + 坛号数字（坛号补零/截取至3位），以“-”连接
           </div>
         </div>
       </div>
@@ -408,11 +408,33 @@
         </el-button>
       </span>
     </el-dialog>
+
+    <!-- 新酒库确认对话框 -->
+    <el-dialog :visible.sync="newCellarDialogVisible" title="发现新酒库" width="500px">
+      <div style="margin-bottom:12px">
+        本次导入发现 <b>{{ newCellarData.length }}</b> 个酒库在酒库管理中尚不存在，是否自动创建？
+      </div>
+      <el-table :data="newCellarData" border size="small" max-height="250" style="width:100%">
+        <el-table-column prop="cellar_pos" label="酒库编号" width="170" />
+        <el-table-column prop="cellar_name" label="房间编号" width="170" />
+        <el-table-column label="酒库ID" width="140">
+          <template slot-scope="scope">
+            {{ scope.row.cellar_pos + '-' + scope.row.cellar_name }}
+          </template>
+        </el-table-column>
+      </el-table>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="cancelCreateCellars">跳过</el-button>
+        <el-button type="primary" @click="confirmCreateCellars">
+          确认创建（{{ newCellarData.length }} 个）
+        </el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { fetchList, deleteJar, createJar, updateJar, exportJarList, getHistory, getTotalMass, getJarTypeOptions, getCellarPosOptions, getFactoryPosOptions, importJarCsv, clearHistory, exportJarHistory } from '@/api/wine_jar'
+import { fetchList, deleteJar, createJar, updateJar, exportJarList, getHistory, getTotalMass, getJarTypeOptions, getCellarPosOptions, getFactoryPosOptions, importJarCsv, createCellarsBatch, clearHistory, exportJarHistory } from '@/api/wine_jar'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -506,10 +528,10 @@ export default {
           { required: true, message: '请输入陶坛名称', trigger: 'blur' }
         ],
         jar_pos: [
-          { required: true, message: '请输入陶坛位置', trigger: 'blur' }
+          { required: true, message: '请输入房间编号', trigger: 'blur' }
         ],
         cellar_pos: [
-          { required: true, message: '请输入陶坛位置', trigger: 'blur' }
+          { required: true, message: '请输入酒库编号', trigger: 'blur' }
         ],
         jar_no: [
           { required: true, message: '请输入陶坛编号', trigger: 'blur' }
@@ -557,6 +579,9 @@ export default {
       importSkipCount: 0,
       importNewCount: 0,
       importUpdateCount: 0,
+      newCellarDialogVisible: false,
+      newCellarData: [],
+      newCellarCreatedCount: 0,
       showChart: false,
       chartTitle: '',
       className: 'chart',
@@ -1163,7 +1188,7 @@ export default {
     },
     exportCurrentPage() {
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['陶坛ID', '缸型', '缸高', '位置', '液位(mm)', '现有酒量(t)', '品名', '更新时间']
+        const tHeader = ['陶坛ID', '缸型', '缸高', '房间编号', '液位(mm)', '现有酒量(t)', '品名', '更新时间']
         const filterVal = ['jar_id', 'jar_type', 'jar_height', 'jar_pos', 'wine_level', 'wine_volume', 'wine_name', 'level_update_time']
         const data = this.formatJson(filterVal)
 
@@ -1276,15 +1301,28 @@ export default {
           const addr3 = addr3Idx >= 0 ? (parts[addr3Idx] || '').trim() : ''
           const addr4 = addr4Idx >= 0 ? (parts[addr4Idx] || '').trim() : ''
           const jar_no = (parts[jarNoIdx] || '').trim()
-          const jar_id = addr1 + addr2 + addr3 + addr4 + jar_no
+          const extractAlnum = (s) => {
+            const m = s.match(/[a-zA-Z0-9]/g)
+            return m ? m.join('') : ''
+          }
+          const idParts = [];
+          [addr1, addr2, addr3, addr4].forEach(f => {
+            const alnum = extractAlnum(f)
+            if (alnum) idParts.push(alnum)
+          })
+          const jarDigits = jar_no.replace(/\D/g, '')
+          if (!jarDigits) { skipCount++; continue }
+          const jar_no_clean = jarDigits.padStart(3, '0').slice(-3)
+          idParts.push(jar_no_clean)
+          const jar_id = idParts.join('-')
           const level = (parts[levelIdx] || '').trim()
-          if (!jar_no || !level) { skipCount++; continue }
+          if (!level) { skipCount++; continue }
           data.push({
             addr1: addr1,
             addr2: addr2,
             addr3: addr3,
             addr4: addr4,
-            jar_no: jar_no,
+            jar_no: jar_no_clean,
             jar_id: jar_id,
             level: level,
             date: dateIdx >= 0 ? parts[dateIdx] || '' : '',
@@ -1325,9 +1363,16 @@ export default {
           duration: 3000
         })
         this.importDialogVisible = false
-        this.resetImport()
         this.importLoading = false
-        this.getList()
+        const newCellars = res.new_cellars || []
+        if (newCellars.length > 0) {
+          this.newCellarData = newCellars
+          this.newCellarCreatedCount = 0
+          this.newCellarDialogVisible = true
+        } else {
+          this.resetImport()
+          this.getList()
+        }
       }).catch(() => {
         this.importLoading = false
         this.$notify({
@@ -1337,6 +1382,32 @@ export default {
           duration: 3000
         })
       })
+    },
+    confirmCreateCellars() {
+      createCellarsBatch({ cellars: this.newCellarData }).then(res => {
+        this.newCellarCreatedCount = res.created_count || 0
+        this.$notify({
+          title: '创建完成',
+          message: `成功创建 ${this.newCellarCreatedCount} 个酒库`,
+          type: 'success',
+          duration: 3000
+        })
+        this.newCellarDialogVisible = false
+        this.resetImport()
+        this.getList()
+      }).catch(() => {
+        this.$notify({
+          title: '创建失败',
+          message: '批量创建酒库时出错',
+          type: 'error',
+          duration: 3000
+        })
+      })
+    },
+    cancelCreateCellars() {
+      this.newCellarDialogVisible = false
+      this.resetImport()
+      this.getList()
     },
     formatJson(filterVal) {
       return this.list.map(v => filterVal.map(j => {

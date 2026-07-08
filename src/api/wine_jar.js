@@ -100,6 +100,14 @@ export function importJarCsv(data) {
   })
 }
 
+export function createCellarsBatch(data) {
+  return request({
+    url: `${process.env.API_URL}/create_cellars_batch`,
+    method: 'post',
+    data
+  })
+}
+
 export function exportJarHistory(query) {
   return request({
     url: `${process.env.API_URL}/export_jar_history`,

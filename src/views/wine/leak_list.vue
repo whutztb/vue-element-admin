@@ -2,7 +2,7 @@
   <div class="app-container">
     <div class="filter-container">
       <el-input v-model="listQuery.jar_id" placeholder="陶坛ID" style="width: 180px;" class="filter-item" />
-      <el-input v-model="listQuery.jar_pos" placeholder="陶坛位置" style="width: 180px;" class="filter-item" />
+      <el-input v-model="listQuery.jar_pos" placeholder="所在酒库" style="width: 180px;" class="filter-item" />
       <el-select v-model="listQuery.deal_status" placeholder="选择状态" style="width: 180px;" class="filter-item">
         <el-option label="全部" value="" />
         <el-option label="已处理" value="已处理" />
@@ -46,12 +46,12 @@
           <span>{{ scope.row.jar_id }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="90px" label="陶坛位置" align="center">
+      <el-table-column min-width="110px" label="所在酒库" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.jar_pos }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="70px" label="编号" align="center">
+      <el-table-column min-width="70px" label="坛号" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.jar_no }}</span>
         </template>
@@ -383,7 +383,7 @@ export default {
     },
     exportCurrentPage() {
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['陶坛ID', '陶坛位置', '渗漏时间', '状态']
+        const tHeader = ['陶坛ID', '所在酒库', '渗漏时间', '状态']
         const filterVal = ['jar_id', 'jar_pos', 'leak_time', 'deal_status']
         const data = this.formatJson(filterVal)
 

@@ -2,8 +2,8 @@
   <div class="app-container">
     <div class="filter-container">
       <el-input v-model="listQuery.cellar_id" placeholder="酒库ID" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.cellar_pos" placeholder="酒库位置" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.cellar_name" placeholder="酒库名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.cellar_pos" placeholder="酒库编号" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.cellar_name" placeholder="房间编号" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         查询
       </el-button>
@@ -45,12 +45,12 @@
           <span>{{ scope.row.cellar_id }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="100px" label="酒库位置" align="center">
+      <el-table-column min-width="100px" label="酒库编号" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.cellar_pos }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="120px" align="center" label="酒库名称">
+      <el-table-column min-width="120px" align="center" label="房间编号">
         <template slot-scope="scope">
           <span>{{ scope.row.cellar_name }}</span>
         </template>
@@ -131,11 +131,11 @@
         <el-form-item label="酒库ID" prop="cellar_id" label-width="100px">
           <el-input v-model="temp.cellar_id" :readonly="readOnly" />
         </el-form-item>
-        <el-form-item label="酒库名称" prop="cellar_name" label-width="100px">
-          <el-input v-model="temp.cellar_name" />
-        </el-form-item>
-        <el-form-item label="酒库位置" prop="cellar_pos" label-width="100px">
+        <el-form-item label="酒库编号" prop="cellar_pos" label-width="100px">
           <el-input v-model="temp.cellar_pos" />
+        </el-form-item>
+        <el-form-item label="房间编号" prop="cellar_name" label-width="100px">
+          <el-input v-model="temp.cellar_name" />
         </el-form-item>
         <el-form-item label="缸型" prop="jar_type" label-width="100px">
           <el-select v-model="temp.jar_type" class="filter-item" placeholder="请选择">
@@ -245,10 +245,10 @@ export default {
           { required: true, message: '请输入酒库ID', trigger: 'blur' }
         ],
         cellar_name: [
-          { required: true, message: '请输入酒库名称', trigger: 'blur' }
+          { required: true, message: '请输入房间编号', trigger: 'blur' }
         ],
         cellar_pos: [
-          { required: true, message: '请输入酒库位置', trigger: 'blur' }
+          { required: true, message: '请输入酒库编号', trigger: 'blur' }
         ],
         jar_type: [
           { required: true, message: '请输入缸型', trigger: 'blur' }
@@ -660,7 +660,7 @@ export default {
 
     exportCurrentPage() {
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['酒库ID', '酒库名称', '酒库位置', '缸型', '总数', '空缸', '漏缸', '总酒量(m³)', '总容量(m³)', '利用率']
+        const tHeader = ['酒库ID', '房间编号', '酒库编号', '缸型', '总数', '空缸', '漏缸', '总酒量(m³)', '总容量(m³)', '利用率']
         const filterVal = ['cellar_id', 'cellar_name', 'cellar_pos', 'jar_type', 'all_jar_num', 'empty_jar_num', 'bad_jar_num', 'all_wine_volume', 'all_jar_volume', 'cellar_usage_rate']
         const data = this.formatJson(filterVal)
         excel.export_json_to_excel({
