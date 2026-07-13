@@ -42,7 +42,10 @@
         </template>
       </el-table-column>
 
-      <el-table-column min-width="70px" align="center" label="设备名称">
+      <el-table-column min-width="70px" align="center">
+        <template slot="header">
+          <span>设备<br>名称)</span>
+        </template>
         <template slot-scope="scope">
           <span>{{ scope.row.device_name }}</span>
         </template>
@@ -52,7 +55,10 @@
           <span>{{ scope.row.card_num }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="90px" label="信号质量" align="center">
+      <el-table-column min-width="60px" align="center">
+        <template slot="header">
+          <span>信号<br>质量</span>
+        </template>
         <template slot-scope="scope">
           <span>{{ scope.row.signal_quality }}</span>
         </template>
@@ -81,6 +87,17 @@
       <el-table-column min-width="150px" align="center" label="到期时间">
         <template slot-scope="scope">
           <span>{{ scope.row.expiration_time }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column min-width="100px" align="center" label="电量">
+        <template slot-scope="scope">
+          <el-tag
+            :type="getBatteryTagType(scope.row.used_count, scope.row.remain_count)"
+            effect="dark"
+            style="font-size: 14px; font-weight: bold;"
+          >
+            {{ getBatteryPercentage(scope.row.used_count, scope.row.remain_count) }}%
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column label="" align="center" min-width="150" class-name="small-padding fixed-width">
@@ -145,6 +162,25 @@
         </el-form-item>
         <el-form-item label="到期时间" prop="expiration_time" label-width="150px">
           <el-date-picker v-model="temp.expiration_time" type="datetime" placeholder="请选择日期" />
+        </el-form-item>
+        <el-form-item label="已用次数" prop="used_count" label-width="150px">
+          <el-input
+            v-model.number="temp.used_count"
+            type="number"
+            :min="0"
+            oninput="if(value<0)value=0;if(value.indexOf('.')>=0)value=value.slice(0,value.indexOf('.'))"
+          />
+        </el-form-item>
+        <el-form-item label="剩余次数" prop="remain_count" label-width="150px">
+          <el-input
+            v-model.number="temp.remain_count"
+            type="number"
+            :min="0"
+            oninput="if(value<0)value=0;if(value.indexOf('.')>=0)value=value.slice(0,value.indexOf('.'))"
+          />
+          <div style="font-size: 12px; color: #909399; margin-top: 4px; white-space: nowrap;">
+            百分比 = 剩余 / (已用 + 剩余)
+          </div>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -211,7 +247,9 @@ export default {
         distance_start: '',
         distance_end: '',
         peak_sorting: '',
-        expiration_time: ''
+        expiration_time: '',
+        used_count: 0,
+        remain_count: 1000
       },
       readOnly: false,
       dialogFormVisible: false,
@@ -325,7 +363,9 @@ export default {
         distance_start: '',
         distance_end: '',
         peak_sorting: '',
-        expiration_time: ''
+        expiration_time: '',
+        used_count: 0,
+        remain_count: 1000
       }
     },
     handleCreate() {
@@ -451,8 +491,8 @@ export default {
     },
     exportCurrentPage() {
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['设备ID', '设备名称', 'CCID', '到期时间']
-        const filterVal = ['device_id', 'device_name', 'card_num', 'expiration_time']
+        const tHeader = ['设备ID', '设备名称', 'CCID', '到期时间', '已用次数', '剩余次数']
+        const filterVal = ['device_id', 'device_name', 'card_num', 'expiration_time', 'used_count', 'remain_count']
         const data = this.formatJson(filterVal)
 
         excel.export_json_to_excel({
@@ -497,6 +537,19 @@ export default {
     getSortClass: function(key) {
       const sort = this.listQuery.sort
       return sort === `+${key}` ? 'ascending' : 'descending'
+    },
+    getBatteryPercentage(used, remain) {
+      const u = used || 0
+      const r = remain || 0
+      const total = u + r
+      if (total === 0) return 0
+      return Math.round(r / total * 100)
+    },
+    getBatteryTagType(used, remain) {
+      const pct = this.getBatteryPercentage(used, remain)
+      if (pct <= 20) return 'danger'
+      if (pct <= 50) return 'warning'
+      return 'success'
     }
   }
 }
