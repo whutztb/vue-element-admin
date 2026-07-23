@@ -128,11 +128,6 @@
           <span>{{ scope.row.jar_no }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="50px" label="品名" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.wine_name }}</span>
-        </template>
-      </el-table-column>
       <!--<el-table-column min-width="120px" label="生产年月" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.wine_date }}</span>
@@ -192,15 +187,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column min-width="80" align="center">
-        <template slot="header">
-          <span>折算酒度<br>(%vol)</span>
-        </template>
-        <template slot-scope="scope">
-          <span>{{ scope.row.wine_vol_convert }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column min-width="65" align="center">
+      <el-table-column min-width="75" align="center">
         <template slot="header">
           <span>密度<br>(t/m³)</span>
         </template>
@@ -214,6 +201,14 @@
         </template>
         <template slot-scope="scope">
           <span>{{ scope.row.wine_weight }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column min-width="80" align="center">
+        <template slot="header">
+          <span>折算酒度<br>(%vol)</span>
+        </template>
+        <template slot-scope="scope">
+          <span>{{ scope.row.wine_vol_convert }}</span>
         </template>
       </el-table-column>
       <el-table-column min-width="80" align="center">
@@ -293,7 +288,7 @@
           <el-input v-model="temp.jar_no" />
         </el-form-item>
         <el-form-item label="陶坛高(mm)" prop="jar_height" label-width="150px">
-          <el-input v-model="temp.jar_height" :readonly="true" />
+          <el-input v-model="temp.jar_height" placeholder="选择坛型后自动填充，可手动修改" />
         </el-form-item>
         <el-form-item label="液位(mm)" prop="wine_level" label-width="150px">
           <el-input v-model="temp.wine_level" />

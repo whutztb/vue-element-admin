@@ -119,11 +119,13 @@ const actions = {
   },
 
   // remove token
-  resetToken({ commit }) {
+  resetToken({ commit, dispatch }) {
     return new Promise((resolve) => {
       commit('SET_TOKEN', '')
       commit('SET_ROLES', [])
       removeToken()
+      resetRouter()
+      dispatch('tagsView/delAllViews', null, { root: true })
       resolve()
     })
   },

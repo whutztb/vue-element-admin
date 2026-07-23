@@ -245,6 +245,23 @@ export const asyncRoutes = [
       }
     ]
   },
+  {
+    path: '/views/wine/jar_level_volume_list',
+    component: Layout,
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/wine/jar_level_volume_list'),
+        name: '陶坛数字特征档案',
+        meta: {
+          title: '陶坛数字特征档案',
+          icon: 'example',
+          affix: true,
+          roles: ['管理员']
+        }
+      }
+    ]
+  },
   /*
   {
     path: '/views/wine/plan_list',

@@ -35,18 +35,18 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column align="center" label="类型ID" min-width="95">
+      <el-table-column align="center" label="类型ID" min-width="70">
         <template slot-scope="scope">
           <span>{{ scope.row.jar_type_id }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column min-width="100px" align="center" label="类型名称">
+      <el-table-column min-width="70px" align="center" label="类型名称">
         <template slot-scope="scope">
           <span>{{ scope.row.jar_type_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="100px" align="center">
+      <el-table-column min-width="70px" align="center">
         <template slot="header">
           <span>标准高度<br>(mm)</span>
         </template>
@@ -54,7 +54,7 @@
           <span>{{ scope.row.jar_std_height }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="80px" align="center">
+      <el-table-column min-width="70px" align="center">
         <template slot="header">
           <span>标准容量<br>(L)</span>
         </template>
@@ -70,7 +70,7 @@
           <span>{{ scope.row.lv_count || 0 }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="80px" align="center">
+      <el-table-column min-width="70px" align="center">
         <template slot="header">
           <span>最大液位<br>(mm)</span>
         </template>
@@ -78,7 +78,7 @@
           <span>{{ scope.row.lv_max_level != null ? scope.row.lv_max_level : '-' }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="80px" align="center">
+      <el-table-column min-width="70px" align="center">
         <template slot="header">
           <span>最大容积<br>(m³)</span>
         </template>
@@ -86,7 +86,7 @@
           <span>{{ scope.row.lv_max_volume != null ? scope.row.lv_max_volume.toFixed(3) : '-' }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="" align="center" min-width="280" class-name="small-padding fixed-width">
+      <el-table-column label="" align="center" min-width="350" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(row)">
             编辑
