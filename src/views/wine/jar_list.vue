@@ -72,6 +72,9 @@
       <el-button class="filter-item" type="primary" icon="el-icon-upload" @click="handleImportCsv">
         导入
       </el-button>
+      <el-button class="filter-item" type="warning" icon="el-icon-time" @click="handleImportHistory">
+        导入历史
+      </el-button>
       <el-dialog
         title="导出选项"
         :visible.sync="showDialog"
@@ -425,11 +428,66 @@
         </el-button>
       </span>
     </el-dialog>
+
+    <!-- 导入历史对话框 -->
+    <el-dialog :visible.sync="importHistoryDialogVisible" title="导入历史" width="900px" @opened="fetchImportHistory">
+      <el-table v-loading="importHistoryLoading" :data="importHistoryList" border size="small" max-height="400" style="width:100%">
+        <el-table-column prop="id" label="ID" width="60" />
+        <el-table-column prop="import_type" label="导入类型" width="100">
+          <template slot-scope="scope">
+            <el-tag v-if="scope.row.import_type === 'web_csv'" type="primary" size="small">网页导入</el-tag>
+            <el-tag v-else-if="scope.row.import_type === 'tcp_device'" type="success" size="small">设备上传</el-tag>
+            <el-tag v-else type="info" size="small">{{ scope.row.import_type }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="source_name" label="来源" min-width="150" show-overflow-tooltip />
+        <el-table-column prop="user_or_device" label="操作人/设备" width="130" show-overflow-tooltip />
+        <el-table-column prop="status" label="状态" width="110">
+          <template slot-scope="scope">
+            <el-tag v-if="scope.row.status === 'COMPLETED'" type="success" size="small">已完成</el-tag>
+            <el-tag v-else-if="scope.row.status === 'IMPORTING'" type="warning" size="small">进行中</el-tag>
+            <el-tag v-else-if="scope.row.status === 'FAILED'" type="danger" size="small">失败</el-tag>
+            <el-tag v-else-if="scope.row.status === 'ROLLED_BACK'" type="info" size="small">已回退</el-tag>
+            <el-tag v-else size="small">{{ scope.row.status }}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="record_count" label="记录数" width="80" />
+        <el-table-column prop="created_at" label="导入时间" width="160" />
+        <el-table-column label="操作" width="100" align="center">
+          <template slot-scope="scope">
+            <el-button
+              v-if="scope.row.status === 'COMPLETED' && isAdministrator"
+              type="danger"
+              size="mini"
+              icon="el-icon-refresh-left"
+              @click="handleRollbackConfirm(scope.row)"
+            >
+              回退
+            </el-button>
+            <span v-else-if="scope.row.status === 'ROLLED_BACK'" style="color:#909399;font-size:12px">已回退</span>
+            <span v-else style="color:#909399;font-size:12px">-</span>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div style="margin-top:10px;text-align:right">
+        <el-pagination
+          background
+          layout="prev, pager, next"
+          :total="importHistoryTotal"
+          :page-size="importHistoryQuery.limit"
+          :current-page.sync="importHistoryQuery.page"
+          @current-change="fetchImportHistory"
+        />
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="importHistoryDialogVisible = false">关闭</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { fetchList, deleteJar, createJar, updateJar, exportJarList, getHistory, getTotalMass, getJarTypeOptions, getCellarPosOptions, getFactoryPosOptions, importJarCsv, createCellarsBatch, clearHistory, exportJarHistory } from '@/api/wine_jar'
+import { fetchList, deleteJar, createJar, updateJar, exportJarList, getHistory, getTotalMass, getJarTypeOptions, getCellarPosOptions, getFactoryPosOptions, importJarCsv, createCellarsBatch, clearHistory, exportJarHistory, fetchImportSessions, rollbackImport } from '@/api/wine_jar'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -577,6 +635,14 @@ export default {
       newCellarDialogVisible: false,
       newCellarData: [],
       newCellarCreatedCount: 0,
+      importHistoryDialogVisible: false,
+      importHistoryList: [],
+      importHistoryTotal: 0,
+      importHistoryLoading: false,
+      importHistoryQuery: {
+        page: 1,
+        limit: 20
+      },
       showChart: false,
       chartTitle: '',
       className: 'chart',
@@ -1403,6 +1469,60 @@ export default {
       this.newCellarDialogVisible = false
       this.resetImport()
       this.getList()
+    },
+    // ========== 导入历史与回退 ==========
+    handleImportHistory() {
+      this.importHistoryQuery.page = 1
+      this.importHistoryList = []
+      this.importHistoryTotal = 0
+      this.importHistoryDialogVisible = true
+    },
+    fetchImportHistory() {
+      this.importHistoryLoading = true
+      fetchImportSessions(this.importHistoryQuery).then(res => {
+        this.importHistoryList = res.items || []
+        this.importHistoryTotal = res.total || 0
+        this.importHistoryLoading = false
+      }).catch(() => {
+        this.importHistoryLoading = false
+        this.$message.error('获取导入历史失败')
+      })
+    },
+    handleRollbackConfirm(row) {
+      this.$confirm(
+        `确认回退导入记录 #${row.id}？<br>
+        来源：${row.source_name}<br>
+        记录数：${row.record_count}<br>
+        此操作将恢复被修改的 Stock 数据，并删除本次导入产生的 Record 记录。`,
+        '回退确认',
+        {
+          confirmButtonText: '确认回退',
+          cancelButtonText: '取消',
+          type: 'warning',
+          dangerouslyUseHTMLString: true
+        }
+      ).then(() => {
+        this.doRollback(row)
+      }).catch(() => {})
+    },
+    doRollback(row) {
+      rollbackImport({ import_session_id: row.id }).then(res => {
+        this.$notify({
+          title: '回退成功',
+          message: res.message || '导入数据已回退',
+          type: 'success',
+          duration: 3000
+        })
+        this.fetchImportHistory()
+        this.getList()
+      }).catch(() => {
+        this.$notify({
+          title: '回退失败',
+          message: '回退操作出错',
+          type: 'error',
+          duration: 3000
+        })
+      })
     },
     formatJson(filterVal) {
       return this.list.map(v => filterVal.map(j => {

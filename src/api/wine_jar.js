@@ -108,6 +108,22 @@ export function createCellarsBatch(data) {
   })
 }
 
+export function fetchImportSessions(query) {
+  return request({
+    url: `${process.env.API_URL}/import_sessions`,
+    method: 'get',
+    params: query
+  })
+}
+
+export function rollbackImport(data) {
+  return request({
+    url: `${process.env.API_URL}/rollback_import`,
+    method: 'post',
+    data
+  })
+}
+
 export function exportJarHistory(query) {
   return request({
     url: `${process.env.API_URL}/export_jar_history`,
