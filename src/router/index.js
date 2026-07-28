@@ -130,6 +130,7 @@ export const constantRoutes = [
  * the routes that need to be dynamically loaded based on user roles
  */
 export const asyncRoutes = [
+  /*
   {
     path: '/views/wine/cellar_list',
     component: Layout,
@@ -148,7 +149,7 @@ export const asyncRoutes = [
         }
       }
     ]
-  },
+  },*/
   {
     path: '/views/wine/jar_list',
     component: Layout,
@@ -158,9 +159,9 @@ export const asyncRoutes = [
       {
         path: '',
         component: () => import('@/views/wine/jar_list'),
-        name: '陶坛管理',
+        name: '指示灯管理',
         meta: {
-          title: '陶坛管理',
+          title: '指示灯管理',
           icon: 'documentation',
           affix: true,
           roles: ['管理员', '普通用户'] // or you can only set roles in sub nav
@@ -168,6 +169,7 @@ export const asyncRoutes = [
       }
     ]
   },
+  /*
   {
     path: '/views/wine/in_out_bound_list',
     component: Layout,
@@ -262,7 +264,7 @@ export const asyncRoutes = [
       }
     ]
   },
-  /*
+
   {
     path: '/views/wine/plan_list',
     component: Layout,

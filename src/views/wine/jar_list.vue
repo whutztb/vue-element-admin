@@ -52,28 +52,11 @@
           style="width: 180px;"
         />
       </div>
-      <el-input v-model="listQuery.jar_id" placeholder="陶坛ID" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.cellar_pos" placeholder="酒库编号" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.jar_pos" placeholder="房间编号" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.jar_id" placeholder="指示灯ID" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <!--<el-input v-model="listQuery.jar_type" placeholder="缸型" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />-->
       <!--<el-input v-model="listQuery.wine_name" placeholder="品名" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />-->
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         查询
-      </el-button>
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-s-data" @click="handleAddUp">
-        统计
-      </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-circle-plus" @click="handleCreate">
-        新增
-      </el-button>
-      <el-button class="filter-item" type="primary" icon="el-icon-download" @click="exportAllPages">
-        导出
-      </el-button>
-      <el-button class="filter-item" type="primary" icon="el-icon-upload" @click="handleImportCsv">
-        导入
-      </el-button>
-      <el-button class="filter-item" type="warning" icon="el-icon-time" @click="handleImportHistory">
-        导入历史
       </el-button>
       <el-dialog
         title="导出选项"
@@ -99,15 +82,15 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column align="center" min-width="100">
+      <el-table-column v-if="true" align="center" min-width="100">
         <template slot="header">
-          <span>陶坛<br>ID</span>
+          <span>指示灯ID</span>
         </template>
         <template slot-scope="scope">
           <span>{{ scope.row.jar_id }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="65px" align="center">
+      <el-table-column v-if="false" min-width="65px" align="center">
         <template slot="header">
           <span>酒库<br>编号</span>
         </template>
@@ -115,7 +98,7 @@
           <span>{{ scope.row.cellar_pos }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="65px" align="center">
+      <el-table-column v-if="false" min-width="65px" align="center">
         <template slot="header">
           <span>房间<br>编号</span>
         </template>
@@ -123,7 +106,7 @@
           <span>{{ scope.row.jar_pos }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="65px" align="center">
+      <el-table-column v-if="false" min-width="65px" align="center">
         <template slot="header">
           <span>坛号</span>
         </template>
@@ -141,7 +124,7 @@
           <span>{{ scope.row.jar_type }}</span>
         </template>
       </el-table-column>-->
-      <el-table-column min-width="60px" align="center">
+      <el-table-column v-if="false" min-width="60px" align="center">
         <template slot="header">
           <span>缸高<br>(mm)</span>
         </template>
@@ -151,13 +134,13 @@
       </el-table-column>
       <el-table-column min-width="60px" align="center">
         <template slot="header">
-          <span>净空<br>(mm)</span>
+          <span>净空(mm)</span>
         </template>
         <template slot-scope="scope">
           <span>{{ scope.row.air_height }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="60px" align="center">
+      <el-table-column v-if="false" min-width="60px" align="center">
         <template slot="header">
           <span>液位<br>(mm)</span>
         </template>
@@ -165,7 +148,7 @@
           <span>{{ scope.row.wine_level }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="60" align="center">
+      <el-table-column v-if="false" min-width="60" align="center">
         <template slot="header">
           <span>体积<br>(m³)</span>
         </template>
@@ -173,7 +156,7 @@
           <span>{{ scope.row.wine_volume }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="65" align="center">
+      <el-table-column v-if="false" min-width="65" align="center">
         <template slot="header">
           <span>酒度<br>(%vol)</span>
         </template>
@@ -181,7 +164,7 @@
           <span>{{ scope.row.wine_vol }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="55" align="center">
+      <el-table-column v-if="false" min-width="55" align="center">
         <template slot="header">
           <span>温度<br>(℃)</span>
         </template>
@@ -190,7 +173,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column min-width="75" align="center">
+      <el-table-column v-if="false" min-width="75" align="center">
         <template slot="header">
           <span>密度<br>(t/m³)</span>
         </template>
@@ -198,7 +181,7 @@
           <span>{{ scope.row.wine_rou }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="80" align="center">
+      <el-table-column v-if="false" min-width="80" align="center">
         <template slot="header">
           <span>原度重量<br>(t)</span>
         </template>
@@ -206,7 +189,7 @@
           <span>{{ scope.row.wine_weight }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="80" align="center">
+      <el-table-column v-if="false" min-width="80" align="center">
         <template slot="header">
           <span>折算酒度<br>(%vol)</span>
         </template>
@@ -214,7 +197,7 @@
           <span>{{ scope.row.wine_vol_convert }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="80" align="center">
+      <el-table-column v-if="false" min-width="80" align="center">
         <template slot="header">
           <span>折算重量<br>(t)</span>
         </template>
@@ -222,33 +205,18 @@
           <span>{{ scope.row.wine_weight_convert }}</span>
         </template>
       </el-table-column>
-      <!--<el-table-column min-width="155px" align="center" label="测量数据更新日期">
+      <el-table-column min-width="155px" align="center">
+        <template slot="header">
+          <span>更新时间</span>
+        </template>
         <template slot-scope="scope">
           <span>{{ scope.row.level_update_time }}</span>
         </template>
-      </el-table-column>-->
-      <el-table-column label="" align="center" min-width="460" class-name="small-padding fixed-width">
+      </el-table-column>
+      <el-table-column label="操作" align="center" min-width="100" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
-          <el-button type="info" size="mini" icon="el-icon-more" @click="handleMoreDetail(row)">
-            更多
-          </el-button>
-          <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(row)">
-            编辑
-          </el-button>
           <el-button v-if="row.status!='deleted'" size="mini" type="info" icon="el-icon-document" @click="handleHistory(row,$index)">
             历史
-          </el-button>
-          <el-button type="primary" size="mini" icon="el-icon-download" @click="exportHistory(row, $index)">
-            导出
-          </el-button>
-          <!--<el-button v-if="row.status!='deleted'" size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(row,$index)">
-            删除
-          </el-button>-->
-          <el-button v-if="row.status != 'deleted' && isAdministrator" size="mini" type="warning" icon="el-icon-brush" @click="handleClearHistory(row, $index)">
-            清空
-          </el-button>
-          <el-button v-if="row.status != 'deleted' && isAdministrator" size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(row, $index)">
-            删除
           </el-button>
         </template>
       </el-table-column>
@@ -260,7 +228,6 @@
       <el-table :data="historyDataTable" class="custom-table" style="width: 100%;background-color: #394056;">
         <el-table-column prop="rec_time" label="时间" width="230" align="center" />
         <el-table-column prop="rec_lv" label="液位（mm）" width="210" align="center" />
-        <el-table-column prop="rec_temp" label="温度（℃）" width="210" align="center" />
       </el-table>
     </el-dialog>
     <!--<history_chart v-if="historyDataTable.length" :historyDataTable="historyDataTable" />-->
@@ -1058,12 +1025,9 @@ export default {
           // 提取时间和对应的酒量
           const timestamps = sortedHistoryData.map(item => item.rec_time) // 提取时间
           // const recWeights = sortedHistoryData.map(item => item.rec_weight) // 提取 rec_weight
-          const recLevels = sortedHistoryData.map(item => item.rec_lv) // 提取 rec_lv
-          const recTemps = sortedHistoryData.map(item => item.rec_temp) // 提取 rec_temp
+          const recLevels = sortedHistoryData.map(item => item.rec_lv)
           const minRecLevel = Math.min(...recLevels)
           const maxRecLevel = Math.max(...recLevels)
-          const minTemp = Math.min(...recTemps)
-          const maxTemp = Math.max(...recTemps)
           this.chart.setOption({
             title: {
               top: 20,
@@ -1084,8 +1048,8 @@ export default {
             },
             legend: {
               top: 10,
-              left: 'center', // 将图例水平居中
-              orient: 'horizontal', // 设置图例为水平布局
+              left: 'center',
+              orient: 'horizontal',
               icon: 'rect',
               itemWidth: 14,
               itemHeight: 5,
@@ -1104,7 +1068,7 @@ export default {
               containLabel: true
             },
             xAxis: [{
-              type: 'category', // category,time
+              type: 'category',
               boundaryGap: false,
               axisLine: {
                 lineStyle: {
@@ -1117,95 +1081,41 @@ export default {
                   return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')} ${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}`
                 }
               },
-              data: timestamps // 转换为 Date 对象
+              data: timestamps
             }],
-            yAxis: [
-              {
-                type: 'value',
-                name: '温度(℃)',
-                min: Math.round(minTemp - 5),
-                max: Math.round(maxTemp + 5),
-                nameTextStyle: {
-                  color: '#F1F1F3' // 设置液位 Y 轴名称的颜色为白色
-                },
-                axisTick: {
-                  show: false
-                },
-                axisLine: {
-                  lineStyle: {
-                    color: '#57617B'
-                  }
-                },
-                axisLabel: {
-                  margin: 10,
-                  textStyle: {
-                    fontSize: 12,
-                    color: '#F1F1F3'
-                  }
-                },
-                splitLine: {
-                  lineStyle: {
-                    color: '#57617B'
-                  }
+            yAxis: [{
+              type: 'value',
+              name: '液位（mm）',
+              min: Math.round(minRecLevel - 50),
+              max: Math.round(maxRecLevel + 50),
+              nameTextStyle: {
+                color: '#F1F1F3'
+              },
+              axisTick: {
+                show: false
+              },
+              axisLine: {
+                lineStyle: {
+                  color: '#57617B'
                 }
               },
-              {
-                type: 'value',
-                name: '液位（mm）',
-                nameTextStyle: {
-                  color: '#F1F1F3' // 设置液位 Y 轴名称的颜色为白色
-                },
-                min: Math.round(minRecLevel - 50),
-                max: Math.round(maxRecLevel + 50),
-                axisTick: {
-                  show: false
-                },
-                axisLine: {
-                  lineStyle: {
-                    color: '#57617B'
-                  }
-                },
-                axisLabel: {
-                  margin: 10,
-                  textStyle: {
-                    fontSize: 12,
-                    color: '#F1F1F3'
-                  }
-                },
-                splitLine: {
-                  lineStyle: {
-                    color: '#57617B'
-                  }
-                },
-                position: 'right', // 将第二个Y轴放在右侧
-                offset: 0
-              }],
+              axisLabel: {
+                margin: 10,
+                textStyle: {
+                  fontSize: 12,
+                  color: '#F1F1F3'
+                }
+              },
+              splitLine: {
+                lineStyle: {
+                  color: '#57617B'
+                }
+              }
+            }],
             series: [{
-              name: '温度(℃)',
-              type: 'line',
-              connectNulls: true, // 连接 null 值
-              smooth: true,
-              symbol: 'circle',
-              symbolSize: 5,
-              showSymbol: false,
-              lineStyle: {
-                normal: {
-                  width: 1
-                }
-              },
-              itemStyle: {
-                normal: {
-                  color: 'rgb(137,189,27)',
-                  borderColor: 'rgba(137,189,2,0.27)',
-                  borderWidth: 12
-                }
-              },
-              data: recTemps
-            }, {
               name: '液位值（mm）',
               type: 'line',
-              yAxisIndex: 1, // 指定使用第二个Y轴
-              connectNulls: true, // 连接 null 值
+              connectNulls: true,
               smooth: true,
               symbol: 'circle',
               symbolSize: 5,

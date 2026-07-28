@@ -1,6 +1,6 @@
 import Cookies from 'js-cookie'
 
-const TokenKey = 'Admin-Token-jingpai'
+const TokenKey = 'Admin-Token-light'
 
 export function getToken() {
   return Cookies.get(TokenKey)

@@ -1,5 +1,5 @@
 module.exports = {
-  title: '数智化陶坛监测系统',
+  title: '巡航指示灯监测系统',
 
   /**
    * @type {boolean} true | false

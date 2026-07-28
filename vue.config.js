@@ -25,7 +25,7 @@ module.exports = {
    * In most cases please use '/' !!!
    * Detail: https://cli.vuejs.org/config/#publicpath
    */
-  publicPath: '/jingpai/',
+  publicPath: '/light/',
   outputDir: 'dist',
   assetsDir: 'static',
   lintOnSave: process.env.NODE_ENV === 'development',
@@ -49,7 +49,7 @@ module.exports = {
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
     // it can be accessed in index.html to inject the correct title.
-    name: '数智化陶坛监测系统',
+    name: '巡航指示灯监测系统',
     resolve: {
       alias: {
         '@': resolve('src')

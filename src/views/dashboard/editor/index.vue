@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-admin-container">
     <div class="image-container">
-      <img src="@/assets/images/GJ3.jpg" alt="Background Image" class="full-image">
+      <img src="@/assets/images/GJ4.jpeg" alt="Background Image" class="full-image">
     </div>
   </div>
 </template>
