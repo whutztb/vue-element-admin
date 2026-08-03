@@ -5,19 +5,19 @@
         <el-input v-model="settings.systemName" placeholder="请输入系统名称" />
       </el-form-item>-->
 
-      <el-form-item label="折算酒度(%vol)" prop="volConvert">
+      <el-form-item v-if="false" label="折算酒度(%vol)" prop="volConvert">
         <el-input-number v-model="settings.volConvert" :min="1" />
       </el-form-item>
 
-      <el-form-item label="出入库阈值(mm)" prop="inOutThreshold">
+      <el-form-item v-if="false" label="出入库阈值(mm)" prop="inOutThreshold">
         <el-input-number v-model="settings.inOutThreshold" :min="1" />
       </el-form-item>
 
-      <el-form-item label="渗漏告警阈值(mm)" prop="leakThreshold">
+      <el-form-item v-if="false" label="渗漏告警阈值(mm)" prop="leakThreshold">
         <el-input-number v-model="settings.leakThreshold" :min="1" />
       </el-form-item>
 
-      <el-form-item label="溢出告警阈值(mm)" prop="overflowThreshold">
+      <el-form-item v-if="false" label="溢出告警阈值(mm)" prop="overflowThreshold">
         <el-input-number v-model="settings.overflowThreshold" :min="1" />
       </el-form-item>
 
@@ -25,16 +25,16 @@
         <el-input-number v-model="settings.timeout" :min="1" />
       </el-form-item>-->
 
-      <el-form-item label="报警蜂鸣时间(s)" prop="beepTime">
+      <el-form-item v-if="false" label="报警蜂鸣时间(s)" prop="beepTime">
         <el-input-number v-model="settings.beepTime" :min="0" />
       </el-form-item>
-      <el-form-item label="是否弹窗报警" prop="popupAlarm">
+      <el-form-item v-if="false" label="是否弹窗报警" prop="popupAlarm">
         <el-select v-model="settings.popupAlarm" placeholder="请选择是否弹窗告警">
           <el-option label="否" value="0" />
           <el-option label="是" value="1" />
         </el-select>
       </el-form-item>
-      <el-form-item label="缸盖异动报警" prop="lidWarnMode">
+      <el-form-item v-if="false" label="缸盖异动报警" prop="lidWarnMode">
         <el-select v-model="settings.lidWarnMode" placeholder="请选择异动告警开关">
           <el-option label="开" value="0" />
           <el-option label="关" value="1" />

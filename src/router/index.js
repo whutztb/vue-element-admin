@@ -283,7 +283,7 @@ export const asyncRoutes = [
         }
       }
     ]
-  },*/
+  },
   {
     path: '/views/wine/device_list',
     component: Layout,
@@ -322,7 +322,7 @@ export const asyncRoutes = [
         }
       }
     ]
-  },
+  },*/
   {
     path: '/views/wine/system_settings',
     component: Layout,

@@ -124,9 +124,9 @@
           <span>{{ scope.row.jar_type }}</span>
         </template>
       </el-table-column>-->
-      <el-table-column v-if="false" min-width="60px" align="center">
+      <el-table-column v-if="true" min-width="60px" align="center">
         <template slot="header">
-          <span>缸高<br>(mm)</span>
+          <span>容器高(mm)</span>
         </template>
         <template slot-scope="scope">
           <span>{{ scope.row.jar_height }}</span>
@@ -140,9 +140,9 @@
           <span>{{ scope.row.air_height }}</span>
         </template>
       </el-table-column>
-      <el-table-column v-if="false" min-width="60px" align="center">
+      <el-table-column v-if="true" min-width="60px" align="center">
         <template slot="header">
-          <span>液位<br>(mm)</span>
+          <span>液位(mm)</span>
         </template>
         <template slot-scope="scope">
           <span>{{ scope.row.wine_level }}</span>
@@ -213,8 +213,11 @@
           <span>{{ scope.row.level_update_time }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" min-width="100" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" min-width="150" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
+          <el-button size="mini" type="primary" icon="el-icon-edit" @click="handleUpdate(row)">
+            编辑
+          </el-button>
           <el-button v-if="row.status!='deleted'" size="mini" type="info" icon="el-icon-document" @click="handleHistory(row,$index)">
             历史
           </el-button>
@@ -236,58 +239,58 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="陶坛ID" prop="jar_id" label-width="150px">
+        <el-form-item v-if="false" label="陶坛ID" prop="jar_id" label-width="150px">
           <el-input v-model="temp.jar_id" :readonly="readOnly" />
         </el-form-item>
-        <el-form-item label="缸型" prop="jar_type" label-width="150px">
+        <el-form-item v-if="false" label="缸型" prop="jar_type" label-width="150px">
           <el-select v-model="temp.jar_type" class="filter-item" placeholder="请选择" @change="onJarTypeChange">
             <el-option v-for="item in jarTypeOptions" :key="item" :label="item" :value="item" />
           </el-select>
         </el-form-item>
-        <el-form-item label="酒库编号" prop="cellar_pos" label-width="150px">
+        <el-form-item v-if="false" label="酒库编号" prop="cellar_pos" label-width="150px">
           <el-select v-model="temp.cellar_pos" class="filter-item" placeholder="请选择">
             <el-option v-for="item in factoryPosOptions" :key="item" :label="item" :value="item" />
           </el-select>
         </el-form-item>
-        <el-form-item label="房间编号" prop="jar_pos" label-width="150px">
+        <el-form-item v-if="false" label="房间编号" prop="jar_pos" label-width="150px">
           <el-select v-model="temp.jar_pos" class="filter-item" placeholder="请选择">
             <el-option v-for="item in cellarPosOptions" :key="item" :label="item" :value="item" />
           </el-select>
         </el-form-item>
-        <el-form-item label="陶坛编号" prop="jar_no" label-width="150px">
+        <el-form-item v-if="false" label="陶坛编号" prop="jar_no" label-width="150px">
           <el-input v-model="temp.jar_no" />
         </el-form-item>
-        <el-form-item label="陶坛高(mm)" prop="jar_height" label-width="150px">
-          <el-input v-model="temp.jar_height" placeholder="选择坛型后自动填充，可手动修改" />
+        <el-form-item label="容器高(mm)" prop="jar_height" label-width="150px">
+          <el-input v-model="temp.jar_height" />
         </el-form-item>
-        <el-form-item label="液位(mm)" prop="wine_level" label-width="150px">
+        <el-form-item v-if="false" label="液位(mm)" prop="wine_level" label-width="150px">
           <el-input v-model="temp.wine_level" />
         </el-form-item>
-        <el-form-item label="酒度(%vol)" prop="wine_vol" label-width="150px">
+        <el-form-item v-if="false" label="酒度(%vol)" prop="wine_vol" label-width="150px">
           <el-input v-model="temp.wine_vol" />
         </el-form-item>
-        <el-form-item label="温度(℃)" prop="wine_temp" label-width="150px">
+        <el-form-item v-if="false" label="温度(℃)" prop="wine_temp" label-width="150px">
           <el-input v-model="temp.wine_temp" />
         </el-form-item>
-        <el-form-item label="品名" prop="wine_name" label-width="150px">
+        <el-form-item v-if="false" label="品名" prop="wine_name" label-width="150px">
           <el-input v-model="temp.wine_name" />
         </el-form-item>
-        <el-form-item label="香型" prop="wine_type" label-width="150px">
+        <el-form-item v-if="false" label="香型" prop="wine_type" label-width="150px">
           <el-input v-model="temp.wine_type" />
         </el-form-item>
-        <el-form-item label="生产厂区" prop="factory" label-width="150px">
+        <el-form-item v-if="false" label="生产厂区" prop="factory" label-width="150px">
           <el-input v-model="temp.factory" />
         </el-form-item>
-        <el-form-item label="入库时间" prop="wine_date" label-width="150px">
+        <el-form-item v-if="false" label="入库时间" prop="wine_date" label-width="150px">
           <el-date-picker v-model="temp.wine_date" type="date" placeholder="请选择日期" />
         </el-form-item>
-        <el-form-item label="补偿值（mm）" prop="compensation_value" label-width="150px">
+        <el-form-item v-if="false" label="补偿值（mm）" prop="compensation_value" label-width="150px">
           <el-input v-model="temp.compensation_value" />
         </el-form-item>
-        <el-form-item label="更新时间" prop="level_update_time" label-width="150px">
+        <el-form-item v-if="false" label="更新时间" prop="level_update_time" label-width="150px">
           <el-date-picker v-model="temp.level_update_time" type="datetime" placeholder="请选择日期" />
         </el-form-item>
-        <el-form-item label="密度(t/m³)" prop="wine_rou_input" label-width="150px">
+        <el-form-item v-if="false" label="密度(t/m³)" prop="wine_rou_input" label-width="150px">
           <el-tooltip
             class="item"
             effect="dark"
@@ -842,12 +845,14 @@ export default {
           if (!this.temp.compensation_value && this.temp.compensation_value !== 0) {
             this.temp.compensation_value = 0
           }
-          const date = new Date(this.temp.level_update_time)
-          const formattedDateTime = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`
-          this.temp.level_update_time = formattedDateTime
-          const date2 = new Date(this.temp.wine_date)
-          const formattedDateTime2 = `${date2.getFullYear()}-${String(date2.getMonth() + 1).padStart(2, '0')}-${String(date2.getDate()).padStart(2, '0')}`
-          this.temp.wine_date = formattedDateTime2
+          if (this.temp.level_update_time) {
+            const date = new Date(this.temp.level_update_time)
+            this.temp.level_update_time = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`
+          }
+          if (this.temp.wine_date) {
+            const date2 = new Date(this.temp.wine_date)
+            this.temp.wine_date = `${date2.getFullYear()}-${String(date2.getMonth() + 1).padStart(2, '0')}-${String(date2.getDate()).padStart(2, '0')}`
+          }
           createJar(this.temp).then(() => {
             this.list.unshift(this.temp)
             this.dialogFormVisible = false
@@ -890,13 +895,14 @@ export default {
           if (!this.temp.compensation_value && this.temp.compensation_value !== 0) {
             this.temp.compensation_value = 0
           }
-          // 格式化日期（将Wed May 01 2024 16:15:23 GMT+0800 (中国标准时间)格式化为2024-05-01 16:15:23）
-          const date = new Date(this.temp.level_update_time)
-          const formattedDateTime = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`
-          this.temp.level_update_time = formattedDateTime
-          const date2 = new Date(this.temp.wine_date)
-          const formattedDateTime2 = `${date2.getFullYear()}-${String(date2.getMonth() + 1).padStart(2, '0')}-${String(date2.getDate()).padStart(2, '0')}`
-          this.temp.wine_date = formattedDateTime2
+          if (this.temp.level_update_time) {
+            const date = new Date(this.temp.level_update_time)
+            this.temp.level_update_time = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`
+          }
+          if (this.temp.wine_date) {
+            const date2 = new Date(this.temp.wine_date)
+            this.temp.wine_date = `${date2.getFullYear()}-${String(date2.getMonth() + 1).padStart(2, '0')}-${String(date2.getDate()).padStart(2, '0')}`
+          }
           // const tempData = Object.assign({}, this.temp)
           // 确保 wine_rou_input 字段存在，即使为空
           const tempData = {
