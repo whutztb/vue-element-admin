@@ -1,5 +1,8 @@
+const titles = { tank: '数智化大罐监测系统', jar: '数智化陶坛监测系统' }
+const containerType = process.env.VUE_APP_CONTAINER_TYPE || 'jar'
+
 module.exports = {
-  title: '数智化陶坛监测系统',
+  title: titles[containerType],
 
   /**
    * @type {boolean} true | false

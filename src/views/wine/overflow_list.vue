@@ -46,7 +46,7 @@
           <span>{{ scope.row.jar_id }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="110px" label="所在酒库" align="center">
+      <el-table-column min-width="90px" label="所在酒库" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.jar_pos }}</span>
         </template>
@@ -56,17 +56,17 @@
           <span>{{ scope.row.jar_no }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="125px" align="center" label="渗漏时间">
+      <el-table-column min-width="125px" align="center" label="溢出时间">
         <template slot-scope="scope">
-          <span>{{ scope.row.leak_time }}</span>
+          <span>{{ scope.row.overflow_time }}</span>
         </template>
       </el-table-column>
       <el-table-column min-width="60px" align="center">
         <template slot="header">
-          <span>渗漏量<br>(mm)</span>
+          <span>当前净空<br>(mm)</span>
         </template>
         <template slot-scope="scope">
-          <span>{{ scope.row.leak_height }}</span>
+          <span>{{ scope.row.overflow_air_height }}</span>
         </template>
       </el-table-column>
       <el-table-column min-width="70px" align="center" label="状态">
@@ -118,7 +118,7 @@
 </template>
 
 <script>
-import { fetchList, dealWarning, clearAllWarning, exportLeakList, queryWarning } from '@/api/wine_leak'
+import { fetchList, dealWarning, clearAllWarning, exportOverflowList, queryWarning } from '@/api/wine_overflow'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -158,8 +158,8 @@ export default {
         jar_id: undefined,
         jar_pos: '',
         jar_no: '',
-        leak_time: '',
-        leak_height: '',
+        overflow_time: '',
+        overflow_air_height: '',
         deal_status: '',
         deal_time: '',
         deal_desc: '',
@@ -191,10 +191,10 @@ export default {
   created() {
     // 监听 EventBus 事件
     if (window.EventBus) {
-      window.EventBus.$on('updateLeakListUI', this.getList)
+      window.EventBus.$on('updateOverflowListUI', this.getList)
     } else {
       console.error('全局 EventBus 未找到，使用局部 EventBus')
-      EventBus.$on('updateLeakListUI', this.getList)
+      EventBus.$on('updateOverflowListUI', this.getList)
     }
     this.getList()
   },
@@ -203,9 +203,9 @@ export default {
   },
   beforeDestroy() {
     if (window.EventBus) {
-      window.EventBus.$off('updateLeakListUI', this.getList)
+      window.EventBus.$off('updateOverflowListUI', this.getList)
     } else {
-      EventBus.$off('updateLeakListUI', this.getList)
+      EventBus.$off('updateOverflowListUI', this.getList)
     }
     if (this.chart) {
       this.chart.dispose()
@@ -252,8 +252,8 @@ export default {
         jar_id: undefined,
         jar_pos: '',
         jar_no: '',
-        leak_time: '',
-        leak_height: '',
+        overflow_time: '',
+        overflow_air_height: '',
         deal_status: '',
         deal_time: '',
         deal_desc: '',
@@ -381,14 +381,14 @@ export default {
     },
     exportCurrentPage() {
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['陶坛ID', '所在酒库', '渗漏时间', '状态']
-        const filterVal = ['jar_id', 'jar_pos', 'leak_time', 'deal_status']
+        const tHeader = ['陶坛ID', '所在酒库', '溢出时间', '状态']
+        const filterVal = ['jar_id', 'jar_pos', 'overflow_time', 'deal_status']
         const data = this.formatJson(filterVal)
 
         excel.export_json_to_excel({
           header: tHeader,
           data,
-          filename: 'current-page-leak-list'
+          filename: 'current-page-overflow-list'
         })
         this.downloadLoading = false
       })
@@ -397,12 +397,12 @@ export default {
       this.downloadLoading = true // 开始下载时显示加载状态
 
       // 发起请求以获取 Excel 文件，传递查询参数
-      exportLeakList(this.listQuery)
+      exportOverflowList(this.listQuery)
         .then(blob => { // 直接获取 Blob 对象
           const url = window.URL.createObjectURL(blob) // 创建 Blob URL
           const a = document.createElement('a') // 创建一个链接元素
           a.href = url
-          a.download = '渗漏列表.xlsx' // 设置下载的文件名
+          a.download = '溢出列表.xlsx' // 设置下载的文件名
           document.body.appendChild(a) // 将链接添加到文档
           a.click() // 模拟点击
           a.remove() // 下载后移除链接

@@ -6,6 +6,7 @@ Vue.use(Router)
 
 /* Layout */
 import Layout from '@/layout'
+import { hiddenRoutes } from '@/config/route.config'
 
 /* Router Modules */
 // import componentsRouter from './modules/components'
@@ -129,7 +130,7 @@ export const constantRoutes = [
  * asyncRoutes
  * the routes that need to be dynamically loaded based on user roles
  */
-export const asyncRoutes = [
+const _asyncRoutes = [
   {
     path: '/views/wine/cellar_list',
     component: Layout,
@@ -221,6 +222,24 @@ export const asyncRoutes = [
           icon: 'message',
           affix: true,
           roles: ['管理员', '普通用户'] // or you can only set roles in sub nav
+        }
+      }
+    ]
+  },
+
+  {
+    path: '/views/wine/overflow_list',
+    component: Layout,
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/wine/overflow_list'),
+        name: '陶坛溢出报警',
+        meta: {
+          title: '陶坛溢出报警',
+          icon: 'message',
+          affix: true,
+          roles: ['管理员', '普通用户']
         }
       }
     ]
@@ -599,6 +618,18 @@ export const asyncRoutes = [
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
+
+function filterHiddenRoutes(routes) {
+  return routes.filter(route => {
+    if (hiddenRoutes.includes(route.path)) return false
+    if (route.children) {
+      route.children = filterHiddenRoutes(route.children)
+    }
+    return true
+  })
+}
+
+export const asyncRoutes = filterHiddenRoutes(_asyncRoutes)
 
 const createRouter = () => new Router({
   // mode: 'history', // require service support

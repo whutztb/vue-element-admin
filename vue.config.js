@@ -1,6 +1,7 @@
 'use strict'
 const path = require('path')
 const defaultSettings = require('./src/settings.js')
+const customer = require('./customer.config.js')
 
 function resolve(dir) {
   return path.join(__dirname, dir)
@@ -14,6 +15,8 @@ const name = defaultSettings.title || 'vue Element Admin' // page title
 // You can change the port by the following method:
 // port = 9527 npm run dev OR npm run dev --port = 9527
 const port = process.env.port || process.env.npm_config_port || 9527 // dev port
+const prefix = customer.prefix
+const apiBase = process.env.VUE_APP_BASE_API || ('/' + prefix + '-api')
 
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
 const webpack = require('webpack'); // 引入 webpack
@@ -25,7 +28,7 @@ module.exports = {
    * In most cases please use '/' !!!
    * Detail: https://cli.vuejs.org/config/#publicpath
    */
-  publicPath: '/jingpai/',
+  publicPath: '/' + prefix + '/',
   outputDir: 'dist',
   assetsDir: 'static',
   lintOnSave: process.env.NODE_ENV === 'development',
@@ -58,10 +61,8 @@ module.exports = {
         // 其他webpack配置...在这里定义全局变量API_URL
     plugins: [
         new webpack.DefinePlugin({
-          //'process.env.API_URL': JSON.stringify('http://sdyg.w1.luyouxia.net')
-          // 'process.env.API_URL': JSON.stringify('http://124.222.57.90:5000')
-          // 'process.env.API_URL': JSON.stringify('http://127.0.0.1:5000')
-          // 'process.env.API_URL': JSON.stringify('http://124.222.57.90:5000')
+          'process.env.VUE_APP_BASE_API': JSON.stringify(apiBase),
+          'process.env.VUE_APP_TOKEN_KEY': JSON.stringify('Admin-Token-' + prefix),
           'process.env.API_URL': JSON.stringify('')
         })
     ]
@@ -97,6 +98,17 @@ module.exports = {
       .options({
         symbolId: 'icon-[name]'
       })
+      .end()
+
+    // 构建时容器名词替换（仅 tank 模式生效）
+    config.module
+      .rule('string-replace')
+      .test(/\.(vue|js)$/)
+      .enforce('pre')
+      .exclude.add(resolve('node_modules'))
+      .end()
+      .use('string-replace-loader')
+      .loader(resolve('build/string-replace-loader.js'))
       .end()
 
     config

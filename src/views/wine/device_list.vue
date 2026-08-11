@@ -44,7 +44,7 @@
 
       <el-table-column min-width="70px" align="center">
         <template slot="header">
-          <span>设备<br>名称)</span>
+          <span>设备<br>名称</span>
         </template>
         <template slot-scope="scope">
           <span>{{ scope.row.device_name }}</span>
@@ -65,7 +65,7 @@
       </el-table-column>
       <el-table-column min-width="90px" align="center">
         <template slot="header">
-          <span>起始距离<br>(mm))</span>
+          <span>起始距离<br>(mm)</span>
         </template>
         <template slot-scope="scope">
           <span>{{ scope.row.distance_start }}</span>
@@ -73,7 +73,7 @@
       </el-table-column>
       <el-table-column min-width="90px" align="center">
         <template slot="header">
-          <span>终止距离<br>(mm))</span>
+          <span>终止距离<br>(mm)</span>
         </template>
         <template slot-scope="scope">
           <span>{{ scope.row.distance_end }}</span>
