@@ -17,6 +17,14 @@
         <el-input-number v-model="settings.leakThreshold" :min="1" />
       </el-form-item>
 
+      <el-form-item label="渗漏对比天数" prop="leakCompareDays">
+        <el-input-number v-model="settings.leakCompareDays" :min="1" :max="30" />
+      </el-form-item>
+
+      <el-form-item label="等温阈值(℃)" prop="isoThreshold">
+        <el-input-number v-model="settings.isoThreshold" :min="0.1" :max="2.0" :step="0.1" :precision="1" />
+      </el-form-item>
+
       <el-form-item label="溢出告警阈值(mm)" prop="overflowThreshold">
         <el-input-number v-model="settings.overflowThreshold" :min="1" />
       </el-form-item>
@@ -88,6 +96,8 @@ export default {
         volConvert: '',
         inOutThreshold: '',
         leakThreshold: '',
+        leakCompareDays: '',
+        isoThreshold: '',
         overflowThreshold: '',
         beepTime: 0.5,
         lidWarnMode: 0,
@@ -100,6 +110,8 @@ export default {
         volConvert: [{ required: true, message: '请输入折算酒度', trigger: 'blur' }],
         inOutThreshold: [{ required: true, message: '请输入出入库阈值', trigger: 'blur' }],
         leakThreshold: [{ required: true, message: '请输入渗漏报警阈值', trigger: 'blur' }],
+        leakCompareDays: [{ required: true, message: '请输入渗漏对比天数', trigger: 'blur' }],
+        isoThreshold: [{ required: true, message: '请输入等温阈值', trigger: 'blur' }],
         overflowThreshold: [{ required: true, message: '请输入溢出报警阈值', trigger: 'blur' }],
         beepTime: [{ required: true, message: '请输入蜂鸣报警时间', trigger: 'blur' }],
         timeout: [{ required: true, message: '请输入超时时间', trigger: 'blur' }],
@@ -140,6 +152,8 @@ export default {
         this.settings.volConvert = response.volConvert
         this.settings.beepTime = response.beepTime
         this.settings.leakThreshold = response.leakThreshold
+        this.settings.leakCompareDays = response.leakCompareDays
+        this.settings.isoThreshold = response.isoThreshold
         this.settings.overflowThreshold = response.overflowThreshold
         this.settings.popupAlarm = response.popupAlarm
         this.settings.lidWarnMode = response.lidWarnMode
