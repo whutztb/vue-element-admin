@@ -45,6 +45,24 @@
         </el-form-item>
       </el-tooltip>
 
+      <el-form-item prop="captchaCode">
+        <div class="captcha-row">
+          <el-input
+            ref="captchaCode"
+            v-model="loginForm.captchaCode"
+            placeholder="验证码"
+            name="captchaCode"
+            type="text"
+            tabindex="3"
+            autocomplete="off"
+            @keyup.enter.native="handleLogin"
+          />
+          <span class="captcha-img" title="点击刷新验证码" @click="refreshCaptcha">
+            <img v-if="captchaImg" :src="captchaImg" alt="验证码">
+          </span>
+        </div>
+      </el-form-item>
+
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登录</el-button>
 
       <!-- <div style="position:relative">
@@ -75,6 +93,8 @@
 
 <script>
 import { validUsername } from '@/utils/validate'
+import { getPublicKey, getCaptcha } from '@/api/user'
+import JSEncrypt from 'jsencrypt'
 import SocialSign from './components/SocialSignin'
 
 export default {
@@ -103,15 +123,27 @@ export default {
         callback()
       }
     }
+    const validateCaptcha = (rule, value, callback) => {
+      if (!value || !value.trim()) {
+        callback(new Error('请输入验证码'))
+      } else {
+        callback()
+      }
+    }
     return {
       loginForm: {
         username: '',
-        password: ''
+        password: '',
+        captchaCode: ''
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+        password: [{ required: true, trigger: 'blur', validator: validatePassword }],
+        captchaCode: [{ required: true, trigger: 'blur', validator: validateCaptcha }]
       },
+      publicKey: '',
+      captchaId: '',
+      captchaImg: '',
       passwordType: 'password',
       capsTooltip: false,
       loading: false,
@@ -133,7 +165,8 @@ export default {
     }
   },
   created() {
-    // window.addEventListener('storage', this.afterQRScan)
+    this.fetchPublicKey()
+    this.refreshCaptcha()
   },
   mounted() {
     if (this.loginForm.username === '') {
@@ -160,22 +193,58 @@ export default {
         this.$refs.password.focus()
       })
     },
+    refreshCaptcha() {
+      getCaptcha().then(res => {
+        if (res && res.code === 0) {
+          this.captchaId = res.captcha_id
+          this.captchaImg = 'data:image/png;base64,' + res.image_base64
+          this.loginForm.captchaCode = ''
+        }
+      }).catch(() => {})
+    },
+    fetchPublicKey() {
+      getPublicKey().then(res => {
+        if (res && res.code === 0) {
+          this.publicKey = res.public_key
+        }
+      }).catch(() => {})
+    },
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
-        if (valid) {
-          this.loading = true
-          this.$store.dispatch('user/login', this.loginForm)
-            .then(() => {
-              this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
-              this.loading = false
-            })
-            .catch(() => {
-              this.loading = false
-            })
-        } else {
+        if (!valid) {
           console.log('error submit!!')
           return false
         }
+        this.loading = true
+        let encryptedPassword = ''
+        try {
+          const encryptor = new JSEncrypt()
+          encryptor.setPublicKey(this.publicKey)
+          encryptedPassword = encryptor.encrypt(this.loginForm.password)
+        } catch (e) {
+          console.error('encrypt failed', e)
+        }
+        if (!encryptedPassword) {
+          this.loading = false
+          this.$message.error('密码加密失败，请重试')
+          this.refreshCaptcha()
+          return
+        }
+        const payload = {
+          username: this.loginForm.username.trim(),
+          password: encryptedPassword,
+          captcha_id: this.captchaId,
+          captcha_code: this.loginForm.captchaCode
+        }
+        this.$store.dispatch('user/login', payload)
+          .then(() => {
+            this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
+            this.loading = false
+          })
+          .catch(() => {
+            this.loading = false
+            this.refreshCaptcha()
+          })
       })
     },
     getOtherQuery(query) {
@@ -318,6 +387,33 @@ $light_gray:#eee;
     color: $dark_gray;
     cursor: pointer;
     user-select: none;
+  }
+
+  .captcha-row {
+    display: flex;
+    align-items: center;
+    width: 100%;
+
+    .el-input {
+      flex: 1;
+      width: auto;
+    }
+
+    .captcha-img {
+      display: block;
+      width: 100px;
+      height: 40px;
+      margin-left: 8px;
+      flex-shrink: 0;
+      cursor: pointer;
+
+      img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border-radius: 4px;
+      }
+    }
   }
 
   .thirdparty-button {

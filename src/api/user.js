@@ -10,8 +10,24 @@ export function login(data) {
     },
     data: JSON.stringify({
       'user_id': data.username,
-      'user_pwd': data.password
+      'user_pwd': data.password,
+      'captcha_id': data.captcha_id,
+      'captcha_code': data.captcha_code
     })
+  })
+}
+
+export function getPublicKey() {
+  return request({
+    url: `${process.env.API_URL}/login_public_key`,
+    method: 'get'
+  })
+}
+
+export function getCaptcha() {
+  return request({
+    url: `${process.env.API_URL}/captcha`,
+    method: 'get'
   })
 }
 
