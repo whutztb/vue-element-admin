@@ -129,6 +129,14 @@
           <span>{{ scope.row.jar_no }}</span>
         </template>
       </el-table-column>
+      <el-table-column min-width="65px" align="center">
+        <template slot="header">
+          <span>陶坛<br>状态</span>
+        </template>
+        <template slot-scope="scope">
+          <span>{{ scope.row.jar_status }}</span>
+        </template>
+      </el-table-column>
       <el-table-column min-width="50px" label="品名" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.wine_name }}</span>
@@ -280,6 +288,11 @@
             <el-option v-for="item in jarTypeOptions" :key="item" :label="item" :value="item" />
           </el-select>
         </el-form-item>
+        <el-form-item label="陶坛状态" prop="jar_status" label-width="150px">
+          <el-select v-model="temp.jar_status" class="filter-item" placeholder="请选择" @change="onJarStatusChange">
+            <el-option v-for="item in jarStatusOptions" :key="item" :label="item" :value="item" />
+          </el-select>
+        </el-form-item>
         <el-form-item label="酒库位置" prop="cellar_pos" label-width="150px">
           <el-select v-model="temp.cellar_pos" class="filter-item" placeholder="请选择">
             <el-option v-for="item in factoryPosOptions" :key="item" :label="item" :value="item" />
@@ -410,6 +423,7 @@ export default {
       temp: {
         jar_id: undefined,
         jar_type: '',
+        jar_status: '正常',
         jar_pos: '',
         cellar_pos: '',
         jar_no: '',
@@ -437,6 +451,7 @@ export default {
       cellarPosOptions: [],
       factoryPosOptions: [],
       jarTypeOptions: [],
+      jarStatusOptions: ['正常', '空坛', '漏坛'],
       readOnly: false,
       dialogFormVisible: false,
       dialogStatus: '',
@@ -567,6 +582,41 @@ export default {
         this.jarTypeOptions = response.items.map(item => item.jar_type_name)
       })
     },
+    onJarStatusChange(val) {
+      if (val === '空坛') {
+        // 空坛：液位、酒度、体积、温度、密度、原度重量、折算重量、折算酒度、品名、香型、生产工厂、折算系数、补偿值全部置0；净空值=坛高-液位=坛高（由 wine_level=0 自动满足）
+        this.temp.wine_level = 0
+        this.temp.wine_vol = 0
+        this.temp.wine_temp = 0
+        this.temp.wine_volume = 0
+        this.temp.wine_rou = 0
+        this.temp.wine_rou_input = ''
+        this.temp.wine_weight = 0
+        this.temp.wine_weight_convert = 0
+        this.temp.wine_vol_convert = 0
+        this.temp.wine_name = ''
+        this.temp.wine_type = ''
+        this.temp.factory = ''
+        this.temp.convert_fraction = 0
+        this.temp.compensation_value = 0
+        this.setJarRequiredRules(false)
+      } else {
+        this.setJarRequiredRules(true)
+      }
+      this.$nextTick(() => {
+        if (this.$refs['dataForm']) {
+          this.$refs['dataForm'].clearValidate()
+        }
+      })
+    },
+    setJarRequiredRules(required) {
+      const fields = ['wine_level', 'wine_vol', 'wine_temp', 'wine_name', 'wine_type', 'factory']
+      fields.forEach(field => {
+        if (this.rules[field] && this.rules[field][0]) {
+          this.rules[field][0].required = required
+        }
+      })
+    },
 
     getList() {
       // console.log('jar listQuery', this.listQuery)
@@ -665,6 +715,7 @@ export default {
       this.temp = {
         jar_id: undefined,
         jar_type: '',
+        jar_status: '正常',
         jar_pos: '',
         cellar_pos: '',
         jar_no: '',
@@ -706,6 +757,7 @@ export default {
     handleCreate() {
       this.readOnly = false
       this.resetTemp()
+      this.setJarRequiredRules(true)
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -750,6 +802,7 @@ export default {
     handleUpdate(row) {
       this.readOnly = true
       this.temp = Object.assign({}, row) // copy obj
+      this.setJarRequiredRules(this.temp.jar_status !== '空坛')
       // this.temp.timestamp = new Date(this.temp.timestamp)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
