@@ -157,14 +157,14 @@
           <span>{{ scope.row.air_height }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="60px" align="center">
+      <!--<el-table-column min-width="60px" align="center">
         <template slot="header">
           <span>液位<br>(mm)</span>
         </template>
         <template slot-scope="scope">
           <span>{{ scope.row.wine_level }}</span>
         </template>
-      </el-table-column>
+      </el-table-column>-->
       <el-table-column min-width="60" align="center">
         <template slot="header">
           <span>体积<br>(m³)</span>
@@ -175,7 +175,7 @@
       </el-table-column>
       <el-table-column min-width="65" align="center">
         <template slot="header">
-          <span>酒度<br>(%vol)</span>
+          <span>原度<br>(%vol)</span>
         </template>
         <template slot-scope="scope">
           <span>{{ scope.row.wine_vol }}</span>
@@ -208,7 +208,7 @@
       </el-table-column>
       <el-table-column min-width="80" align="center">
         <template slot="header">
-          <span>折算酒度<br>(%vol)</span>
+          <span>标准酒度<br>(%vol)</span>
         </template>
         <template slot-scope="scope">
           <span>{{ scope.row.wine_vol_convert }}</span>
