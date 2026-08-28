@@ -605,16 +605,16 @@ export default {
           { required: false, message: '请输入密度', trigger: 'blur' }
         ],
         wine_name: [
-          { required: true, message: '请输入品名', trigger: 'blur' }
+          { required: false, message: '请输入品名', trigger: 'blur' }
         ],
         wine_type: [
-          { required: true, message: '请输入香型', trigger: 'blur' }
+          { required: false, message: '请输入香型', trigger: 'blur' }
         ],
         wine_date: [
-          { required: true, message: '请输入入库时间', trigger: 'blur' }
+          { required: false, message: '请输入入库时间', trigger: 'blur' }
         ],
         factory: [
-          { required: true, message: '请输入生产厂区', trigger: 'blur' }
+          { required: false, message: '请输入生产厂区', trigger: 'blur' }
         ],
         compensation_value: [
           { required: false, message: '请输入补偿值', trigger: 'blur' }
@@ -878,9 +878,12 @@ export default {
           const date = new Date(this.temp.level_update_time)
           const formattedDateTime = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`
           this.temp.level_update_time = formattedDateTime
-          const date2 = new Date(this.temp.wine_date)
-          const formattedDateTime2 = `${date2.getFullYear()}-${String(date2.getMonth() + 1).padStart(2, '0')}-${String(date2.getDate()).padStart(2, '0')}`
-          this.temp.wine_date = formattedDateTime2
+          if (this.temp.wine_date) {
+            const date2 = new Date(this.temp.wine_date)
+            this.temp.wine_date = `${date2.getFullYear()}-${String(date2.getMonth() + 1).padStart(2, '0')}-${String(date2.getDate()).padStart(2, '0')}`
+          } else {
+            this.temp.wine_date = null
+          }
           createJar(this.temp).then(() => {
             this.list.unshift(this.temp)
             this.dialogFormVisible = false
@@ -927,9 +930,12 @@ export default {
           const date = new Date(this.temp.level_update_time)
           const formattedDateTime = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`
           this.temp.level_update_time = formattedDateTime
-          const date2 = new Date(this.temp.wine_date)
-          const formattedDateTime2 = `${date2.getFullYear()}-${String(date2.getMonth() + 1).padStart(2, '0')}-${String(date2.getDate()).padStart(2, '0')}`
-          this.temp.wine_date = formattedDateTime2
+          if (this.temp.wine_date) {
+            const date2 = new Date(this.temp.wine_date)
+            this.temp.wine_date = `${date2.getFullYear()}-${String(date2.getMonth() + 1).padStart(2, '0')}-${String(date2.getDate()).padStart(2, '0')}`
+          } else {
+            this.temp.wine_date = null
+          }
           // const tempData = Object.assign({}, this.temp)
           // 确保 wine_rou_input 字段存在，即使为空
           const tempData = {
