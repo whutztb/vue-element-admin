@@ -296,8 +296,8 @@
         <el-form-item label="液位(mm)" prop="wine_level" label-width="150px">
           <el-input v-model="temp.wine_level" />
         </el-form-item>
-        <el-form-item label="酒度(%vol)" prop="wine_vol" label-width="150px">
-          <el-input v-model="temp.wine_vol" />
+        <el-form-item label="标准酒度(%vol)" prop="wine_vol_convert" label-width="150px">
+          <el-input v-model="temp.wine_vol_convert" placeholder="输入20℃标准酒度，保存后自动推算原始酒度" />
         </el-form-item>
         <el-form-item label="温度(℃)" prop="wine_temp" label-width="150px">
           <el-input v-model="temp.wine_temp" />
@@ -598,8 +598,8 @@ export default {
         wine_temp: [
           { required: true, message: '请输入温度', trigger: 'blur' }
         ],
-        wine_vol: [
-          { required: true, message: '请输入酒度', trigger: 'blur' }
+        wine_vol_convert: [
+          { required: true, message: '请输入标准酒度', trigger: 'blur' }
         ],
         wine_rou_input: [
           { required: false, message: '请输入密度', trigger: 'blur' }
