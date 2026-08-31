@@ -1,4 +1,4 @@
-const titles = { tank: '数智化大罐监测系统', jar: '数智化陶坛监测系统' }
+const titles = { tank: '数智化大罐监测系统', jar: '无损陶坛酒液高度体积检测项目数据管理系统' }
 const containerType = process.env.VUE_APP_CONTAINER_TYPE || 'jar'
 
 module.exports = {

@@ -24,7 +24,7 @@ export default {
   },
   data() {
     return {
-      title: '数智化陶坛监测系统',
+      title: '无损陶坛酒液高度体积检测项目数据管理系统',
       logo: require('@/assets/images/aizhishang.png')
     }
   }

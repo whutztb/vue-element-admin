@@ -174,7 +174,7 @@
       </el-table-column>
       <el-table-column min-width="65" align="center">
         <template slot="header">
-          <span>酒度<br>(%vol)</span>
+          <span>原度<br>(%vol)</span>
         </template>
         <template slot-scope="scope">
           <span>{{ scope.row.wine_vol }}</span>
@@ -207,7 +207,7 @@
       </el-table-column>
       <el-table-column min-width="80" align="center">
         <template slot="header">
-          <span>折算酒度<br>(%vol)</span>
+          <span>标准酒度<br>(%vol)</span>
         </template>
         <template slot-scope="scope">
           <span>{{ scope.row.wine_vol_convert }}</span>
@@ -331,8 +331,8 @@
         <el-form-item label="液位(mm)" prop="wine_level" label-width="150px">
           <el-input v-model="temp.wine_level" />
         </el-form-item>
-        <el-form-item label="酒度(%vol)" prop="wine_vol" label-width="150px">
-          <el-input v-model="temp.wine_vol" />
+        <el-form-item label="标准酒度(%vol)" prop="wine_vol_convert" label-width="150px">
+          <el-input v-model="temp.wine_vol_convert" placeholder="输入20℃标准酒度，保存后自动推算原始酒度" />
         </el-form-item>
         <el-form-item label="温度(℃)" prop="wine_temp" label-width="150px">
           <el-input v-model="temp.wine_temp" />
@@ -649,23 +649,23 @@ export default {
         wine_temp: [
           { required: true, message: '请输入温度', trigger: 'blur' }
         ],
-        wine_vol: [
-          { required: true, message: '请输入酒度', trigger: 'blur' }
+        wine_vol_convert: [
+          { required: true, message: '请输入标准酒度', trigger: 'blur' }
         ],
         wine_rou_input: [
           { required: false, message: '请输入密度', trigger: 'blur' }
         ],
         wine_name: [
-          { required: true, message: '请输入品名', trigger: 'blur' }
+          { required: false, message: '请输入品名', trigger: 'blur' }
         ],
         wine_type: [
-          { required: true, message: '请输入香型', trigger: 'blur' }
+          { required: false, message: '请输入香型', trigger: 'blur' }
         ],
         wine_date: [
-          { required: true, message: '请输入入库时间', trigger: 'blur' }
+          { required: false, message: '请输入入库时间', trigger: 'blur' }
         ],
         factory: [
-          { required: true, message: '请输入生产厂区', trigger: 'blur' }
+          { required: false, message: '请输入生产厂区', trigger: 'blur' }
         ],
         compensation_value: [
           { required: false, message: '请输入补偿值', trigger: 'blur' }
