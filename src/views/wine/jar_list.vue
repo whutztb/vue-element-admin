@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="app-container" style="overflow-x: auto;">
     <div class="filter-container">
       <div class="filter-item">
         <el-select v-model="listQuery.condition" placeholder="日期选择" style="width: 120px;">
@@ -94,9 +94,8 @@
       v-loading="listLoading"
       :data="list"
       border
-      fit
       highlight-current-row
-      style="width: 100%;"
+      style="width: max-content; min-width: 100%;"
       @sort-change="sortChange"
     >
       <el-table-column align="center" min-width="100">
@@ -222,6 +221,42 @@
           <span>{{ scope.row.wine_weight_convert }}</span>
         </template>
       </el-table-column>
+
+      <el-table-column min-width="60" align="center">
+        <template slot="header">
+          <span>湿度<br>(%)</span>
+        </template>
+        <template slot-scope="scope">
+          <span>{{ scope.row.humidity }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column min-width="80" align="center">
+        <template slot="header">
+          <span>班组</span>
+        </template>
+        <template slot-scope="scope">
+          <span>{{ scope.row.team_group }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column min-width="90" align="center">
+        <template slot="header">
+          <span>首次测量标志</span>
+        </template>
+        <template slot-scope="scope">
+          <span>{{ scope.row.first_measure }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column min-width="90" align="center">
+        <template slot="header">
+          <span>尾坛标志</span>
+        </template>
+        <template slot-scope="scope">
+          <el v-if="scope.row.last_jar_flag" type="success" size="mini">是</el>
+          <el v-else type="info" size="mini">否</el>
+        </template>
+      </el-table-column>
       <!--<el-table-column min-width="155px" align="center" label="测量数据更新日期">
         <template slot-scope="scope">
           <span>{{ scope.row.level_update_time }}</span>
@@ -333,6 +368,18 @@
               placeholder="点击输入密度(按指定密度计算)"
             />
           </el-tooltip>
+        </el-form-item>
+        <el-form-item label="湿度(%)" prop="humidity">
+          <el-input v-model="temp.humidity" />
+        </el-form-item>
+        <el-form-item label="班组" prop="team_group">
+          <el-input v-model="temp.team_group" />
+        </el-form-item>
+        <el-form-item label="首次测量" prop="first_measure">
+          <el-input v-model="temp.first_measure" />
+        </el-form-item>
+        <el-form-item label="末坛标志" prop="last_jar_flag">
+          <el-switch v-model="temp.last_jar_flag" active-text="是" inactive-text="否" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -558,7 +605,11 @@ export default {
         level_update_time: '',
         compensation_value: 0,
         startDate: '',
-        endDate: ''
+        endDate: '',
+        humidity: '',
+        team_group: '',
+        first_measure: '',
+        last_jar_flag: ''
       },
       cellarPosOptions: [],
       factoryPosOptions: [],
@@ -844,7 +895,11 @@ export default {
         level_update_time: '',
         compensation_value: 0,
         startDate: '',
-        endDate: ''
+        endDate: '',
+        humidity: '',
+        team_group: '',
+        first_measure: '',
+        last_jar_flag: ''
       }
     },
     handleAddUp() {
