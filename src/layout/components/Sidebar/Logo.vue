@@ -47,35 +47,46 @@ export default {
   height: 50px;
   line-height: 50px;
   background: #2b2f3a;
-  text-align: center;
   overflow: hidden;
 
   & .sidebar-logo-link {
     height: 100%;
     width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px;
 
     & .sidebar-logo {
-      width: 32px;
-      height: 32px;
-      vertical-align: middle;
-      margin-right: 12px;
+      width: 28px;
+      height: 28px;
+      flex-shrink: 0;
     }
 
     & .sidebar-title {
-      display: inline-block;
-      margin: 0;
+      display: block;
+      flex: 1;
+      min-width: 0;
+      margin: 0 0 0 8px;
       color: #fff;
       font-weight: 600;
-      line-height: 50px;
-      font-size: 14px;
+      font-size: 12px;
+      line-height: 1.2;
       font-family: Avenir, Helvetica Neue, Arial, Helvetica, sans-serif;
-      vertical-align: middle;
+      text-align: left;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 
   &.collapse {
-    .sidebar-logo {
-      margin-right: 0px;
+    .sidebar-logo-link {
+      justify-content: center;
+      padding: 0;
+    }
+    .sidebar-title {
+      display: none;
     }
   }
 }

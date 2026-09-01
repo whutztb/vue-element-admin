@@ -53,8 +53,8 @@
         />
       </div>
       <el-input v-model="listQuery.jar_id" placeholder="陶坛ID" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.cellar_pos" placeholder="酒库编号" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.jar_pos" placeholder="房间编号" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.cellar_pos" placeholder="栋号" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.jar_pos" placeholder="库号" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <!--<el-input v-model="listQuery.jar_type" placeholder="缸型" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />-->
       <!--<el-input v-model="listQuery.wine_name" placeholder="品名" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />-->
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
@@ -108,7 +108,7 @@
       </el-table-column>
       <el-table-column min-width="65px" align="center">
         <template slot="header">
-          <span>酒库<br>编号</span>
+          <span>栋号</span>
         </template>
         <template slot-scope="scope">
           <span>{{ scope.row.cellar_pos }}</span>
@@ -116,10 +116,18 @@
       </el-table-column>
       <el-table-column min-width="65px" align="center">
         <template slot="header">
-          <span>房间<br>编号</span>
+          <span>库号</span>
         </template>
         <template slot-scope="scope">
           <span>{{ scope.row.jar_pos }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column min-width="65px" align="center">
+        <template slot="header">
+          <span>桶号</span>
+        </template>
+        <template slot-scope="scope">
+          <span>{{ scope.row.barrel_no }}</span>
         </template>
       </el-table-column>
       <el-table-column min-width="65px" align="center">
@@ -245,7 +253,7 @@
           <span>首次测量标志</span>
         </template>
         <template slot-scope="scope">
-          <span>{{ scope.row.first_measure }}</span>
+          <el-tag v-if="scope.row.first_measure" type="success" size="mini">是</el-tag>
         </template>
       </el-table-column>
       <el-table-column min-width="90" align="center">
@@ -253,8 +261,7 @@
           <span>尾坛标志</span>
         </template>
         <template slot-scope="scope">
-          <el v-if="scope.row.last_jar_flag" type="success" size="mini">是</el>
-          <el v-else type="info" size="mini">否</el>
+          <el-tag v-if="scope.row.last_jar_flag" type="success" size="mini">是</el-tag>
         </template>
       </el-table-column>
       <!--<el-table-column min-width="155px" align="center" label="测量数据更新日期">
@@ -312,15 +319,18 @@
             <el-option v-for="item in jarTypeOptions" :key="item" :label="item" :value="item" />
           </el-select>
         </el-form-item>
-        <el-form-item label="酒库编号" prop="cellar_pos" label-width="150px">
+        <el-form-item label="栋号" prop="cellar_pos" label-width="150px">
           <el-select v-model="temp.cellar_pos" class="filter-item" placeholder="请选择">
             <el-option v-for="item in factoryPosOptions" :key="item" :label="item" :value="item" />
           </el-select>
         </el-form-item>
-        <el-form-item label="房间编号" prop="jar_pos" label-width="150px">
+        <el-form-item label="库号" prop="jar_pos" label-width="150px">
           <el-select v-model="temp.jar_pos" class="filter-item" placeholder="请选择">
             <el-option v-for="item in cellarPosOptions" :key="item" :label="item" :value="item" />
           </el-select>
+        </el-form-item>
+        <el-form-item label="桶号" prop="barrel_no" label-width="150px">
+          <el-input v-model="temp.barrel_no" />
         </el-form-item>
         <el-form-item label="陶坛编号" prop="jar_no" label-width="150px">
           <el-input v-model="temp.jar_no" />
@@ -369,18 +379,33 @@
             />
           </el-tooltip>
         </el-form-item>
-        <el-form-item label="湿度(%)" prop="humidity">
+        <el-form-item label="湿度(%)" prop="humidity" label-width="150px">
           <el-input v-model="temp.humidity" />
         </el-form-item>
-        <el-form-item label="班组" prop="team_group">
+        <el-form-item label="班组" prop="team_group" label-width="150px">
           <el-input v-model="temp.team_group" />
         </el-form-item>
-        <el-form-item label="首次测量" prop="first_measure">
-          <el-input v-model="temp.first_measure" />
+        <el-form-item label="首次测量" prop="first_measure" label-width="150px">
+          <el-switch
+            v-model="temp.first_measure"
+            :active-value="1"
+            :inactive-value="0"
+            active-text="是"
+            inactive-text="否"
+            @change="val=>console.log('first_measure',val,typeof val)"
+          />
         </el-form-item>
-        <el-form-item label="末坛标志" prop="last_jar_flag">
-          <el-switch v-model="temp.last_jar_flag" active-text="是" inactive-text="否" />
+        <el-form-item label="尾坛标志" prop="last_jar_flag" label-width="150px">
+          <el-switch
+            v-model="temp.last_jar_flag"
+            :active-value="1"
+            :inactive-value="0"
+            active-text="是"
+            inactive-text="否"
+            @change="val=>console.log('first_measure',val,typeof val)"
+          />
         </el-form-item>
+
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
@@ -460,8 +485,8 @@
         本次导入发现 <b>{{ newCellarData.length }}</b> 个酒库在酒库管理中尚不存在，是否自动创建？
       </div>
       <el-table :data="newCellarData" border size="small" max-height="250" style="width:100%">
-        <el-table-column prop="cellar_pos" label="酒库编号" width="170" />
-        <el-table-column prop="cellar_name" label="房间编号" width="170" />
+        <el-table-column prop="cellar_pos" label="栋号" width="170" />
+        <el-table-column prop="cellar_name" label="库号" width="170" />
         <el-table-column label="酒库ID" width="140">
           <template slot-scope="scope">
             {{ scope.row.cellar_pos + '-' + scope.row.cellar_name }}
@@ -608,8 +633,9 @@ export default {
         endDate: '',
         humidity: '',
         team_group: '',
-        first_measure: '',
-        last_jar_flag: ''
+        first_measure: 0,
+        last_jar_flag: 0,
+        barrel_no: ''
       },
       cellarPosOptions: [],
       factoryPosOptions: [],
@@ -632,10 +658,10 @@ export default {
           { required: true, message: '请输入陶坛名称', trigger: 'blur' }
         ],
         jar_pos: [
-          { required: true, message: '请输入房间编号', trigger: 'blur' }
+          { required: true, message: '请输入库号', trigger: 'blur' }
         ],
         cellar_pos: [
-          { required: true, message: '请输入酒库编号', trigger: 'blur' }
+          { required: true, message: '请输入栋号', trigger: 'blur' }
         ],
         jar_no: [
           { required: true, message: '请输入陶坛编号', trigger: 'blur' }
@@ -898,8 +924,8 @@ export default {
         endDate: '',
         humidity: '',
         team_group: '',
-        first_measure: '',
-        last_jar_flag: ''
+        first_measure: 0,
+        last_jar_flag: 0
       }
     },
     handleAddUp() {
@@ -965,6 +991,9 @@ export default {
     handleUpdate(row) {
       this.readOnly = true
       this.temp = Object.assign({}, row) // copy obj
+      // 归一化布尔字段，后端返回 null/空串/非1值都变成 0
+      this.temp.first_measure = Number(this.temp.first_measure) === 1 ? 1 : 0
+      this.temp.last_jar_flag = Number(this.temp.last_jar_flag) === 1 ? 1 : 0
       // this.temp.timestamp = new Date(this.temp.timestamp)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true

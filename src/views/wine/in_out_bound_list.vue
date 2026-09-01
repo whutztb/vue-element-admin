@@ -53,8 +53,8 @@
         />
       </div>
       <el-input v-model="listQuery.jar_id" placeholder="陶坛ID" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.cellar_pos" placeholder="酒库编号" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.jar_pos" placeholder="房间编号" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.cellar_pos" placeholder="栋号" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.jar_pos" placeholder="库号" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.wine_name" placeholder="品名" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         查询
@@ -94,12 +94,12 @@
           <span>{{ scope.row.jar_id }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="70px" label="酒库编号" align="center">
+      <el-table-column min-width="70px" label="栋号" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.cellar_pos }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="85px" label="房间编号" align="center">
+      <el-table-column min-width="85px" label="库号" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.jar_pos }}</span>
         </template>
