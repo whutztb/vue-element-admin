@@ -51,7 +51,9 @@ service.interceptors.response.use(
     }
     const contentType = response.headers['content-type']
     if (contentType.includes('application/json')) {
-      const res = JSON.parse(response.data)
+      // const res = JSON.parse(response.data)
+      // axios会自动把json字符串转换为对象，如果再parse就报错，需要判断是否为字符串 2026.9.2
+      const res = typeof response.data === 'string' ? JSON.parse(response.data) : response.data
       // if the custom code is not 0, it is judged as an error.
       if (res.code !== 0) {
         Message({
