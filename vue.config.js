@@ -34,7 +34,7 @@ module.exports = {
   lintOnSave: process.env.NODE_ENV === 'development',
   productionSourceMap: false,
   devServer: {
-    //https: true,
+    // https: true,
     port: port,
     open: true,
     overlay: {
@@ -45,9 +45,16 @@ module.exports = {
     allowedHosts: [
       'http://7xp4019ui152.vicp.fun/',
       'http://sdyg.a1.luyouxia.net:24703/'
-       ]
-    //假数据
-    //before: require('./mock/mock-server.js')
+    ],
+    proxy: {
+      '/dev-api': {
+        target: 'http://127.0.0.1:5000',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/dev-api': ''
+        }
+      }
+    }
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
@@ -58,13 +65,13 @@ module.exports = {
         '@': resolve('src')
       }
     },
-        // 其他webpack配置...在这里定义全局变量API_URL
+    // 其他webpack配置...在这里定义全局变量API_URL
     plugins: [
-        new webpack.DefinePlugin({
-          'process.env.VUE_APP_BASE_API': JSON.stringify(apiBase),
-          'process.env.VUE_APP_TOKEN_KEY': JSON.stringify('Admin-Token-' + prefix),
-          'process.env.API_URL': JSON.stringify('')
-        })
+      new webpack.DefinePlugin({
+        'process.env.VUE_APP_BASE_API': JSON.stringify(apiBase),
+        'process.env.VUE_APP_TOKEN_KEY': JSON.stringify('Admin-Token-' + prefix),
+        'process.env.API_URL': JSON.stringify('')
+      })
     ]
   },
   chainWebpack(config) {

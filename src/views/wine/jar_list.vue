@@ -392,7 +392,6 @@
             :inactive-value="0"
             active-text="是"
             inactive-text="否"
-            @change="val=>console.log('first_measure',val,typeof val)"
           />
         </el-form-item>
         <el-form-item label="尾坛标志" prop="last_jar_flag" label-width="150px">
@@ -402,7 +401,6 @@
             :inactive-value="0"
             active-text="是"
             inactive-text="否"
-            @change="val=>console.log('first_measure',val,typeof val)"
           />
         </el-form-item>
 
@@ -995,6 +993,15 @@ export default {
       this.temp.first_measure = Number(this.temp.first_measure) === 1 ? 1 : 0
       this.temp.last_jar_flag = Number(this.temp.last_jar_flag) === 1 ? 1 : 0
       // this.temp.timestamp = new Date(this.temp.timestamp)
+
+      const wd = this.temp.wine_date
+      if (!wd || wd === '0000-00-00' || wd === '0000-00-00 00:00:00') {
+        this.temp.wine_date = new Date(2020, 0, 1) // 默认 2020-01-01
+      } else if (typeof wd === 'string') {
+        const d = new Date(wd.replace(/-/g, '/'))
+        this.temp.wine_date = isNaN(d.getTime()) ? new Date(2020, 0, 1) : d
+      }
+
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -1011,9 +1018,26 @@ export default {
           const date = new Date(this.temp.level_update_time)
           const formattedDateTime = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`
           this.temp.level_update_time = formattedDateTime
-          const date2 = new Date(this.temp.wine_date)
-          const formattedDateTime2 = `${date2.getFullYear()}-${String(date2.getMonth() + 1).padStart(2, '0')}-${String(date2.getDate()).padStart(2, '0')}`
-          this.temp.wine_date = formattedDateTime2
+
+          // const date2 = new Date(this.temp.wine_date)
+          // const formattedDateTime2 = `${date2.getFullYear()}-${String(date2.getMonth() + 1).padStart(2, '0')}-${String(date2.getDate()).padStart(2, '0')}`
+          // this.temp.wine_date = formattedDateTime2
+
+          // wine_date 处理：空值→默认 2020-01-01；Date 对象→格式化；字符串→直接用
+          const wd = this.temp.wine_date
+          if (!wd) {
+            // 情况①：空值 → 默认
+            this.temp.wine_date = '2020-01-01'
+          } else if (wd instanceof Date) {
+            // 情况②③：Date 对象（有效→格式化；Invalid→默认）
+            if (isNaN(wd.getTime())) {
+              this.temp.wine_date = '2020-01-01'
+            } else {
+              const d = wd
+              this.temp.wine_date = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+            }
+          }
+
           // const tempData = Object.assign({}, this.temp)
           // 确保 wine_rou_input 字段存在，即使为空
           const tempData = {
