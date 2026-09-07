@@ -17,7 +17,7 @@
         <el-input-number v-model="settings.leakThreshold" :min="1" />
       </el-form-item>
 
-      <el-form-item v-if="false" label="溢出告警阈值(mm)" prop="overflowThreshold">
+      <el-form-item label="溢出告警阈值(mm)" prop="overflowThreshold">
         <el-input-number v-model="settings.overflowThreshold" :min="1" />
       </el-form-item>
 
@@ -25,10 +25,10 @@
         <el-input-number v-model="settings.timeout" :min="1" />
       </el-form-item>-->
 
-      <el-form-item v-if="false" label="报警蜂鸣时间(s)" prop="beepTime">
+      <el-form-item label="报警蜂鸣时间(s)" prop="beepTime">
         <el-input-number v-model="settings.beepTime" :min="0" />
       </el-form-item>
-      <el-form-item v-if="false" label="是否弹窗报警" prop="popupAlarm">
+      <el-form-item label="是否弹窗报警" prop="popupAlarm">
         <el-select v-model="settings.popupAlarm" placeholder="请选择是否弹窗告警">
           <el-option label="否" value="0" />
           <el-option label="是" value="1" />

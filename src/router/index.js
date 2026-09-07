@@ -169,6 +169,23 @@ export const asyncRoutes = [
       }
     ]
   },
+  {
+    path: '/views/wine/overflow_list',
+    component: Layout,
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/wine/overflow_list'),
+        name: '溢出报警',
+        meta: {
+          title: '溢出报警',
+          icon: 'message',
+          affix: true,
+          roles: ['管理员', '普通用户']
+        }
+      }
+    ]
+  },
   /*
   {
     path: '/views/wine/in_out_bound_list',
