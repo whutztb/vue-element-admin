@@ -1,5 +1,5 @@
-<template>
-  <div class="app-container" style="overflow-x: auto;">
+container<template>
+  <div class="app-container ">
     <div class="filter-container">
       <div class="filter-item">
         <el-select v-model="listQuery.condition" placeholder="日期选择" style="width: 120px;">
@@ -15,7 +15,7 @@
         </el-select>
       </div>
       <div v-if="listQuery.condition === 'quarter'" class="filter-item">
-        <el-select v-model="listQuery.quarter" placeholder="选择季度" style="width: 180px;">
+        <el-select v-model="listQuery.quarter" placeholder="选择季度" style="width: 120px;">
           <template v-for="year in years">
             <el-option
               v-for="quarter in quarters"
@@ -52,9 +52,9 @@
           style="width: 180px;"
         />
       </div>
-      <el-input v-model="listQuery.jar_id" placeholder="陶坛ID" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.cellar_pos" placeholder="栋号" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.jar_pos" placeholder="库号" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.jar_no" placeholder="坛号" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <!--<el-input v-model="listQuery.jar_type" placeholder="缸型" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />-->
       <!--<el-input v-model="listQuery.wine_name" placeholder="品名" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />-->
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
@@ -75,6 +75,9 @@
       <el-button class="filter-item" type="warning" icon="el-icon-time" @click="handleImportHistory">
         导入历史
       </el-button>
+      <el-button v-if="isAdministrator" class="filter-item" type="primary" icon="el-icon-user" :disabled="selectedRows.length === 0" @click="handleBatchModifyTeam">
+        批量修改班组{{ selectedRows.length > 0 ? `（已选${selectedRows.length}）` : '' }}
+      </el-button>
       <el-dialog
         title="导出选项"
         :visible.sync="showDialog"
@@ -90,23 +93,19 @@
     </div>
 
     <el-table
+      ref="jarTable"
       :key="tableKey"
       v-loading="listLoading"
       :data="list"
       border
       highlight-current-row
+      height="100%"
       style="width: max-content; min-width: 100%;"
       @sort-change="sortChange"
+      @selection-change="handleSelectionChange"
     >
-      <el-table-column align="center" min-width="100">
-        <template slot="header">
-          <span>陶坛<br>ID</span>
-        </template>
-        <template slot-scope="scope">
-          <span>{{ scope.row.jar_id }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column min-width="65px" align="center">
+      <el-table-column type="selection" width="55" align="center" fixed="left" />
+      <el-table-column min-width="55px" align="center" fixed="left">
         <template slot="header">
           <span>栋号</span>
         </template>
@@ -114,7 +113,7 @@
           <span>{{ scope.row.cellar_pos }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="65px" align="center">
+      <el-table-column min-width="55px" align="center" fixed="left">
         <template slot="header">
           <span>库号</span>
         </template>
@@ -122,7 +121,7 @@
           <span>{{ scope.row.jar_pos }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="65px" align="center">
+      <el-table-column min-width="55px" align="center" fixed="left">
         <template slot="header">
           <span>桶号</span>
         </template>
@@ -130,7 +129,7 @@
           <span>{{ scope.row.barrel_no }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="65px" align="center">
+      <el-table-column min-width="55px" align="center" fixed="left">
         <template slot="header">
           <span>坛号</span>
         </template>
@@ -138,19 +137,9 @@
           <span>{{ scope.row.jar_no }}</span>
         </template>
       </el-table-column>
-      <!--<el-table-column min-width="120px" label="生产年月" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.wine_date }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column min-width="90px" align="center" label="缸型">
-        <template slot-scope="scope">
-          <span>{{ scope.row.jar_type }}</span>
-        </template>
-      </el-table-column>-->
       <el-table-column min-width="60px" align="center">
         <template slot="header">
-          <span>缸高<br>(mm)</span>
+          <span>坛高<br>(mm)</span>
         </template>
         <template slot-scope="scope">
           <span>{{ scope.row.jar_height }}</span>
@@ -239,7 +228,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column min-width="80" align="center">
+      <el-table-column min-width="60" align="center">
         <template slot="header">
           <span>班组</span>
         </template>
@@ -248,17 +237,17 @@
         </template>
       </el-table-column>
 
-      <el-table-column min-width="90" align="center">
+      <el-table-column min-width="60" align="center">
         <template slot="header">
-          <span>首次测量标志</span>
+          <span>首测<br>标志</span>
         </template>
         <template slot-scope="scope">
           <el-tag v-if="scope.row.first_measure" type="success" size="mini">是</el-tag>
         </template>
       </el-table-column>
-      <el-table-column min-width="90" align="center">
+      <el-table-column min-width="60" align="center">
         <template slot="header">
-          <span>尾坛标志</span>
+          <span>尾坛<br>标志</span>
         </template>
         <template slot-scope="scope">
           <el-tag v-if="scope.row.last_jar_flag" type="success" size="mini">是</el-tag>
@@ -271,25 +260,25 @@
       </el-table-column>-->
       <el-table-column label="" align="center" min-width="460" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
-          <el-button type="info" size="mini" icon="el-icon-more" @click="handleMoreDetail(row)">
+          <el-button type="info" size="mini" @click="handleMoreDetail(row)">
             更多
           </el-button>
-          <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(row)">
+          <el-button v-permission="['管理员']" type="primary" size="mini" @click="handleUpdate(row)">
             编辑
           </el-button>
-          <el-button v-if="row.status!='deleted'" size="mini" type="info" icon="el-icon-document" @click="handleHistory(row,$index)">
+          <el-button v-if="row.status!='deleted'" size="mini" type="info" @click="handleHistory(row,$index)">
             历史
           </el-button>
-          <el-button type="primary" size="mini" icon="el-icon-download" @click="exportHistory(row, $index)">
+          <el-button type="primary" size="mini" @click="exportHistory(row, $index)">
             导出
           </el-button>
           <!--<el-button v-if="row.status!='deleted'" size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(row,$index)">
             删除
           </el-button>-->
-          <el-button v-if="row.status != 'deleted' && isAdministrator" size="mini" type="warning" icon="el-icon-brush" @click="handleClearHistory(row, $index)">
+          <el-button v-if="row.status != 'deleted' && isAdministrator" size="mini" type="warning" @click="handleClearHistory(row, $index)">
             清空
           </el-button>
-          <el-button v-if="row.status != 'deleted' && isAdministrator" size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(row, $index)">
+          <el-button v-if="row.status != 'deleted' && isAdministrator" size="mini" type="danger" @click="handleDelete(row, $index)">
             删除
           </el-button>
         </template>
@@ -335,7 +324,7 @@
         <el-form-item label="陶坛编号" prop="jar_no" label-width="150px">
           <el-input v-model="temp.jar_no" />
         </el-form-item>
-        <el-form-item label="陶坛高(mm)" prop="jar_height" label-width="150px">
+        <el-form-item label="坛高(mm)" prop="jar_height" label-width="150px">
           <el-input v-model="temp.jar_height" placeholder="选择坛型后自动填充，可手动修改" />
         </el-form-item>
         <el-form-item label="液位(mm)" prop="wine_level" label-width="150px">
@@ -553,22 +542,38 @@
         <el-button @click="importHistoryDialogVisible = false">关闭</el-button>
       </span>
     </el-dialog>
+
+    <!-- 批量修改班组对话框 -->
+    <el-dialog v-permission="['管理员']" :visible.sync="batchTeamDialogVisible" title="批量修改班组" width="420px" :close-on-click-modal="false">
+      <div style="margin-bottom:12px">已选中 <b>{{ selectedRows.length }}</b> 条陶坛数据</div>
+      <el-form :model="batchTeamForm" label-width="80px">
+        <el-form-item label="新班组" required>
+          <el-input v-model="batchTeamForm.team_group" placeholder="请输入新的班组名称" clearable />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="batchTeamDialogVisible = false">取消</el-button>
+        <el-button type="primary" :loading="batchTeamLoading" @click="confirmBatchModifyTeam">确认修改</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { fetchList, deleteJar, createJar, updateJar, exportJarList, getHistory, getTotalMass, getJarTypeOptions, getCellarPosOptions, getFactoryPosOptions, importJarCsv, createCellarsBatch, clearHistory, exportJarHistory, fetchImportSessions, rollbackImport } from '@/api/wine_jar'
+import { fetchList, deleteJar, createJar, updateJar, exportJarList, getHistory, getTotalMass, getJarTypeOptions, getCellarPosOptions, getFactoryPosOptions, importJarCsv, createCellarsBatch, clearHistory, exportJarHistory, fetchImportSessions, rollbackImport, batchUpdateTeamGroup } from '@/api/wine_jar'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import echarts from 'echarts'
 import { MessageBox } from 'element-ui'
 import { EventBus } from '@/utils/eventBus'
+import permission from '@/directive/permission'
+import checkPermission from '@/utils/permission'
 
 export default {
   name: 'ComplexTable',
   components: { Pagination },
-  directives: { waves },
+  directives: { waves, permission },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -595,7 +600,8 @@ export default {
         wine_name: '',
         startDate: '',
         endDate: '',
-        export_jar_id: ''
+        export_jar_id: '',
+        jar_no: ''
       },
       years: Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - i), // 倒序的年份
       quarters: ['第4季度', '第3季度', '第2季度', '第1季度'], // 倒序的季度
@@ -718,6 +724,12 @@ export default {
         page: 1,
         limit: 20
       },
+      selectedRows: [],
+      batchTeamDialogVisible: false,
+      batchTeamLoading: false,
+      batchTeamForm: {
+        team_group: ''
+      },
       showChart: false,
       chartTitle: '',
       className: 'chart',
@@ -772,6 +784,7 @@ export default {
     }
   },
   methods: {
+    checkPermission,
     // 获取酒库位置
     fetchCellarPosOptions() {
       getCellarPosOptions().then(response => {
@@ -1357,7 +1370,7 @@ export default {
     },
     exportCurrentPage() {
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['陶坛ID', '缸型', '缸高', '房间编号', '液位(mm)', '现有酒量(t)', '品名', '更新时间']
+        const tHeader = ['陶坛ID', '缸型', '坛高', '房间编号', '液位(mm)', '现有酒量(t)', '品名', '更新时间']
         const filterVal = ['jar_id', 'jar_type', 'jar_height', 'jar_pos', 'wine_level', 'wine_volume', 'wine_name', 'level_update_time']
         const data = this.formatJson(filterVal)
 
@@ -1666,11 +1679,62 @@ export default {
     getSortClass: function(key) {
       const sort = this.listQuery.sort
       return sort === `+${key}` ? 'ascending' : 'descending'
+    },
+    // ========== 批量修改班组 ==========
+    handleSelectionChange(rows) {
+      this.selectedRows = rows
+    },
+    handleBatchModifyTeam() {
+      if (!this.selectedRows.length) {
+        this.$message.warning('请先勾选要修改的陶坛')
+        return
+      }
+      this.batchTeamForm.team_group = ''
+      this.batchTeamDialogVisible = true
+    },
+    confirmBatchModifyTeam() {
+      const teamGroup = (this.batchTeamForm.team_group || '').trim()
+      if (!teamGroup) {
+        this.$message.warning('请输入新的班组名称')
+        return
+      }
+      const jarIds = this.selectedRows.map(r => r.jar_id)
+      this.batchTeamLoading = true
+      batchUpdateTeamGroup({ jar_ids: jarIds, team_group: teamGroup }).then(res => {
+        const msg = (res && res.message) || `成功修改 ${jarIds.length} 条数据的班组`
+        this.$notify({ title: '操作成功', message: msg, type: 'success', duration: 3000 })
+        this.batchTeamDialogVisible = false
+        this.batchTeamLoading = false
+        this.selectedRows.forEach(r => { r.team_group = teamGroup })
+        this.$refs.jarTable && this.$refs.jarTable.clearSelection && this.$refs.jarTable.clearSelection()
+        this.getList()
+      }).catch(() => {
+        this.batchTeamLoading = false
+        this.$notify({ title: '操作失败', message: '批量修改班组失败，请重试', type: 'error', duration: 3000 })
+      })
     }
   }
 }
 </script>
 <style>
+/* .jar-page-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 86px);
+  overflow: hidden;
+}
+.jar-table-wrap {
+  flex: 1;
+  overflow: auto;
+  min-height: 0;
+}
+.jar-page-container .pagination-container {
+  margin-top: 0 !important;
+  padding: 12px 16px 0px 16px!important;
+}
+.jar-page-container .el-table-fixed--left {
+  box-shadow: 6px 0 8px -4px rgba(86, 84, 84, 0.15);
+} */
 
 .custom-dialog .el-dialog__header {
   color: white; /* 设置标题文字颜色 */

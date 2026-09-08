@@ -136,3 +136,12 @@ export function exportJarHistory(query) {
     timeout: 30000 // 设置超时时间为 30 秒
   })
 }
+
+// 批量修改班组
+export function batchUpdateTeamGroup(data) {
+  return request({
+    url: `${process.env.API_URL}/batch_update_team_group`,
+    method: 'post',
+    data
+  })
+}
