@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container ">
+  <div class="app-container">
     <div class="filter-container">
       <div class="filter-item">
         <el-select v-model="listQuery.condition" placeholder="日期选择" style="width: 120px;">
@@ -99,7 +99,6 @@
       :data="list"
       border
       highlight-current-row
-      height="100%"
       style="width: max-content; min-width: 100%;"
       @sort-change="sortChange"
       @selection-change="handleSelectionChange"
