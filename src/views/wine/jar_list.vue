@@ -1,4 +1,4 @@
-container<template>
+<template>
   <div class="app-container ">
     <div class="filter-container">
       <div class="filter-item">
