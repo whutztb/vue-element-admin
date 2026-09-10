@@ -164,9 +164,9 @@
           <span>{{ scope.row.wine_vol }}</span>
         </template>
       </el-table-column>
-      <el-table-column v-if="false" min-width="55" align="center">
+      <el-table-column v-if="true" min-width="55" align="center">
         <template slot="header">
-          <span>温度<br>(℃)</span>
+          <span>温度(℃)</span>
         </template>
         <template slot-scope="scope">
           <span>{{ scope.row.wine_temp }}</span>
@@ -229,8 +229,9 @@
       <div ref="chartContainer" class="chart-container" :style="{ height: '300px', width: '100%' }" />
       <!-- 表格容器 -->
       <el-table :data="historyDataTable" class="custom-table" style="width: 100%;background-color: #394056;">
-        <el-table-column prop="rec_time" label="时间" width="230" align="center" />
-        <el-table-column prop="rec_lv" label="液位（mm）" width="210" align="center" />
+        <el-table-column prop="rec_time" label="时间" min-width="210" align="center" />
+        <el-table-column prop="rec_lv" label="液位（mm）" min-width="120" align="center" />
+        <el-table-column prop="rec_temp" label="温度（℃）" min-width="120" align="center" />
       </el-table>
     </el-dialog>
     <!--<history_chart v-if="historyDataTable.length" :historyDataTable="historyDataTable" />-->
@@ -1032,8 +1033,11 @@ export default {
           const timestamps = sortedHistoryData.map(item => item.rec_time) // 提取时间
           // const recWeights = sortedHistoryData.map(item => item.rec_weight) // 提取 rec_weight
           const recLevels = sortedHistoryData.map(item => item.rec_lv)
+          const recTemps = sortedHistoryData.map(item => item.rec_temp)
           const minRecLevel = Math.min(...recLevels)
           const maxRecLevel = Math.max(...recLevels)
+          const minRecTemp = Math.min(...recTemps)
+          const maxRecTemp = Math.max(...recTemps)
           this.chart.setOption({
             title: {
               top: 20,
@@ -1117,6 +1121,34 @@ export default {
                   color: '#57617B'
                 }
               }
+            }, {
+              type: 'value',
+              name: '温度（℃）',
+              min: Math.round(minRecTemp - 5),
+              max: Math.round(maxRecTemp + 5),
+              nameTextStyle: {
+                color: '#F1F1F3'
+              },
+              axisTick: {
+                show: false
+              },
+              axisLine: {
+                lineStyle: {
+                  color: '#57617B'
+                }
+              },
+              axisLabel: {
+                margin: 10,
+                textStyle: {
+                  fontSize: 12,
+                  color: '#F1F1F3'
+                }
+              },
+              splitLine: {
+                show: false
+              },
+              position: 'right',
+              offset: 0
             }],
             series: [{
               name: '液位值（mm）',
@@ -1139,6 +1171,28 @@ export default {
                 }
               },
               data: recLevels
+            }, {
+              name: '温度值（℃）',
+              type: 'line',
+              yAxisIndex: 1,
+              connectNulls: true,
+              smooth: true,
+              symbol: 'circle',
+              symbolSize: 5,
+              showSymbol: false,
+              lineStyle: {
+                normal: {
+                  width: 1
+                }
+              },
+              itemStyle: {
+                normal: {
+                  color: 'rgb(255,159,67)',
+                  borderColor: 'rgba(255,159,67,0.27)',
+                  borderWidth: 12
+                }
+              },
+              data: recTemps
             }]
           })
           setTimeout(() => {

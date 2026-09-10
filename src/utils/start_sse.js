@@ -90,7 +90,7 @@ class StartSSE {
         const popupAlarm = parseInt(mainObj.popupAlarm)
         if (popupAlarm === 1) {
           MessageBox.alert(
-            `ID: ${mainObj.jar_id}<br>当前净空（mm）: ${mainObj.air_height}<br>溢出阈值（mm）: ${mainObj.overflowThreshold}`,
+            `ID: ${mainObj.jar_id}<br>当前净空（mm）: ${mainObj.overflow_air_height}<br>溢出阈值（mm）: ${mainObj.overflowThreshold}`,
             '溢出风险提示',
             {
               confirmButtonText: '确定',

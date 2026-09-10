@@ -166,7 +166,7 @@ class MessagePoller {
         const popupAlarm = parseInt(parsedData.popupAlarm)
         if (popupAlarm === 1) {
           MessageBox.alert(
-            `ID: ${parsedData.jar_id}<br>当前净空（mm）: ${parsedData.air_height}<br>溢出阈值（mm）: ${parsedData.overflowThreshold}`,
+            `ID: ${parsedData.jar_id}<br>当前净空（mm）: ${parsedData.overflow_air_height}<br>溢出阈值（mm）: ${parsedData.overflowThreshold}`,
             '溢出风险提示',
             {
               confirmButtonText: '确定',
