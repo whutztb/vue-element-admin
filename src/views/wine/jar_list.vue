@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="app-container jar-page-container">
     <div class="filter-container">
       <div class="filter-item">
         <el-select v-model="listQuery.condition" placeholder="日期选择" style="width: 120px;">
@@ -55,6 +55,7 @@
       <el-input v-model="listQuery.cellar_pos" placeholder="栋号" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.jar_pos" placeholder="库号" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.jar_no" placeholder="坛号" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.jar_id" placeholder="陶坛ID" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <!--<el-input v-model="listQuery.jar_type" placeholder="缸型" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />-->
       <!--<el-input v-model="listQuery.wine_name" placeholder="品名" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />-->
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
@@ -92,197 +93,208 @@
       </el-dialog>
     </div>
 
-    <el-table
-      ref="jarTable"
-      :key="tableKey"
-      v-loading="listLoading"
-      :data="list"
-      border
-      highlight-current-row
-      style="width: max-content; min-width: 100%;"
-      @sort-change="sortChange"
-      @selection-change="handleSelectionChange"
-    >
-      <el-table-column type="selection" width="55" align="center" fixed="left" />
-      <el-table-column min-width="55px" align="center" fixed="left">
-        <template slot="header">
-          <span>栋号</span>
-        </template>
-        <template slot-scope="scope">
-          <span>{{ scope.row.cellar_pos }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column min-width="55px" align="center" fixed="left">
-        <template slot="header">
-          <span>库号</span>
-        </template>
-        <template slot-scope="scope">
-          <span>{{ scope.row.jar_pos }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column min-width="55px" align="center" fixed="left">
-        <template slot="header">
-          <span>桶号</span>
-        </template>
-        <template slot-scope="scope">
-          <span>{{ scope.row.barrel_no }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column min-width="55px" align="center" fixed="left">
-        <template slot="header">
-          <span>坛号</span>
-        </template>
-        <template slot-scope="scope">
-          <span>{{ scope.row.jar_no }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column min-width="60px" align="center">
-        <template slot="header">
-          <span>坛高<br>(mm)</span>
-        </template>
-        <template slot-scope="scope">
-          <span>{{ scope.row.jar_height }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column min-width="60px" align="center">
-        <template slot="header">
-          <span>净空<br>(mm)</span>
-        </template>
-        <template slot-scope="scope">
-          <span>{{ scope.row.air_height }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column min-width="60px" align="center">
-        <template slot="header">
-          <span>液位<br>(mm)</span>
-        </template>
-        <template slot-scope="scope">
-          <span>{{ scope.row.wine_level }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column min-width="60" align="center">
-        <template slot="header">
-          <span>体积<br>(m³)</span>
-        </template>
-        <template slot-scope="scope">
-          <span>{{ scope.row.wine_volume }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column min-width="65" align="center">
-        <template slot="header">
-          <span>原度<br>(%vol)</span>
-        </template>
-        <template slot-scope="scope">
-          <span>{{ scope.row.wine_vol }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column min-width="55" align="center">
-        <template slot="header">
-          <span>温度<br>(℃)</span>
-        </template>
-        <template slot-scope="scope">
-          <span>{{ scope.row.wine_temp }}</span>
-        </template>
-      </el-table-column>
+    <div class="jar-table-wrap">
+      <el-table
+        ref="jarTable"
+        :key="tableKey"
+        v-loading="listLoading"
+        :data="list"
+        border
+        height="100%"
+        highlight-current-row
+        style="width: max-content; min-width: 100%;"
+        @sort-change="sortChange"
+        @selection-change="handleSelectionChange"
+      >
+        <el-table-column type="selection" width="55" align="center" fixed="left" />
+        <el-table-column align="center" min-width="100" fixed="left">
+          <template slot="header">
+            <span>陶坛ID</span>
+          </template>
+          <template slot-scope="scope">
+            <span>{{ scope.row.jar_id }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column min-width="55px" align="center" fixed="left">
+          <template slot="header">
+            <span>栋号</span>
+          </template>
+          <template slot-scope="scope">
+            <span>{{ scope.row.cellar_pos }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column min-width="55px" align="center" fixed="left">
+          <template slot="header">
+            <span>库号</span>
+          </template>
+          <template slot-scope="scope">
+            <span>{{ scope.row.jar_pos }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column min-width="55px" align="center" fixed="left">
+          <template slot="header">
+            <span>桶号</span>
+          </template>
+          <template slot-scope="scope">
+            <span>{{ scope.row.barrel_no }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column min-width="55px" align="center" fixed="left">
+          <template slot="header">
+            <span>坛号</span>
+          </template>
+          <template slot-scope="scope">
+            <span>{{ scope.row.jar_no }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column min-width="60px" align="center">
+          <template slot="header">
+            <span>坛高<br>(mm)</span>
+          </template>
+          <template slot-scope="scope">
+            <span>{{ scope.row.jar_height }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column min-width="60px" align="center">
+          <template slot="header">
+            <span>净空<br>(mm)</span>
+          </template>
+          <template slot-scope="scope">
+            <span>{{ scope.row.air_height }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column min-width="60px" align="center">
+          <template slot="header">
+            <span>液位<br>(mm)</span>
+          </template>
+          <template slot-scope="scope">
+            <span>{{ scope.row.wine_level }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column min-width="60" align="center">
+          <template slot="header">
+            <span>体积<br>(m³)</span>
+          </template>
+          <template slot-scope="scope">
+            <span>{{ scope.row.wine_volume }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column min-width="65" align="center">
+          <template slot="header">
+            <span>原度<br>(%vol)</span>
+          </template>
+          <template slot-scope="scope">
+            <span>{{ scope.row.wine_vol }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column min-width="55" align="center">
+          <template slot="header">
+            <span>温度<br>(℃)</span>
+          </template>
+          <template slot-scope="scope">
+            <span>{{ scope.row.wine_temp }}</span>
+          </template>
+        </el-table-column>
 
-      <el-table-column min-width="75" align="center">
-        <template slot="header">
-          <span>密度<br>(t/m³)</span>
-        </template>
-        <template slot-scope="scope">
-          <span>{{ scope.row.wine_rou }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column min-width="80" align="center">
-        <template slot="header">
-          <span>原度重量<br>(t)</span>
-        </template>
-        <template slot-scope="scope">
-          <span>{{ scope.row.wine_weight }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column min-width="80" align="center">
-        <template slot="header">
-          <span>标准酒度<br>(%vol)</span>
-        </template>
-        <template slot-scope="scope">
-          <span>{{ scope.row.wine_vol_convert }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column min-width="80" align="center">
-        <template slot="header">
-          <span>折算重量<br>(t)</span>
-        </template>
-        <template slot-scope="scope">
-          <span>{{ scope.row.wine_weight_convert }}</span>
-        </template>
-      </el-table-column>
+        <el-table-column min-width="75" align="center">
+          <template slot="header">
+            <span>密度<br>(t/m³)</span>
+          </template>
+          <template slot-scope="scope">
+            <span>{{ scope.row.wine_rou }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column min-width="80" align="center">
+          <template slot="header">
+            <span>原度重量<br>(t)</span>
+          </template>
+          <template slot-scope="scope">
+            <span>{{ scope.row.wine_weight }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column min-width="80" align="center">
+          <template slot="header">
+            <span>标准酒度<br>(%vol)</span>
+          </template>
+          <template slot-scope="scope">
+            <span>{{ scope.row.wine_vol_convert }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column min-width="80" align="center">
+          <template slot="header">
+            <span>折算重量<br>(t)</span>
+          </template>
+          <template slot-scope="scope">
+            <span>{{ scope.row.wine_weight_convert }}</span>
+          </template>
+        </el-table-column>
 
-      <el-table-column min-width="60" align="center">
-        <template slot="header">
-          <span>湿度<br>(%)</span>
-        </template>
-        <template slot-scope="scope">
-          <span>{{ scope.row.humidity }}</span>
-        </template>
-      </el-table-column>
+        <el-table-column min-width="60" align="center">
+          <template slot="header">
+            <span>湿度<br>(%)</span>
+          </template>
+          <template slot-scope="scope">
+            <span>{{ scope.row.humidity }}</span>
+          </template>
+        </el-table-column>
 
-      <el-table-column min-width="60" align="center">
-        <template slot="header">
-          <span>班组</span>
-        </template>
-        <template slot-scope="scope">
-          <span>{{ scope.row.team_group }}</span>
-        </template>
-      </el-table-column>
+        <el-table-column min-width="60" align="center">
+          <template slot="header">
+            <span>班组</span>
+          </template>
+          <template slot-scope="scope">
+            <span>{{ scope.row.team_group }}</span>
+          </template>
+        </el-table-column>
 
-      <el-table-column min-width="60" align="center">
-        <template slot="header">
-          <span>首测<br>标志</span>
-        </template>
-        <template slot-scope="scope">
-          <el-tag v-if="scope.row.first_measure" type="success" size="mini">是</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column min-width="60" align="center">
-        <template slot="header">
-          <span>尾坛<br>标志</span>
-        </template>
-        <template slot-scope="scope">
-          <el-tag v-if="scope.row.last_jar_flag" type="success" size="mini">是</el-tag>
-        </template>
-      </el-table-column>
-      <!--<el-table-column min-width="155px" align="center" label="测量数据更新日期">
-        <template slot-scope="scope">
-          <span>{{ scope.row.level_update_time }}</span>
-        </template>
-      </el-table-column>-->
-      <el-table-column label="" align="center" min-width="460" class-name="small-padding fixed-width">
-        <template slot-scope="{row,$index}">
-          <el-button type="info" size="mini" @click="handleMoreDetail(row)">
-            更多
-          </el-button>
-          <el-button v-permission="['管理员']" type="primary" size="mini" @click="handleUpdate(row)">
-            编辑
-          </el-button>
-          <el-button v-if="row.status!='deleted'" size="mini" type="info" @click="handleHistory(row,$index)">
-            历史
-          </el-button>
-          <el-button type="primary" size="mini" @click="exportHistory(row, $index)">
-            导出
-          </el-button>
-          <!--<el-button v-if="row.status!='deleted'" size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(row,$index)">
-            删除
-          </el-button>-->
-          <el-button v-if="row.status != 'deleted' && isAdministrator" size="mini" type="warning" @click="handleClearHistory(row, $index)">
-            清空
-          </el-button>
-          <el-button v-if="row.status != 'deleted' && isAdministrator" size="mini" type="danger" @click="handleDelete(row, $index)">
-            删除
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+        <el-table-column min-width="60" align="center">
+          <template slot="header">
+            <span>首测<br>标志</span>
+          </template>
+          <template slot-scope="scope">
+            <el-tag v-if="scope.row.first_measure" type="success" size="mini">是</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column min-width="60" align="center">
+          <template slot="header">
+            <span>尾坛<br>标志</span>
+          </template>
+          <template slot-scope="scope">
+            <el-tag v-if="scope.row.last_jar_flag" type="success" size="mini">是</el-tag>
+          </template>
+        </el-table-column>
+        <!--<el-table-column min-width="155px" align="center" label="测量数据更新日期">
+          <template slot-scope="scope">
+            <span>{{ scope.row.level_update_time }}</span>
+          </template>
+        </el-table-column>-->
+        <el-table-column label="" align="center" min-width="460" class-name="small-padding fixed-width">
+          <template slot-scope="{row,$index}">
+            <el-button type="info" size="mini" @click="handleMoreDetail(row)">
+              更多
+            </el-button>
+            <el-button v-permission="['管理员']" type="primary" size="mini" @click="handleUpdate(row)">
+              编辑
+            </el-button>
+            <el-button v-if="row.status!='deleted'" size="mini" type="info" @click="handleHistory(row,$index)">
+              历史
+            </el-button>
+            <el-button type="primary" size="mini" @click="exportHistory(row, $index)">
+              导出
+            </el-button>
+            <!--<el-button v-if="row.status!='deleted'" size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(row,$index)">
+              删除
+            </el-button>-->
+            <el-button v-if="row.status != 'deleted' && isAdministrator" size="mini" type="warning" @click="handleClearHistory(row, $index)">
+              清空
+            </el-button>
+            <el-button v-if="row.status != 'deleted' && isAdministrator" size="mini" type="danger" @click="handleDelete(row, $index)">
+              删除
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
 
     <el-dialog :visible.sync="showChart" :title="chartTitle" width="650px" :styles="{ height: '300px' }" class="custom-dialog">
       <div ref="chartContainer" class="chart-container" :style="{ height: '300px', width: '100%' }" />
@@ -295,7 +307,7 @@
     </el-dialog>
     <!--<history_chart v-if="historyDataTable.length" :historyDataTable="historyDataTable" />-->
 
-    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" class="pagination-container" :limit.sync="listQuery.limit" @pagination="getList" />
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
@@ -1716,7 +1728,7 @@ export default {
 }
 </script>
 <style>
-/* .jar-page-container {
+.jar-page-container {
   display: flex;
   flex-direction: column;
   height: calc(100vh - 86px);
@@ -1731,9 +1743,6 @@ export default {
   margin-top: 0 !important;
   padding: 12px 16px 0px 16px!important;
 }
-.jar-page-container .el-table-fixed--left {
-  box-shadow: 6px 0 8px -4px rgba(86, 84, 84, 0.15);
-} */
 
 .custom-dialog .el-dialog__header {
   color: white; /* 设置标题文字颜色 */

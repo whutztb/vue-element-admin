@@ -36,13 +36,13 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column align="center" label="设备ID" min-width="140">
+      <el-table-column align="center" label="设备ID" min-width="140" fixed="left">
         <template slot-scope="scope">
           <span>{{ scope.row.device_id }}</span>
         </template>
       </el-table-column>
 
-      <el-table-column min-width="70px" align="center">
+      <el-table-column min-width="70px" align="center" fixed="left">
         <template slot="header">
           <span>设备<br>名称</span>
         </template>
@@ -50,11 +50,13 @@
           <span>{{ scope.row.device_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="140px" label="CCID" align="center">
+
+      <el-table-column min-width="140px" label="CCID" align="center" fixed="left">
         <template slot-scope="scope">
           <span>{{ scope.row.card_num }}</span>
         </template>
       </el-table-column>
+
       <el-table-column min-width="60px" align="center">
         <template slot="header">
           <span>信号<br>质量</span>
