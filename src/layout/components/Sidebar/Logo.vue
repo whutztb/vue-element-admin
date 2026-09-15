@@ -24,7 +24,7 @@ export default {
   },
   data() {
     return {
-      title: '无损陶坛酒液高度体积检测项目数据管理系统',
+      title: '数智化液位管理系统',
       logo: require('@/assets/images/aizhishang.png')
     }
   }
@@ -52,6 +52,7 @@ export default {
     height: 100%;
     width: 100%;
     display: flex;
+    flex-flow: row nowrap;
     align-items: center;
     justify-content: flex-start;
     padding: 0 12px;
@@ -59,26 +60,22 @@ export default {
     color: #fff;
 
     & .sidebar-logo {
-      width: 28px;
-      height: 28px;
+      width: 36px;
+      height: 36px;
       flex-shrink: 0;
-      display: block;
     }
 
     & .sidebar-title {
-      display: -webkit-box;
       flex: 1;
       min-width: 0;
       margin: 0 0 0 10px;
       padding: 0;
       color: #fff !important;
       font-weight: 600;
-      font-size: 11px;
+      font-size: 14px;
       line-height: 1.3;
       font-family: Avenir, Helvetica Neue, Arial, Helvetica, sans-serif;
       text-align: left;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 2;
       overflow: hidden;
     }
   }
