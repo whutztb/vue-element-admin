@@ -107,160 +107,25 @@
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="55" align="center" fixed="left" />
-        <el-table-column align="center" min-width="100" fixed="left">
+        <el-table-column
+          v-for="col in visibleColumns"
+          :key="col.prop"
+          :prop="col.prop"
+          :min-width="col.minWidth"
+          :width="col.width"
+          :align="col.align || 'center'"
+          :fixed="col.fixed || undefined"
+        >
           <template slot="header">
-            <span>陶坛ID</span>
+            <span v-html="col.label" />
           </template>
           <template slot-scope="scope">
-            <span>{{ scope.row.jar_id }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column min-width="55px" align="center" fixed="left">
-          <template slot="header">
-            <span>栋号</span>
-          </template>
-          <template slot-scope="scope">
-            <span>{{ scope.row.cellar_pos }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column min-width="55px" align="center" fixed="left">
-          <template slot="header">
-            <span>库号</span>
-          </template>
-          <template slot-scope="scope">
-            <span>{{ scope.row.jar_pos }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column min-width="55px" align="center" fixed="left">
-          <template slot="header">
-            <span>桶号</span>
-          </template>
-          <template slot-scope="scope">
-            <span>{{ scope.row.barrel_no }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column min-width="55px" align="center" fixed="left">
-          <template slot="header">
-            <span>坛号</span>
-          </template>
-          <template slot-scope="scope">
-            <span>{{ scope.row.jar_no }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column min-width="60px" align="center">
-          <template slot="header">
-            <span>坛高<br>(mm)</span>
-          </template>
-          <template slot-scope="scope">
-            <span>{{ scope.row.jar_height }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column min-width="60px" align="center">
-          <template slot="header">
-            <span>净空<br>(mm)</span>
-          </template>
-          <template slot-scope="scope">
-            <span>{{ scope.row.air_height }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column min-width="60px" align="center">
-          <template slot="header">
-            <span>液位<br>(mm)</span>
-          </template>
-          <template slot-scope="scope">
-            <span>{{ scope.row.wine_level }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column min-width="60" align="center">
-          <template slot="header">
-            <span>体积<br>(m³)</span>
-          </template>
-          <template slot-scope="scope">
-            <span>{{ scope.row.wine_volume }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column min-width="65" align="center">
-          <template slot="header">
-            <span>原度<br>(%vol)</span>
-          </template>
-          <template slot-scope="scope">
-            <span>{{ scope.row.wine_vol }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column min-width="55" align="center">
-          <template slot="header">
-            <span>温度<br>(℃)</span>
-          </template>
-          <template slot-scope="scope">
-            <span>{{ scope.row.wine_temp }}</span>
-          </template>
-        </el-table-column>
-
-        <el-table-column min-width="75" align="center">
-          <template slot="header">
-            <span>密度<br>(t/m³)</span>
-          </template>
-          <template slot-scope="scope">
-            <span>{{ scope.row.wine_rou }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column min-width="80" align="center">
-          <template slot="header">
-            <span>原度重量<br>(t)</span>
-          </template>
-          <template slot-scope="scope">
-            <span>{{ scope.row.wine_weight }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column min-width="80" align="center">
-          <template slot="header">
-            <span>标准酒度<br>(%vol)</span>
-          </template>
-          <template slot-scope="scope">
-            <span>{{ scope.row.wine_vol_convert }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column min-width="80" align="center">
-          <template slot="header">
-            <span>折算重量<br>(t)</span>
-          </template>
-          <template slot-scope="scope">
-            <span>{{ scope.row.wine_weight_convert }}</span>
-          </template>
-        </el-table-column>
-
-        <el-table-column min-width="60" align="center">
-          <template slot="header">
-            <span>湿度<br>(%)</span>
-          </template>
-          <template slot-scope="scope">
-            <span>{{ scope.row.humidity }}</span>
-          </template>
-        </el-table-column>
-
-        <el-table-column min-width="60" align="center">
-          <template slot="header">
-            <span>班组</span>
-          </template>
-          <template slot-scope="scope">
-            <span>{{ scope.row.team_group }}</span>
-          </template>
-        </el-table-column>
-
-        <el-table-column min-width="60" align="center">
-          <template slot="header">
-            <span>首测<br>标志</span>
-          </template>
-          <template slot-scope="scope">
-            <el-tag v-if="scope.row.first_measure" type="success" size="mini">是</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column min-width="60" align="center">
-          <template slot="header">
-            <span>尾坛<br>标志</span>
-          </template>
-          <template slot-scope="scope">
-            <el-tag v-if="scope.row.last_jar_flag" type="success" size="mini">是</el-tag>
+            <el-tag
+              v-if="col.type === 'tag' && isTagShown(scope.row[col.prop], col)"
+              :type="col.tagType || 'success'"
+              size="mini"
+            >{{ col.tagText || '是' }}</el-tag>
+            <span v-else-if="col.type !== 'tag'">{{ scope.row[col.prop] }}</span>
           </template>
         </el-table-column>
         <!--<el-table-column min-width="155px" align="center" label="测量数据更新日期">
@@ -581,6 +446,8 @@ import { EventBus } from '@/utils/eventBus'
 import permission from '@/directive/permission'
 import checkPermission from '@/utils/permission'
 
+import { getColumnConfig } from '@/api/table_column_config'
+
 export default {
   name: 'ComplexTable',
   components: { Pagination },
@@ -747,8 +614,9 @@ export default {
       historyData: [], // 初始化为空数组
       historyDataTable: [], // 初始化为空数组
       lidOpenData: [], // 初始化为空数组
-      volHistoryData: []
+      volHistoryData: [],
       // socket: null  // 定义 socket 实例
+      tableColumns: []
     }
   },
   computed: {
@@ -758,6 +626,9 @@ export default {
     },
     importPreviewData() {
       return this.importData.slice(0, 10)
+    },
+    visibleColumns() {
+      return this.tableColumns.filter(col => col.visible !== false)
     }
   },
   watch: {
@@ -781,6 +652,7 @@ export default {
     this.fetchCellarPosOptions()
     this.fetchFactoryPosOptions()
     this.fetchJarTypeOptions()
+    this.loadTableConfig()
   },
   beforeDestroy() {
     // 清除事件监听
@@ -796,6 +668,25 @@ export default {
   },
   methods: {
     checkPermission,
+    // ========== 表格列配置相关 ==========
+    loadTableConfig() {
+      getColumnConfig('jar_list').then(res => {
+        if (res && res.columns && res.columns.length > 0) {
+          const cols = [...res.columns]
+          cols.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0))
+          this.tableColumns = cols
+        }
+      }).catch(() => {
+        console.warn('加载表格列配置失败，使用默认配置')
+      })
+    },
+    // 判断 Tag 是否应该显示
+    isTagShown(value, col) {
+      if (!col.tagCondition) return !!value
+      if (col.tagCondition === 'truthy') return !!value
+      if (col.tagCondition === 'eq') return String(value) === String(col.tagValue)
+      return !!value
+    },
     // 获取酒库位置
     fetchCellarPosOptions() {
       getCellarPosOptions().then(response => {

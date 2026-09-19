@@ -343,8 +343,6 @@ const _asyncRoutes = [
   {
     path: '/views/wine/system_settings',
     component: Layout,
-    // redirect: '/dashboard',
-    // alwaysShow: true, // will always show the root menu
     children: [
       {
         path: '',
@@ -352,6 +350,23 @@ const _asyncRoutes = [
         name: '系统设置',
         meta: {
           title: '系统设置',
+          icon: 'el-icon-s-tools',
+          affix: true,
+          roles: ['管理员'] // or you can only set roles in sub nav
+        }
+      }
+    ]
+  },
+  {
+    path: '/views/wine/table_column_config',
+    component: Layout,
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/wine/table_column_config'),
+        name: '页面设置',
+        meta: {
+          title: '页面设置',
           icon: 'el-icon-s-tools',
           affix: true,
           roles: ['管理员'] // or you can only set roles in sub nav
