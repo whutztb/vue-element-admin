@@ -95,6 +95,7 @@
 
     <div class="jar-table-wrap">
       <el-table
+        v-if="tableReady"
         ref="jarTable"
         :key="tableKey"
         v-loading="listLoading"
@@ -465,6 +466,7 @@ export default {
   data() {
     return {
       tableKey: 0,
+      tableReady: false,
       list: null,
       total: 0,
       listLoading: true,
@@ -677,10 +679,11 @@ export default {
           this.tableColumns = cols
           // 配置加载完，等 DOM 更新后重算表格布局
           this.$nextTick(() => {
-            if (this.$refs.table) {
-              this.$refs.table.doLayout()
+            if (this.$refs.jarTable) {
+              this.$refs.jarTable.doLayout()
             }
           })
+          this.tableReady = true
         }
       }).catch(() => {
         console.warn('加载表格列配置失败，使用默认配置')
@@ -729,7 +732,7 @@ export default {
         this.total = response.total_count
         this.listLoading = false
         this.$nextTick(() => {
-          if (this.$refs.table) this.$refs.table.doLayout()
+          if (this.$refs.jarTable) this.$refs.jarTable.doLayout()
         })
       })
     },
