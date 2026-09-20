@@ -675,6 +675,12 @@ export default {
           const cols = [...res.columns]
           cols.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0))
           this.tableColumns = cols
+          // 配置加载完，等 DOM 更新后重算表格布局
+          this.$nextTick(() => {
+            if (this.$refs.table) {
+              this.$refs.table.doLayout()
+            }
+          })
         }
       }).catch(() => {
         console.warn('加载表格列配置失败，使用默认配置')
@@ -722,6 +728,9 @@ export default {
         this.list = response.items
         this.total = response.total_count
         this.listLoading = false
+        this.$nextTick(() => {
+          if (this.$refs.table) this.$refs.table.doLayout()
+        })
       })
     },
     loadSavedQuery() {
