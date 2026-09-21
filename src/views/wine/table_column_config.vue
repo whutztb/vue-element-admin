@@ -90,9 +90,17 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="Tag配置" min-width="200" align="center">
+        <el-table-column label="Tag配置" min-width="260" align="center">
           <template slot-scope="scope">
-            <div v-if="scope.row.type === 'tag'" style="display: flex; gap: 6px; flex-wrap: wrap;">
+            <div v-if="scope.row.tagMappings && scope.row.tagMappings.length > 0" style="display: flex; flex-direction: column; gap: 4px;">
+              <div v-for="(m, idx) in scope.row.tagMappings" :key="idx" style="display: flex; gap: 4px;">
+                <el-input v-model="m.value" size="small" placeholder="值" style="width: 50px;" />
+                <el-input v-model="m.text" size="small" placeholder="文字" style="flex: 1;" />
+                <el-button type="text" size="mini" icon="el-icon-delete" style="color: #F56C6C;" @click="scope.row.tagMappings.splice(idx, 1)" />
+              </div>
+              <el-button type="text" size="mini" icon="el-icon-plus" style="padding: 0;" @click="scope.row.tagMappings.push({ value: '', text: '' })">添加映射</el-button>
+            </div>
+            <div v-else-if="scope.row.type === 'tag'" style="display: flex; gap: 6px; flex-wrap: wrap;">
               <el-select v-model="scope.row.tagCondition" size="small" placeholder="条件" style="flex: 1; min-width: 65px;">
                 <el-option label="等于" value="eq" />
                 <el-option label="非空" value="truthy" />
@@ -166,7 +174,8 @@ const DEFAULT_COLUMNS_MAP = {
     { prop: 'humidity', label: '湿度<br>(%)', minWidth: '60', fixed: '', visible: true, type: 'text' },
     { prop: 'team_group', label: '班组', minWidth: '60', fixed: '', visible: true, type: 'text' },
     { prop: 'first_measure', label: '首测<br>标志', minWidth: '60', fixed: '', visible: true, type: 'tag', tagCondition: 'truthy', tagType: 'success', tagText: '是' },
-    { prop: 'last_jar_flag', label: '尾坛<br>标志', minWidth: '60', fixed: '', visible: true, type: 'tag', tagCondition: 'truthy', tagType: 'success', tagText: '是' }
+    { prop: 'last_jar_flag', label: '尾坛<br>标志', minWidth: '60', fixed: '', visible: true, type: 'tag', tagCondition: 'truthy', tagType: 'success', tagText: '是' },
+    { prop: 'calc_mode', label: '计算方式', minWidth: '100', fixed: '', visible: true, type: 'tag', tagMappings: [{ value: '0', text: '单坛模式', tagType: 'primary' }, { value: '1', text: '厂家模式', tagType: 'success' }, { value: '2', text: '经验公式', tagType: 'warning' }] }
   ]
 }
 
@@ -296,7 +305,8 @@ export default {
         tagCondition: 'truthy',
         tagValue: '',
         tagType: 'success',
-        tagText: '是'
+        tagText: '是',
+        tagMappings: []
       }
       this.addDialogVisible = true
     },

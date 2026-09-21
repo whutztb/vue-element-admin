@@ -122,10 +122,10 @@
           </template>
           <template slot-scope="scope">
             <el-tag
-              v-if="col.type === 'tag' && isTagShown(scope.row[col.prop], col)"
-              :type="col.tagType || 'success'"
+              v-if="col.type === 'tag' && getTagText(scope.row[col.prop], col)"
+              :type="getTagType(scope.row[col.prop], col)"
               size="mini"
-            >{{ col.tagText || '是' }}</el-tag>
+            >{{ getTagText(scope.row[col.prop], col) }}</el-tag>
             <span v-else-if="col.type !== 'tag'">{{ scope.row[col.prop] }}</span>
           </template>
         </el-table-column>
@@ -689,12 +689,28 @@ export default {
         console.warn('加载表格列配置失败，使用默认配置')
       })
     },
-    // 判断 Tag 是否应该显示
-    isTagShown(value, col) {
-      if (!col.tagCondition) return !!value
-      if (col.tagCondition === 'truthy') return !!value
-      if (col.tagCondition === 'eq') return String(value) === String(col.tagValue)
-      return !!value
+    getTagText(value, col) {
+      // 多值映射
+      if (col.tagMappings && col.tagMappings.length > 0) {
+        const v = String(value)
+        const m = col.tagMappings.find(x => String(x.value) === v)
+        return m ? m.text : ''
+      }
+      // 原有单 tag
+      if (!col.tagCondition) return value ? (col.tagText || '') : ''
+      if (col.tagCondition === 'truthy') return value ? (col.tagText || '是') : ''
+      if (col.tagCondition === 'eq') return String(value) === String(col.tagValue) ? (col.tagText || '是') : ''
+      return col.tagText || ''
+    },
+    getTagType(value, col) {
+      // 多值映射里每项有 tagType 就用自己的
+      if (col.tagMappings && col.tagMappings.length > 0) {
+        const v = String(value)
+        const m = col.tagMappings.find(x => String(x.value) === v)
+        if (m && m.tagType) return m.tagType
+      }
+      // fallback 到 col.tagType，再没有就 success
+      return col.tagType || 'success'
     },
     // 获取酒库位置
     fetchCellarPosOptions() {
