@@ -173,103 +173,79 @@
     </el-dialog>
     <!--<history_chart v-if="historyDataTable.length" :historyDataTable="historyDataTable" />-->
 
+    <el-dialog :visible.sync="moreDetailVisible" title="更多细节" width="500px">
+      <div v-for="col in detailColumns" :key="col.prop" class="detail-item">
+        <span class="detail-label">{{ stripHtml(col.label) }}：</span>
+        <el-tag
+          v-if="col.type === 'tag' && getTagText(moreDetailRow[col.prop], col)"
+          :type="getTagType(moreDetailRow[col.prop], col)"
+          size="mini"
+        >{{ getTagText(moreDetailRow[col.prop], col) }}</el-tag>
+        <span v-else>{{ moreDetailRow[col.prop] }}</span>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="moreDetailVisible = false">确定</el-button>
+      </span>
+    </el-dialog>
+
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" class="pagination-container" :limit.sync="listQuery.limit" @pagination="getList" />
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
-      <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="陶坛ID" prop="jar_id" label-width="150px">
-          <el-input v-model="temp.jar_id" :readonly="readOnly" />
-        </el-form-item>
-        <el-form-item label="缸型" prop="jar_type" label-width="150px">
-          <el-select v-model="temp.jar_type" class="filter-item" placeholder="请选择" @change="onJarTypeChange">
-            <el-option v-for="item in jarTypeOptions" :key="item" :label="item" :value="item" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="栋号" prop="cellar_pos" label-width="150px">
-          <el-select v-model="temp.cellar_pos" class="filter-item" placeholder="请选择">
-            <el-option v-for="item in factoryPosOptions" :key="item" :label="item" :value="item" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="库号" prop="jar_pos" label-width="150px">
-          <el-select v-model="temp.jar_pos" class="filter-item" placeholder="请选择">
-            <el-option v-for="item in cellarPosOptions" :key="item" :label="item" :value="item" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="桶号" prop="barrel_no" label-width="150px">
-          <el-input v-model="temp.barrel_no" />
-        </el-form-item>
-        <el-form-item label="陶坛编号" prop="jar_no" label-width="150px">
-          <el-input v-model="temp.jar_no" />
-        </el-form-item>
-        <el-form-item label="坛高(mm)" prop="jar_height" label-width="150px">
-          <el-input v-model="temp.jar_height" placeholder="选择坛型后自动填充，可手动修改" />
-        </el-form-item>
-        <el-form-item label="液位(mm)" prop="wine_level" label-width="150px">
-          <el-input v-model="temp.wine_level" />
-        </el-form-item>
-        <el-form-item label="标准酒度(%vol)" prop="wine_vol_convert" label-width="150px">
-          <el-input v-model="temp.wine_vol_convert" placeholder="输入20℃标准酒度，保存后自动推算原始酒度" />
-        </el-form-item>
-        <el-form-item label="温度(℃)" prop="wine_temp" label-width="150px">
-          <el-input v-model="temp.wine_temp" />
-        </el-form-item>
-        <el-form-item label="品名" prop="wine_name" label-width="150px">
-          <el-input v-model="temp.wine_name" />
-        </el-form-item>
-        <el-form-item label="香型" prop="wine_type" label-width="150px">
-          <el-input v-model="temp.wine_type" />
-        </el-form-item>
-        <el-form-item label="生产厂区" prop="factory" label-width="150px">
-          <el-input v-model="temp.factory" />
-        </el-form-item>
-        <el-form-item label="入库时间" prop="wine_date" label-width="150px">
-          <el-date-picker v-model="temp.wine_date" type="date" placeholder="请选择日期" />
-        </el-form-item>
-        <el-form-item label="补偿值（mm）" prop="compensation_value" label-width="150px">
-          <el-input v-model="temp.compensation_value" />
-        </el-form-item>
-        <el-form-item label="更新时间" prop="level_update_time" label-width="150px">
-          <el-date-picker v-model="temp.level_update_time" type="datetime" placeholder="请选择日期" />
-        </el-form-item>
-        <el-form-item label="密度(t/m³)" prop="wine_rou_input" label-width="150px">
-          <el-tooltip
-            class="item"
-            effect="dark"
-            content="如果不为空，将按照输入密度计算酒量，如果为空，自动根据酒度温度查表计算密度"
-            placement="top"
-            :visible-arrow="false"
-          >
+      <el-form ref="dataForm" :rules="formRules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
+        <el-form-item v-for="col in formColumns" :key="col.prop" :label="stripHtml(col.label)" :prop="col.prop" label-width="150px">
+          <el-tooltip v-if="col.tooltip" class="item" effect="dark" :content="col.tooltip" placement="top" :visible-arrow="false">
             <el-input
-              v-model="temp.wine_rou_input"
-              placeholder="点击输入密度(按指定密度计算)"
+              v-if="col.formType === 'input' || col.formType === 'number'"
+              v-model="temp[col.prop]"
+              :readonly="col.readonlyOnEdit && dialogStatus === 'update'"
+              :placeholder="col.placeholder"
             />
           </el-tooltip>
+          <template v-else>
+            <el-input
+              v-if="col.formType === 'input' || col.formType === 'number'"
+              v-model="temp[col.prop]"
+              :readonly="col.readonlyOnEdit && dialogStatus === 'update'"
+              :placeholder="col.placeholder"
+            />
+            <el-select
+              v-else-if="col.formType === 'select'"
+              v-model="temp[col.prop]"
+              class="filter-item"
+              placeholder="请选择"
+              style="width: 100%;"
+              :disabled="col.readonlyOnEdit && dialogStatus === 'update'"
+              @change="onFormFieldChange(col, $event)"
+            >
+              <el-option v-for="item in getSelectOptions(col)" :key="item.value" :label="item.label" :value="item.value" />
+            </el-select>
+            <el-date-picker
+              v-else-if="col.formType === 'date'"
+              v-model="temp[col.prop]"
+              type="date"
+              placeholder="请选择日期"
+              style="width: 100%;"
+              :readonly="col.readonlyOnEdit && dialogStatus === 'update'"
+            />
+            <el-date-picker
+              v-else-if="col.formType === 'datetime'"
+              v-model="temp[col.prop]"
+              type="datetime"
+              placeholder="请选择日期时间"
+              style="width: 100%;"
+              :readonly="col.readonlyOnEdit && dialogStatus === 'update'"
+            />
+            <el-switch
+              v-else-if="col.formType === 'switch'"
+              v-model="temp[col.prop]"
+              :active-value="1"
+              :inactive-value="0"
+              active-text="是"
+              inactive-text="否"
+              :disabled="col.readonlyOnEdit && dialogStatus === 'update'"
+            />
+          </template>
         </el-form-item>
-        <el-form-item label="湿度(%)" prop="humidity" label-width="150px">
-          <el-input v-model="temp.humidity" />
-        </el-form-item>
-        <el-form-item label="班组" prop="team_group" label-width="150px">
-          <el-input v-model="temp.team_group" />
-        </el-form-item>
-        <el-form-item label="首次测量" prop="first_measure" label-width="150px">
-          <el-switch
-            v-model="temp.first_measure"
-            :active-value="1"
-            :inactive-value="0"
-            active-text="是"
-            inactive-text="否"
-          />
-        </el-form-item>
-        <el-form-item label="尾坛标志" prop="last_jar_flag" label-width="150px">
-          <el-switch
-            v-model="temp.last_jar_flag"
-            :active-value="1"
-            :inactive-value="0"
-            active-text="是"
-            inactive-text="否"
-          />
-        </el-form-item>
-
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
@@ -448,6 +424,7 @@ import permission from '@/directive/permission'
 import checkPermission from '@/utils/permission'
 
 import { getColumnConfig } from '@/api/table_column_config'
+import { JAR_LIST_DEFAULT_COLUMNS, mergeColumnConfig } from '@/config/jarListColumns'
 
 export default {
   name: 'ComplexTable',
@@ -534,56 +511,8 @@ export default {
       },
       dialogPvVisible: false,
       pvData: [],
-      rules: {
-        jar_id: [
-          { required: true, message: '请输入陶坛ID', trigger: 'blur' }
-        ],
-        jar_type: [
-          { required: true, message: '请输入陶坛名称', trigger: 'blur' }
-        ],
-        jar_pos: [
-          { required: true, message: '请输入库号', trigger: 'blur' }
-        ],
-        cellar_pos: [
-          { required: true, message: '请输入栋号', trigger: 'blur' }
-        ],
-        jar_no: [
-          { required: true, message: '请输入陶坛编号', trigger: 'blur' }
-        ],
-        jar_height: [
-          { required: true, message: '请输入陶坛高度', trigger: 'blur' }
-        ],
-        wine_level: [
-          { required: true, message: '请输入陶坛液位', trigger: 'blur' }
-        ],
-        wine_temp: [
-          { required: true, message: '请输入温度', trigger: 'blur' }
-        ],
-        wine_vol_convert: [
-          { required: true, message: '请输入标准酒度', trigger: 'blur' }
-        ],
-        wine_rou_input: [
-          { required: false, message: '请输入密度', trigger: 'blur' }
-        ],
-        wine_name: [
-          { required: false, message: '请输入品名', trigger: 'blur' }
-        ],
-        wine_type: [
-          { required: false, message: '请输入香型', trigger: 'blur' }
-        ],
-        wine_date: [
-          { required: false, message: '请输入入库时间', trigger: 'blur' }
-        ],
-        factory: [
-          { required: false, message: '请输入生产厂区', trigger: 'blur' }
-        ],
-        compensation_value: [
-          { required: false, message: '请输入补偿值', trigger: 'blur' }
-        ],
-        level_update_time: [
-          { required: true, message: '请输入液位陶坛更新时间', trigger: 'blur' }
-        ]
-      },
+      moreDetailVisible: false,
+      moreDetailRow: {},
       downloadLoading: false,
       showDialog: false,
       importDialogVisible: false,
@@ -631,6 +560,25 @@ export default {
     },
     visibleColumns() {
       return this.tableColumns.filter(col => col.visible !== false)
+    },
+    detailColumns() {
+      return this.tableColumns.filter(col => col.showInDetail)
+    },
+    formColumns() {
+      const key = this.dialogStatus === 'update' ? 'showInEdit' : 'showInCreate'
+      return this.tableColumns.filter(col => col[key])
+    },
+    formRules() {
+      const requiredKey = this.dialogStatus === 'update' ? 'requiredEdit' : 'requiredCreate'
+      const rules = {}
+      this.formColumns.forEach(col => {
+        rules[col.prop] = [{
+          required: !!col[requiredKey],
+          message: `请输入${this.stripHtml(col.label)}`,
+          trigger: col.formType === 'select' || col.formType === 'date' || col.formType === 'datetime' ? 'change' : 'blur'
+        }]
+      })
+      return rules
     }
   },
   watch: {
@@ -673,20 +621,19 @@ export default {
     // ========== 表格列配置相关 ==========
     loadTableConfig() {
       getColumnConfig('jar_list').then(res => {
-        if (res && res.columns && res.columns.length > 0) {
-          const cols = [...res.columns]
-          cols.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0))
-          this.tableColumns = cols
-          // 配置加载完，等 DOM 更新后重算表格布局
-          this.$nextTick(() => {
-            if (this.$refs.jarTable) {
-              this.$refs.jarTable.doLayout()
-            }
-          })
-          this.tableReady = true
-        }
+        const saved = (res && res.columns) || []
+        this.tableColumns = mergeColumnConfig(saved, JAR_LIST_DEFAULT_COLUMNS)
+        // 配置加载完，等 DOM 更新后重算表格布局
+        this.$nextTick(() => {
+          if (this.$refs.jarTable) {
+            this.$refs.jarTable.doLayout()
+          }
+        })
+        this.tableReady = true
       }).catch(() => {
         console.warn('加载表格列配置失败，使用默认配置')
+        this.tableColumns = JSON.parse(JSON.stringify(JAR_LIST_DEFAULT_COLUMNS))
+        this.tableReady = true
       })
     },
     getTagText(value, col) {
@@ -868,6 +815,12 @@ export default {
         first_measure: 0,
         last_jar_flag: 0
       }
+      // 应用列配置中设置的默认值
+      this.tableColumns.forEach(col => {
+        if (col.defaultValue !== undefined && col.defaultValue !== '' && col.defaultValue !== null) {
+          this.$set(this.temp, col.prop, col.formType === 'switch' ? Number(col.defaultValue) : col.defaultValue)
+        }
+      })
     },
     handleAddUp() {
       getTotalMass(this.listQuery).then(response => {
@@ -918,16 +871,28 @@ export default {
       })
     },
     handleMoreDetail(row) {
-      this.temp = Object.assign({}, row)
-      MessageBox.alert(
-        `陶坛ID: ${this.temp.jar_id}<br>品名: ${this.temp.wine_name}<br>香型: ${this.temp.wine_type}<br>陶坛类型: ${this.temp.jar_type}<br>陶坛高度(mm): ${this.temp.jar_height}<br>折酒系数: ${this.temp.convert_fraction}<br>入库时间: ${this.temp.wine_date}<br>生产厂区: ${this.temp.factory}<br>温度(℃): ${this.temp.wine_temp}<br>原始酒度: ${this.temp.wine_vol}<br>折算酒度: ${this.temp.wine_vol_convert}<br>测量数据更新日期: ${this.temp.level_update_time}`,
-        '更多细节',
-        {
-          confirmButtonText: '确定',
-          type: 'info',
-          dangerouslyUseHTMLString: true // 允许使用 HTML
-        }
-      )
+      this.moreDetailRow = Object.assign({}, row)
+      this.moreDetailVisible = true
+    },
+    stripHtml(str) {
+      return (str || '').replace(/<[^>]*>/g, '')
+    },
+    getSelectOptions(col) {
+      if (col.formOptionsSource === 'jarTypeOptions') {
+        return this.jarTypeOptions.map(v => ({ label: v, value: v }))
+      }
+      if (col.formOptionsSource === 'factoryPosOptions') {
+        return this.factoryPosOptions.map(v => ({ label: v, value: v }))
+      }
+      if (col.formOptionsSource === 'cellarPosOptions') {
+        return this.cellarPosOptions.map(v => ({ label: v, value: v }))
+      }
+      return col.formOptions || []
+    },
+    onFormFieldChange(col, value) {
+      if (col.prop === 'jar_type') {
+        this.onJarTypeChange(value)
+      }
     },
     handleUpdate(row) {
       this.readOnly = true
@@ -1647,6 +1612,13 @@ export default {
 }
 </script>
 <style>
+.detail-item {
+  line-height: 1.9;
+  font-size: 14px;
+}
+.detail-label {
+  color: #909399;
+}
 .jar-page-container {
   display: flex;
   flex-direction: column;

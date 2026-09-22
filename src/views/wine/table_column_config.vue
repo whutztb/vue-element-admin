@@ -34,7 +34,7 @@
 
     <div v-if="selectedPage" class="config-table-wrap">
       <div style="margin-bottom: 12px; color: #909399; font-size: 13px;">
-        提示：勾选"显示"来控制列是否可见；点击上下箭头调整排序；修改各项属性后点击"保存配置"生效。
+        提示：勾选"显示"来控制列是否可见；点击上下箭头调整排序；修改各项属性后点击"保存配置"生效。展开每行可配置该字段在"更多详情/新增/编辑"弹窗中的显示、必填、表单类型与默认值。
       </div>
 
       <el-table ref="configTable" :data="columns" border size="small" style="width: 100%;">
@@ -65,13 +65,13 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="最小宽度" min-width="70" align="center">
+        <el-table-column label="最小宽度" min-width="90" align="center">
           <template slot-scope="scope">
             <el-input v-model="scope.row.minWidth" size="small" placeholder="如: 80" />
           </template>
         </el-table-column>
 
-        <el-table-column label="固定位置" min-width="100" align="center">
+        <el-table-column label="固定位置" min-width="110" align="center">
           <template slot-scope="scope">
             <el-select v-model="scope.row.fixed" size="small" placeholder="不固定" style="width: 100%;">
               <el-option label="不固定" value="" />
@@ -81,7 +81,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="渲染类型" min-width="90" align="center">
+        <el-table-column label="渲染类型" min-width="110" align="center">
           <template slot-scope="scope">
             <el-select v-model="scope.row.type" size="small" style="width: 100%;">
               <el-option label="文本" value="text" />
@@ -90,7 +90,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="Tag配置" min-width="260" align="center">
+        <el-table-column label="Tag配置" min-width="200" align="center">
           <template slot-scope="scope">
             <div v-if="scope.row.tagMappings && scope.row.tagMappings.length > 0" style="display: flex; flex-direction: column; gap: 4px;">
               <div v-for="(m, idx) in scope.row.tagMappings" :key="idx" style="display: flex; gap: 4px;">
@@ -100,21 +100,94 @@
               </div>
               <el-button type="text" size="mini" icon="el-icon-plus" style="padding: 0;" @click="scope.row.tagMappings.push({ value: '', text: '' })">添加映射</el-button>
             </div>
-            <div v-else-if="scope.row.type === 'tag'" style="display: flex; gap: 6px; flex-wrap: wrap;">
-              <el-select v-model="scope.row.tagCondition" size="small" placeholder="条件" style="flex: 1; min-width: 65px;">
-                <el-option label="等于" value="eq" />
-                <el-option label="非空" value="truthy" />
-              </el-select>
-              <el-input v-if="scope.row.tagCondition === 'eq'" v-model="scope.row.tagValue" size="small" placeholder="对比值" style="width: 50px;" />
-              <el-select v-model="scope.row.tagType" size="small" placeholder="类型" style="flex: 1; min-width: 65px;">
+            <div v-else-if="scope.row.type === 'tag'" style="display: flex; flex-direction: column; gap: 4px;">
+              <div style="display: flex; gap: 4px;">
+                <el-select v-model="scope.row.tagCondition" size="small" placeholder="条件" style="flex: 1;">
+                  <el-option label="等于" value="eq" />
+                  <el-option label="非空" value="truthy" />
+                </el-select>
+                <el-input v-if="scope.row.tagCondition === 'eq'" v-model="scope.row.tagValue" size="small" placeholder="对比值" style="width: 60px;" />
+              </div>
+              <el-select v-model="scope.row.tagType" size="small" placeholder="类型" style="width: 100%;">
                 <el-option label="success" value="success" />
                 <el-option label="warning" value="warning" />
                 <el-option label="danger" value="danger" />
                 <el-option label="info" value="info" />
               </el-select>
-              <el-input v-model="scope.row.tagText" size="small" placeholder="文字" style="width: 40px;" />
+              <el-input v-model="scope.row.tagText" size="small" placeholder="文字" style="width: 100%;" />
             </div>
             <span v-else style="color: #C0C4CC; font-size: 12px;">-</span>
+          </template>
+        </el-table-column>
+
+        <el-table-column label="弹窗显示" min-width="130" align="center">
+          <template slot-scope="scope">
+            <div class="stack-checkboxes">
+              <el-checkbox v-model="scope.row.showInDetail">更多详情</el-checkbox>
+              <el-checkbox v-model="scope.row.showInCreate">新增弹窗</el-checkbox>
+              <el-checkbox v-model="scope.row.showInEdit">编辑弹窗</el-checkbox>
+            </div>
+          </template>
+        </el-table-column>
+
+        <el-table-column label="必填/只读" min-width="110" align="center">
+          <template slot-scope="scope">
+            <div class="stack-checkboxes">
+              <el-checkbox v-model="scope.row.requiredCreate" :disabled="!scope.row.showInCreate">新增必填</el-checkbox>
+              <el-checkbox v-model="scope.row.requiredEdit" :disabled="!scope.row.showInEdit">编辑必填</el-checkbox>
+              <el-checkbox v-model="scope.row.readonlyOnEdit" :disabled="!scope.row.showInEdit">编辑只读</el-checkbox>
+            </div>
+          </template>
+        </el-table-column>
+
+        <el-table-column label="表单类型" min-width="200" align="center">
+          <template slot-scope="scope">
+            <el-select v-model="scope.row.formType" size="small" style="width: 100%; margin-bottom: 4px;">
+              <el-option label="文本输入" value="input" />
+              <el-option label="数字输入" value="number" />
+              <el-option label="下拉选择" value="select" />
+              <el-option label="日期" value="date" />
+              <el-option label="日期时间" value="datetime" />
+              <el-option label="开关" value="switch" />
+            </el-select>
+            <el-select v-if="scope.row.formType === 'select'" v-model="scope.row.formOptionsSource" size="small" style="width: 100%;" placeholder="选项来源">
+              <el-option label="自定义选项" value="static" />
+              <el-option label="陶坛类型(jarTypeOptions)" value="jarTypeOptions" />
+              <el-option label="栋号(factoryPosOptions)" value="factoryPosOptions" />
+              <el-option label="库号(cellarPosOptions)" value="cellarPosOptions" />
+            </el-select>
+          </template>
+        </el-table-column>
+
+        <el-table-column label="自定义选项" min-width="220" align="center">
+          <template slot-scope="scope">
+            <div v-if="scope.row.formType === 'select' && scope.row.formOptionsSource === 'static'" style="display: flex; flex-direction: column; gap: 4px;">
+              <div v-for="(op, idx) in scope.row.formOptions" :key="idx" style="display: flex; gap: 4px;">
+                <el-input v-model="op.value" size="small" placeholder="值" style="width: 80px;" />
+                <el-input v-model="op.label" size="small" placeholder="显示文字" style="flex: 1;" />
+                <el-button type="text" size="mini" icon="el-icon-delete" style="color: #F56C6C;" @click="scope.row.formOptions.splice(idx, 1)" />
+              </div>
+              <el-button type="text" size="mini" icon="el-icon-plus" style="padding: 0;" @click="ensureFormOptions(scope.row).push({ value: '', label: '' })">添加选项</el-button>
+            </div>
+            <span v-else style="color: #C0C4CC; font-size: 12px;">-</span>
+          </template>
+        </el-table-column>
+
+        <el-table-column label="新增时默认值" min-width="120" align="center">
+          <template slot-scope="scope">
+            <el-input v-model="scope.row.defaultValue" size="small" placeholder="新增时的默认值" />
+          </template>
+        </el-table-column>
+
+        <el-table-column label="占位提示(placeholder)" min-width="140" align="center">
+          <template slot-scope="scope">
+            <el-input v-model="scope.row.placeholder" size="small" placeholder="输入框占位文字" />
+          </template>
+        </el-table-column>
+
+        <el-table-column label="辅助提示(tooltip)" min-width="160" align="center">
+          <template slot-scope="scope">
+            <el-input v-model="scope.row.tooltip" size="small" placeholder="鼠标悬停提示，留空则不显示" />
           </template>
         </el-table-column>
       </el-table>
@@ -149,35 +222,11 @@
 
 <script>
 import { getColumnConfig, saveColumnConfig } from '@/api/table_column_config'
+import { createColumnDefaults, DEFAULT_COLUMNS_MAP, mergeColumnConfig } from '@/config/jarListColumns'
 
 const PAGE_OPTIONS = [
   { key: 'jar_list', name: '陶坛管理' }
 ]
-
-const DEFAULT_COLUMNS_MAP = {
-  jar_list: [
-    { prop: 'jar_id', label: '陶坛ID', minWidth: '140', fixed: 'left', visible: true, type: 'text' },
-    { prop: 'cellar_pos', label: '栋号', minWidth: '55', fixed: 'left', visible: true, type: 'text' },
-    { prop: 'jar_pos', label: '库号', minWidth: '55', fixed: 'left', visible: true, type: 'text' },
-    { prop: 'barrel_no', label: '桶号', minWidth: '55', fixed: 'left', visible: true, type: 'text' },
-    { prop: 'jar_no', label: '坛号', minWidth: '55', fixed: 'left', visible: true, type: 'text' },
-    { prop: 'jar_height', label: '坛高<br>(mm)', minWidth: '60', fixed: '', visible: true, type: 'text' },
-    { prop: 'air_height', label: '净空<br>(mm)', minWidth: '60', fixed: '', visible: true, type: 'text' },
-    { prop: 'wine_level', label: '液位<br>(mm)', minWidth: '60', fixed: '', visible: true, type: 'text' },
-    { prop: 'wine_volume', label: '体积<br>(m³)', minWidth: '60', fixed: '', visible: true, type: 'text' },
-    { prop: 'wine_vol', label: '原度<br>(%vol)', minWidth: '65', fixed: '', visible: true, type: 'text' },
-    { prop: 'wine_temp', label: '温度<br>(℃)', minWidth: '55', fixed: '', visible: true, type: 'text' },
-    { prop: 'wine_rou', label: '密度<br>(t/m³)', minWidth: '75', fixed: '', visible: true, type: 'text' },
-    { prop: 'wine_weight', label: '原度重量<br>(t)', minWidth: '80', fixed: '', visible: true, type: 'text' },
-    { prop: 'wine_vol_convert', label: '标准酒度<br>(%vol)', minWidth: '80', fixed: '', visible: true, type: 'text' },
-    { prop: 'wine_weight_convert', label: '折算重量<br>(t)', minWidth: '80', fixed: '', visible: true, type: 'text' },
-    { prop: 'humidity', label: '湿度<br>(%)', minWidth: '60', fixed: '', visible: true, type: 'text' },
-    { prop: 'team_group', label: '班组', minWidth: '60', fixed: '', visible: true, type: 'text' },
-    { prop: 'first_measure', label: '首测<br>标志', minWidth: '60', fixed: '', visible: true, type: 'tag', tagCondition: 'truthy', tagType: 'success', tagText: '是' },
-    { prop: 'last_jar_flag', label: '尾坛<br>标志', minWidth: '60', fixed: '', visible: true, type: 'tag', tagCondition: 'truthy', tagType: 'success', tagText: '是' },
-    { prop: 'calc_mode', label: '计算方式', minWidth: '100', fixed: '', visible: true, type: 'tag', tagMappings: [{ value: '0', text: '单坛模式', tagType: 'primary' }, { value: '1', text: '厂家模式', tagType: 'success' }, { value: '2', text: '经验公式', tagType: 'warning' }] }
-  ]
-}
 
 export default {
   name: 'TableColumnConfig',
@@ -188,18 +237,7 @@ export default {
       selectedPage: '',
       columns: [],
       addDialogVisible: false,
-      newColumn: {
-        prop: '',
-        label: '',
-        minWidth: '80',
-        fixed: '',
-        visible: true,
-        type: 'text',
-        tagCondition: 'truthy',
-        tagValue: '',
-        tagType: 'success',
-        tagText: '是'
-      }
+      newColumn: createColumnDefaults({ prop: '', label: '', minWidth: '80' })
     }
   },
   created() {
@@ -219,11 +257,9 @@ export default {
       const cache = {}
       const promises = this.pageOptions.map(page => {
         return getColumnConfig(page.key).then(res => {
-          if (res && res.columns && res.columns.length > 0) {
-            cache[page.key] = res.columns
-          } else {
-            cache[page.key] = null
-          }
+          const defaults = DEFAULT_COLUMNS_MAP[page.key] || []
+          const saved = (res && res.columns) || []
+          cache[page.key] = mergeColumnConfig(saved, defaults)
         }).catch(() => {
           cache[page.key] = null
         })
@@ -295,20 +331,14 @@ export default {
       })
     },
     handleAddColumn() {
-      this.newColumn = {
-        prop: '',
-        label: '',
-        minWidth: '80',
-        fixed: '',
-        visible: true,
-        type: 'text',
-        tagCondition: 'truthy',
-        tagValue: '',
-        tagType: 'success',
-        tagText: '是',
-        tagMappings: []
-      }
+      this.newColumn = createColumnDefaults({ prop: '', label: '', minWidth: '80' })
       this.addDialogVisible = true
+    },
+    ensureFormOptions(row) {
+      if (!row.formOptions) {
+        this.$set(row, 'formOptions', [])
+      }
+      return row.formOptions
     },
     confirmAddColumn() {
       if (!this.newColumn.prop || !this.newColumn.label) {
@@ -340,5 +370,11 @@ export default {
 }
 .config-table-wrap {
   margin-top: 10px;
+}
+.stack-checkboxes {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
 }
 </style>
