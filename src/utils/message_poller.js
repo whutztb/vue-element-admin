@@ -142,8 +142,15 @@ class MessagePoller {
       } else if (msg_type === 'leak_wine') {
         const popupAlarm = parseInt(parsedData.popupAlarm)
         if (popupAlarm === 1) {
+          const strategy = parsedData.alarm_strategy
+          let strategyHtml = ''
+          if (strategy === 'isothermal') {
+            strategyHtml = `<br>对比温度: ${parsedData.ref_temp || '--'}℃<br><span style="color:#67C23A">告警策略: 等温对比</span>`
+          } else if (strategy === 'time_degraded') {
+            strategyHtml = `<br>对比温度: ${parsedData.ref_temp || '--'}℃ / 当前温度: ${parsedData.curr_temp || '--'}℃<br><span style="color:#E6A23C">告警策略: 非等温对比</span>`
+          }
           MessageBox.alert(
-            `陶坛ID: ${parsedData.jar_id}<br>渗漏液位（mm）: ${parsedData.leak_height}<br>上次记录时间: ${parsedData.last_time}`,
+            `陶坛ID: ${parsedData.jar_id}<br>渗漏液位（mm）: ${parsedData.leak_height}<br>对比液位（mm）: ${parsedData.ref_level || '--'}<br>参考记录时间: ${parsedData.last_time}${strategyHtml}`,
             '陶坛泄露风险提示',
             {
               confirmButtonText: '确定',
