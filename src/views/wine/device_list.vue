@@ -44,7 +44,7 @@
 
       <el-table-column min-width="70px" align="center">
         <template slot="header">
-          <span>设备<br>名称)</span>
+          <span>设备<br>名称</span>
         </template>
         <template slot-scope="scope">
           <span>{{ scope.row.device_name }}</span>
@@ -65,7 +65,7 @@
       </el-table-column>
       <el-table-column min-width="90px" align="center">
         <template slot="header">
-          <span>起始距离<br>(mm))</span>
+          <span>起始距离<br>(mm)</span>
         </template>
         <template slot-scope="scope">
           <span>{{ scope.row.distance_start }}</span>
@@ -73,7 +73,7 @@
       </el-table-column>
       <el-table-column min-width="90px" align="center">
         <template slot="header">
-          <span>终止距离<br>(mm))</span>
+          <span>终止距离<br>(mm)</span>
         </template>
         <template slot-scope="scope">
           <span>{{ scope.row.distance_end }}</span>
@@ -141,7 +141,7 @@
             :min="50"
             :max="22500"
             placeholder="请输入50-22500的整数"
-            @blur="handleDistanceEndBlur"
+            @blur="handleDistanceBlur('distance_start', $event)"
           />
         </el-form-item>
         <el-form-item label="终止距离（mm）" prop="distance_end" label-width="150px">
@@ -151,7 +151,7 @@
             :min="50"
             :max="22500"
             placeholder="请输入50-22500的整数"
-            @blur="handleDistanceEndBlur"
+            @blur="handleDistanceBlur('distance_end', $event)"
           />
         </el-form-item>
         <el-form-item label="测量模式" prop="peak_sorting" label-width="150px">
@@ -297,12 +297,12 @@ export default {
     this.getList()
   },
   methods: {
-    handleDistanceEndBlur(event) {
+    handleDistanceBlur(field, event) {
       let value = event.target.value
 
       if (value === '' || value === null || value === undefined) {
         // 允许为空，或者设置为默认值
-        this.temp.distance_end = 50 // 或者保持为空 this.temp.distance_end = null
+        this.temp[field] = 50 // 或者保持为空 this.temp[field] = null
         return
       }
 
@@ -318,7 +318,7 @@ export default {
       if (value < 50) value = 50
       if (value > 22500) value = 22500
 
-      this.temp.distance_end = value
+      this.temp[field] = value
     },
 
     getList() {
