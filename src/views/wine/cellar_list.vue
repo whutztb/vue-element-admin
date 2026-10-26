@@ -50,7 +50,7 @@
           <span>{{ scope.row.cellar_pos }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="70px" align="center" label="房间编号">
+      <el-table-column min-width="90px" align="center" label="房间编号">
         <template slot-scope="scope">
           <span>{{ scope.row.cellar_name }}</span>
         </template>
@@ -75,7 +75,7 @@
           <span>{{ scope.row.bad_jar_num }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="90px" align="center">
+      <el-table-column min-width="100px" align="center">
         <template slot="header">
           <span>现有酒量(m³)</span>
         </template>
@@ -91,7 +91,7 @@
           <span>{{ scope.row.all_jar_volume }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="80px" align="center">
+      <el-table-column min-width="100px" align="center">
         <template slot="header">
           <span>折算重量(t)</span>
         </template>

@@ -62,9 +62,17 @@
           <span>{{ scope.row.jar_std_volume }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="80px" align="center">
+      <el-table-column min-width="70px" align="center">
         <template slot="header">
-          <span>液位高度表格<br>数据量</span>
+          <span>半径<br>(m)</span>
+        </template>
+        <template slot-scope="scope">
+          <span>{{ scope.row.bottom_cir != null ? Number(scope.row.bottom_cir).toFixed(2) : '-' }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column min-width="70px" align="center">
+        <template slot="header">
+          <span>液位容积<br>数据量</span>
         </template>
         <template slot-scope="scope">
           <span>{{ scope.row.lv_count || 0 }}</span>
@@ -127,6 +135,9 @@
         </el-form-item>
         <el-form-item label="标准容量(L)" prop="jar_std_volume" label-width="120px">
           <el-input v-model="temp.jar_std_volume" />
+        </el-form-item>
+        <el-form-item label="半径(m)" prop="bottom_cir" label-width="120px">
+          <el-input-number v-model="temp.bottom_cir" :min="0.01" :step="0.1" :precision="2" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -230,7 +241,8 @@ export default {
         jar_type_id: undefined,
         jar_type_name: '',
         jar_std_height: 0,
-        jar_std_volume: 0
+        jar_std_volume: 0,
+        bottom_cir: null
       },
       readOnly: false,
       dialogFormVisible: false,
@@ -253,6 +265,9 @@ export default {
         ],
         jar_std_volume: [
           { required: true, message: '请输入标准容量', trigger: 'blur' }
+        ],
+        bottom_cir: [
+          { required: true, message: '请输入半径', trigger: 'change' }
         ]
       },
       downloadLoading: false,
@@ -351,7 +366,8 @@ export default {
         jar_type_id: undefined,
         jar_type_name: '',
         jar_std_height: '',
-        jar_std_volume: ''
+        jar_std_volume: '',
+        bottom_cir: null
       }
     },
     handleCreate() {
