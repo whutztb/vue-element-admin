@@ -63,7 +63,7 @@
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-s-data" @click="handleAddUp">
         统计
       </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-circle-plus" @click="handleCreate">
+      <el-button v-if="isAdministrator" class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-circle-plus" @click="handleCreate">
         新增
       </el-button>
       <el-button class="filter-item" type="primary" icon="el-icon-download" @click="exportAllPages">
@@ -232,7 +232,7 @@
           <el-button type="info" size="mini" icon="el-icon-more" @click="handleMoreDetail(row)">
             更多
           </el-button>
-          <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(row)">
+          <el-button v-if="isAdministrator" type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(row)">
             编辑
           </el-button>
           <el-button v-if="row.status!='deleted'" size="mini" type="info" icon="el-icon-document" @click="handleHistory(row,$index)">

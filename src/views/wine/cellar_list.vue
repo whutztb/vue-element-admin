@@ -10,7 +10,7 @@
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-s-data" @click="handleStock">
         统计
       </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-circle-plus" @click="handleCreate">
+      <el-button v-if="isAdministrator" class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-circle-plus" @click="handleCreate">
         新增
       </el-button>
       <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="exportAllPages">
@@ -106,7 +106,7 @@
       </el-table-column>-->
       <el-table-column label="" align="center" min-width="200" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
-          <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(row)">
+          <el-button v-if="isAdministrator" type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(row)">
             编辑
           </el-button>
           <!--<el-button v-if="row.status!='deleted'" size="mini" type="danger" icon="el-icon-delete" @click="handleDelete(row,$index)">
