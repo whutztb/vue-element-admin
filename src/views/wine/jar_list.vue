@@ -570,10 +570,12 @@ export default {
     },
     formRules() {
       const requiredKey = this.dialogStatus === 'update' ? 'requiredEdit' : 'requiredCreate'
+      // 陶坛ID、库号不强制必填（即使列配置里勾了必填也忽略）
+      const optionalProps = ['jar_id', 'jar_pos']
       const rules = {}
       this.formColumns.forEach(col => {
         rules[col.prop] = [{
-          required: !!col[requiredKey],
+          required: !optionalProps.includes(col.prop) && !!col[requiredKey],
           message: `请输入${this.stripHtml(col.label)}`,
           trigger: col.formType === 'select' || col.formType === 'date' || col.formType === 'datetime' ? 'change' : 'blur'
         }]

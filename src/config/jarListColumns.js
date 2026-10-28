@@ -35,8 +35,8 @@ export const JAR_LIST_DEFAULT_COLUMNS = [
     showInDetail: true,
     showInCreate: true,
     showInEdit: true,
-    requiredCreate: true,
-    requiredEdit: true,
+    requiredCreate: false,
+    requiredEdit: false,
     readonlyOnEdit: true,
     placeholder: '请输入陶坛ID'
   }),
@@ -72,8 +72,8 @@ export const JAR_LIST_DEFAULT_COLUMNS = [
     fixed: 'left',
     showInCreate: true,
     showInEdit: true,
-    requiredCreate: true,
-    requiredEdit: true,
+    requiredCreate: false,
+    requiredEdit: false,
     formType: 'select',
     formOptionsSource: 'cellarPosOptions'
   }),
