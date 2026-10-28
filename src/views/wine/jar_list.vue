@@ -964,8 +964,10 @@ export default {
             this.temp.wine_temp = response.wine_temp
             this.temp.wine_vol = response.wine_vol
             this.temp.wine_vol_convert = response.wine_vol_convert
-            const index = this.list.findIndex(v => v.jar_id === this.temp.jar_id)
-            this.list.splice(index, 1, this.temp)
+            const index = this.list.findIndex(v => v.id === this.temp.id)
+            if (index > -1) {
+              this.list.splice(index, 1, this.temp)
+            }
             this.dialogFormVisible = false
             this.$notify({
               title: '操作成功',
@@ -1595,10 +1597,10 @@ export default {
         this.$message.warning('请输入新的班组名称')
         return
       }
-      const jarIds = this.selectedRows.map(r => r.jar_id)
+      const ids = this.selectedRows.map(r => r.id)
       this.batchTeamLoading = true
-      batchUpdateTeamGroup({ jar_ids: jarIds, team_group: teamGroup }).then(res => {
-        const msg = (res && res.message) || `成功修改 ${jarIds.length} 条数据的班组`
+      batchUpdateTeamGroup({ ids: ids, team_group: teamGroup }).then(res => {
+        const msg = (res && res.message) || `成功修改 ${ids.length} 条数据的班组`
         this.$notify({ title: '操作成功', message: msg, type: 'success', duration: 3000 })
         this.batchTeamDialogVisible = false
         this.batchTeamLoading = false
