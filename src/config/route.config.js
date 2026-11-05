@@ -3,5 +3,6 @@
 // path 对应 router/index.js 中 asyncRoutes 各路由的 path 字段
 
 export const hiddenRoutes = [
-  // '/views/wine/overflow_list',  // 溢出告警
+  '/views/wine/overflow_list', // 溢出告警
+  '/views/wine/lid_open_list' // 缸盖异动报警
 ]
