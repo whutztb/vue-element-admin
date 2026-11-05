@@ -827,7 +827,10 @@ export default {
     handleAddUp() {
       getTotalMass(this.listQuery).then(response => {
         MessageBox.alert(
-          `符合查询条件折算酒量(吨): ${response.message}`,
+          `符合查询条件折算酒量(吨): ${response.message}` +
+          `<br><br>统计范围（共 ${response.jar_count} 个坛/罐）:` +
+          `<br>位置: ${response.filter_cellar_pos || '全部'}` +
+          `<br>坛/罐号: ${response.filter_jar_no || '全部'}`,
           '统计结果',
           {
             confirmButtonText: '确定',

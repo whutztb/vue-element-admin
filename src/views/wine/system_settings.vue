@@ -25,9 +25,9 @@
         <el-input-number v-model="settings.isoThreshold" :min="0.1" :max="2.0" :step="0.1" :precision="1" />
       </el-form-item>
 
-      <el-form-item label="溢出告警阈值(mm)" prop="overflowThreshold">
+      <!--<el-form-item label="溢出告警阈值(mm)" prop="overflowThreshold">
         <el-input-number v-model="settings.overflowThreshold" :min="1" />
-      </el-form-item>
+      </el-form-item>-->
 
       <!--<el-form-item label="登录超时时间(s)" prop="timeout">
         <el-input-number v-model="settings.timeout" :min="1" />
@@ -42,13 +42,13 @@
           <el-option label="是" value="1" />
         </el-select>
       </el-form-item>
-      <el-form-item label="缸盖异动报警" prop="lidWarnMode">
+      <!--<el-form-item label="缸盖异动报警" prop="lidWarnMode">
         <el-select v-model="settings.lidWarnMode" placeholder="请选择异动告警开关">
           <el-option label="开" value="0" />
           <el-option label="关" value="1" />
         </el-select>
-      </el-form-item>
-      <el-form-item label="测量时间" prop="detectTime">
+      </el-form-item>-->
+      <!--<el-form-item label="测量时间" prop="detectTime">
         <el-select v-model="settings.detectTime" placeholder="请选择测量时间">
           <el-option
             v-for="hour in 24"
@@ -57,8 +57,8 @@
             :value="hour - 1"
           />
         </el-select>
-      </el-form-item>
-      <el-form-item label="测量间隔(小时)" prop="detectInterval">
+      </el-form-item>-->
+      <!--<el-form-item label="测量间隔(小时)" prop="detectInterval">
         <el-select v-model="settings.detectInterval" placeholder="请选择测量间隔">
           <el-option
             v-for="interval in 12"
@@ -67,7 +67,7 @@
             :value="interval"
           />
         </el-select>
-      </el-form-item>
+      </el-form-item>-->
 
       <el-form-item>
         <el-button type="primary" @click="saveSettings">保存设置</el-button>
