@@ -52,10 +52,8 @@
           style="width: 180px;"
         />
       </div>
-      <el-input v-model="listQuery.jar_id" placeholder="陶坛ID" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.cellar_pos" placeholder="栋号" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.jar_pos" placeholder="库号" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-input v-model="listQuery.wine_name" placeholder="品名" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.cellar_pos" placeholder="位置" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.jar_no" placeholder="坛/罐号" style="width: 120px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         查询
       </el-button>
@@ -89,29 +87,14 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column align="center" label="陶坛ID" min-width="120">
-        <template slot-scope="scope">
-          <span>{{ scope.row.jar_id }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column min-width="70px" label="栋号" align="center">
+      <el-table-column min-width="70px" label="位置" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.cellar_pos }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="85px" label="库号" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.jar_pos }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column min-width="60px" label="坛号" align="center">
+      <el-table-column min-width="80px" label="坛/罐号" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.jar_no }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column min-width="60px" label="品名" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.wine_name }}</span>
         </template>
       </el-table-column>
       <el-table-column min-width="70px" label="液位(mm)" align="center">
@@ -244,10 +227,8 @@ export default {
         page: 1,
         limit: 20,
         jar_type: '',
-        jar_id: '',
-        jar_pos: '',
         cellar_pos: '',
-        wine_name: '',
+        jar_no: '',
         startDate: '',
         endDate: ''
       },
@@ -355,6 +336,9 @@ export default {
         this.listQuery = {
           ...this.listQuery, // 保持当前的分页设置
           ...query, // 应用保存的搜索条件
+          jar_id: '', // 陶坛ID 已取消查询，清理历史缓存条件
+          jar_pos: '', // 库号 已取消查询，清理历史缓存条件
+          wine_name: '', // 品名 已取消查询，清理历史缓存条件
           page: 1, // 但强制重置为第一页
           limit: this.listQuery.limit // 保持当前的每页数量
         }
