@@ -100,6 +100,25 @@
           </el-tag>
         </template>
       </el-table-column>
+      <el-table-column min-width="150px" align="center" label="上次测量时间">
+        <template slot-scope="scope">
+          <span v-if="scope.row.last_measure_time">{{ scope.row.last_measure_time }}</span>
+          <el-tag v-else type="danger" effect="dark" style="font-size: 13px;">无测量记录</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column min-width="100px" align="center" label="距今天数">
+        <template slot-scope="scope">
+          <el-tag
+            v-if="scope.row.last_measure_days !== null && scope.row.last_measure_days !== undefined"
+            :type="getMeasureDaysTagType(scope.row.last_measure_days)"
+            effect="dark"
+            style="font-size: 13px; font-weight: bold;"
+          >
+            {{ scope.row.last_measure_days }} 天
+          </el-tag>
+          <span v-else>—</span>
+        </template>
+      </el-table-column>
       <el-table-column label="" align="center" min-width="150" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
           <el-button type="primary" size="mini" icon="el-icon-edit" @click="handleUpdate(row)">
@@ -549,6 +568,11 @@ export default {
       const pct = this.getBatteryPercentage(used, remain)
       if (pct <= 20) return 'danger'
       if (pct <= 50) return 'warning'
+      return 'success'
+    },
+    getMeasureDaysTagType(days) {
+      if (days >= 7) return 'danger'
+      if (days >= 3) return 'warning'
       return 'success'
     }
   }
