@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.jar_id" placeholder="陶坛ID" style="width: 180px;" class="filter-item" />
+      <el-input v-model="listQuery.jar_no" placeholder="坛/罐号" style="width: 180px;" class="filter-item" />
       <el-input v-model="listQuery.jar_pos" placeholder="所在酒库" style="width: 180px;" class="filter-item" />
       <el-select v-model="listQuery.deal_status" placeholder="选择状态" style="width: 180px;" class="filter-item">
         <el-option label="全部" value="" />
@@ -41,17 +41,12 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column align="center" label="陶坛ID" min-width="135">
-        <template slot-scope="scope">
-          <span>{{ scope.row.jar_id }}</span>
-        </template>
-      </el-table-column>
       <el-table-column min-width="110px" label="所在酒库" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.jar_pos }}</span>
         </template>
       </el-table-column>
-      <el-table-column min-width="70px" label="坛号" align="center">
+      <el-table-column min-width="80px" label="坛/罐号" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.jar_no }}</span>
         </template>
@@ -147,7 +142,7 @@ export default {
       listQuery: {
         page: 1,
         limit: 20,
-        jar_id: '',
+        jar_no: '',
         jar_pos: '',
         deal_desc: '',
         deal_status: ''
@@ -289,7 +284,7 @@ export default {
         const seconds = String(now.getSeconds()).padStart(2, '0')
 
         const formattedTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
-        clearAllWarning({ deal_time: formattedTime, deal_desc: value, jar_pos: this.listQuery.jar_pos, jar_id: this.listQuery.jar_id }).then(response => {
+        clearAllWarning({ deal_time: formattedTime, deal_desc: value, jar_pos: this.listQuery.jar_pos, jar_no: this.listQuery.jar_no }).then(response => {
           this.$notify({
             title: '操作成功',
             message: '处理成功',
