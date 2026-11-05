@@ -61,6 +61,11 @@
           <span>{{ scope.row.leak_time }}</span>
         </template>
       </el-table-column>
+      <el-table-column min-width="125px" align="center" label="对比记录时间">
+        <template slot-scope="scope">
+          <span>{{ scope.row.ref_time }}</span>
+        </template>
+      </el-table-column>
       <el-table-column min-width="60px" align="center">
         <template slot="header">
           <span>渗漏量<br>(mm)</span>
